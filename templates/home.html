@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+		{% block links %}
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
+		<script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+		{% endblock %}
+	
+	{% block title %} Home {% endblock %}
+		
+				{% block header %}						
+				<li><a href="{{ url_for('index') }}"><button id="home" class="selected">Home</button></a></li>
+				<li><a href="{{ url_for('account_settings') }}"><button id="settings">Settings</button></a></li>
+				<li><a href="{{ url_for('logout') }}"><button id="logout">Logout</button></a></li>
+				{% endblock %}
+			
+				{% block tabs %}
+				<li><a href="#"><div>Template</div></a></li>
+				<li><a href="{{ url_for('index') }}"><div class="selected">Bots</div></a></li>
+				{% endblock %}
+		
+		{% block content %}
+		 <h1 style="color: var(--white-smoke); text-align: center; margin-bottom: -4%; margin-top: 1.5%; font-family: comfortaa;">Welcome, {{ username }}</h1>
+		<div id="display"></div>			
+		{% endblock %}

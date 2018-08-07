@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+		{% block links %}
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/control.css') }}">
+		<script type="text/javascript" src="{{ url_for('static', filename='js/control.js') }}"></script>
+		{% endblock %}
+	
+	{% block title %} Control {% endblock %}
+		
+				{% block header %}						
+				<li><a href="{{ url_for('index') }}"><button id="home">Home</button></a></li>
+				<li><a href="{{ url_for('account_settings') }}"><button id="settings">Settings</button></a></li>
+				<li><a href="{{ url_for('logout') }}"><button id="logout">Logout</button></a></li>
+				{% endblock %}
+			
+				{% block tabs %}
+				<li onclick="location.href='/intel?id={{ bot_id }}'"><div>Intels</div></li>
+				<li onclick=""><div class="selected">Controls</div></li>
+				{% endblock %}
+		
+		{% block content %}
+		<div id="display"></div>			
+		{% endblock %}

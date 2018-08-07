@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta charset="utf-8">
+		
+		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+		<link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon">
+		<script type="text/javascript" src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+		{% block links %}{% endblock %}
+		<title>{% block title %}{% endblock %}</title>	
+	</head>
+	<body>	
+		<div id="header">
+			<span id="menu">				
+				<div id="menu-lines">
+					<hr>
+					<hr>
+					<hr>
+				</div>				
+			</span>
+			<ul class="tabs">
+				{% block header %}				
+				{% endblock %}
+			</ul>
+		</div>
+		<div id="sidebar">
+			<ul class="tabs">
+				{% block tabs %}
+				{% endblock %}
+			</ul>
+		</div>
+		{% if session.status != None %}
+			<a href="{{ url_for('account_settings') }}" style="text-decoration: none;"><p id="notice">{{ session.status }}</p></a>
+		{% endif %}
+
+		{% block content %}
+		{% endblock %}
+	</body>
+</html>
