@@ -43,6 +43,6 @@ class CryptoSalsa20(object):
  @staticmethod
  def decrypt(ciphertext, key, nonce):
   ciphertext, key, nonce = [b64decode(_) for _ in [ciphertext, key, nonce]]
-  print(f'\nciphertext: {ciphertext}\nkey: {key}\nnonce: {nonce}')
+  print('\nciphertext: {}\nkey: {}\nnonce: {}'.format(ciphertext, key, nonce))
   cipher = Salsa20.new(key=key, nonce=nonce)
   return cipher.decrypt(ciphertext)

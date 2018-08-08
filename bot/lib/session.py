@@ -62,6 +62,6 @@ class Session(object):
    nonce = crypto.CryptoRSA.decrypt(self.priv_key, data['nonce'])
    decrypted = crypto.CryptoSalsa20.decrypt(ciphertext, key, nonce)
    decrypted = pickle.loads(decrypted)
-   print(f'data: {data}\nciphertext: {ciphertext}\nkey: {key}\nnonce: {nonce}\ndecrypted: {decrypted}')
+   print('data: {}\nciphertext: {}\nkey: {}\nnonce: {}\ndecrypted: {}'.format(data, ciphertext, key, nonce, decrypted))
    return decrypted
   except:pass

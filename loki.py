@@ -47,7 +47,7 @@ def bot_required(func):
    return jsonify({'resp': ''})
   if not get_bot(session['bot_id']):
    return jsonify({'resp': ''})
-  return func(*args, *kwargs)
+  return func(*args, **kwargs)
  wrapper.__name__ = func.__name__
  return wrapper
 

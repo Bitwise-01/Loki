@@ -73,7 +73,6 @@ class Server(object):
  def establish_conn(self, sess, ip):
   s = session.Session(sess, ip, self.priv_key, self.publ_key)
   conn_info = s.initial_communication()
-  print(f'\n\tWorking with: {conn_info}\n\t')
   self.manage_conn_info(s, conn_info)
   
  def waiting_conn_manager(self):

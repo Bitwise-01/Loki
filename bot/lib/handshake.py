@@ -21,7 +21,7 @@ class Handshake(object):
 			self.rec_public_key = self.session.recv(2048)
 			sleep(0.1)
 			self.session.send(self.public_key)
-		print(f'Recv Key: {self.rec_public_key}')
+		print('Recv Key: {}'.format(self.rec_public_key))
 
 	def handshake(self):
 		self.public_key_exchange()

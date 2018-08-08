@@ -5,7 +5,6 @@
 import bcrypt
 import sqlite3
 from . import const
-from . import crypto
 from time import time 
 from os import urandom
 from hashlib import sha256
