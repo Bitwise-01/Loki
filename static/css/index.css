@@ -11,7 +11,7 @@ body, html {
 	color: #fff; 
 	display: block;
 	margin-top: 10%;
-	font-size: 40px;
+	font-size: 40px; 
 	font-family: rich;
 	margin-bottom: 10px;
 }
@@ -40,8 +40,8 @@ body, html {
 
 #username:focus, #password:focus {
 	text-align: left;
-	border: 2px solid var(--bg-color);
-}
+	border: 1.2px solid var(--bg-color);
+} 
 
 #login {
 	width: 20%;
@@ -58,5 +58,9 @@ body, html {
 
 #login:hover {
 	cursor: pointer;
-	border: 1px solid #fff;
+	border: 1px solid #ccc;
+}
+
+#login:active {
+	border: 1px solid var(--bg-color);
 }

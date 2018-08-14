@@ -3,16 +3,13 @@
 # Description: Secure FTP
 
 import os
+import ssl
 import socket
-import pickle
 from time import time, sleep
-from base64 import b64encode
+from lib.const import CERT_FILE, KEY_FILE
 from socket import timeout as TimeOutError
-from . crypto import CryptoRSA, CryptoSalsa20
 
 class sFTP(object):
-
- RSA_KEY_SIZE = 1280
 
  def __init__(self, ip, port, max_time=60, verbose=False):
   self.ip = ip 
@@ -25,35 +22,11 @@ class sFTP(object):
   self.server_socket = None 
   self.chunk_size = (2**16)-1
   self.recipient_session = None
-  self.recipient_public_key = None 
-  self.symmetric_key = CryptoSalsa20.gen_key()
-
-  self.display('Generating RSA bit key pair ...')
-  self.public_key, self.private_key = CryptoRSA.generate_keys(self.RSA_KEY_SIZE)
-  self.display('Keys generated')
-
+  
  def display(self, msg):
   if self.verbose:
    print('{}\n'.format(msg))
 
- def handshake(self):
-  self.display('Establishing a key ...')
-
-  # exchange of public keys
-  self.recipient_public_key = self.recipient_session.recv(self.session_size)
-  
-  # set session key  
-  sleep(1)
-  cipher = CryptoSalsa20.encrypt(self.symmetric_key)
-  pickle_obj = pickle.dumps({ 
-          'access_key': CryptoRSA.encrypt(self.recipient_public_key, cipher[1]),
-          'nonce': cipher[2], 
-          'cipher': cipher[0]
-         })
-
-  self.recipient_session.sendall(pickle_obj)
-  self.display('Key established: {}'.format(self.symmetric_key))
-  
  def read_file(self, file):
   with open(file, 'rb') as f:
    while True:
@@ -68,49 +41,29 @@ class sFTP(object):
   # send file's name
   sleep(0.5)
   print('Sending file\'s name ...')
-  file_name = CryptoSalsa20.encrypt(os.path.basename(file).encode('utf8'), self.symmetric_key)
-  pkt = pickle.dumps({ 'nonce': file_name[2], 'ciphertext': file_name[0] })
-  self.recipient_session.sendall(pkt)
+  self.recipient_session.sendall(os.path.basename(file).encode('utf8'))
 
   # send file's data 
   sleep(0.5)
   self.display('Sending {} ...'.format(file))
   for data in self.read_file(file):
-   cipher = CryptoSalsa20.encrypt(data, self.symmetric_key)
-   pkt = pickle.dumps({'nonce': cipher[2], 'ciphertext': cipher[0]})
-   self.recipient_session.sendall(pkt)
+   self.recipient_session.sendall(data)
   self.display('File sent')
 
  def recv_file(self):
   _bytes = b''
-  encrypted_data_pkt_pkle = [] # pickle objectss
-  encrypted_data_pkt_dict = [] # dictionary objects
-
+  
   # receive file's name
-  pkt = pickle.loads(self.recipient_session.recv(self.session_size))
-  file_name = CryptoSalsa20.decrypt(pkt['ciphertext'], b64encode(self.symmetric_key), pkt['nonce']).decode('utf8')
+  file_name = self.recipient_session.recv(self.session_size) 
 
   # receive file's data
   self.display('Downloading {} ...'.format(file_name))
   while True:
-   pkt = self.recipient_session.recv(self.chunk_size * 2) 
-   if pkt:
-    encrypted_data_pkt_pkle.append(pkt)
+   data = self.recipient_session.recv(self.chunk_size * 2) 
+   if data:
+    _bytes += data
    else:
     break
-
-  # deserialize
-  self.display('Deserializing ...')
-  for pkle_obj in encrypted_data_pkt_pkle:
-   encrypted_data_pkt_dict.append(pickle.loads(pkle_obj))
-      
-  # decrypt
-  self.display('Decrypting ...')
-  for pkt in encrypted_data_pkt_dict:
-   nonce = pkt['nonce']
-   ciphertext = pkt['ciphertext']
-   data = CryptoSalsa20.decrypt(ciphertext, b64encode(self.symmetric_key), nonce)
-   _bytes += data
 
   return file_name, _bytes
 
@@ -149,13 +102,13 @@ class sFTP(object):
    self.error_code = -1
      
   try:
-   self.recipient_session, addr = self.server_socket.accept() 
+   session, addr = self.server_socket.accept() 
+   self.recipient_session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
   except TimeOutError:
    self.display('Server timed out')
    self.error_code = -1
    
   try:
-   self.handshake()
    started = time()
    self.send_file(file)
    self.time_elapsed = (time() - started)
@@ -179,13 +132,13 @@ class sFTP(object):
    self.error_code = -1
      
   try:
-   self.recipient_session, addr = self.server_socket.accept() 
+   session, addr = self.server_socket.accept() 
+   self.recipient_session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
   except TimeOutError:
    self.display('Server timed out')
    self.error_code = -1
 
   try:
-   self.handshake()
    started = time()
    file_name, data = self.recv_file()
    with open(file_name, 'wb') as f:f.write(data)

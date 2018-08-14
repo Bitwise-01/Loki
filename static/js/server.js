@@ -172,12 +172,15 @@ function serverService() {
 				if("mode" in data) {
 					if(data["mode"] == "Start Server") {
 						if(!data["failed"]) {
-							ip.value = "";
-							port.value = "";							
+							ip.disabled = false;
+							port.disabled = false;							
 						} else {
 							invalidate("ip");
 							invalidate("port");
 						}
+					} else {
+						ip.disabled = true;
+						port.disabled = true;
 					}
 
 					if(data["failed"]) {
@@ -225,6 +228,10 @@ function serverServiceSource() {
 				ip.value = data["ip"];
 				port.value = data["port"];
 				btn.innerHTML = data["mode"];
+				if(ip.value) {
+					ip.disabled = true;
+					port.disabled = true;
+				} 
 			}		
 		}
 	});	

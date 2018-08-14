@@ -60,7 +60,7 @@ def index():
   return render_template('index.html')
  if not session['logged_in']:
   return render_template('index.html')
- return render_template('home.html', username=session['username'])
+ return render_template('home.html')
 
 # -------- Subsections of settings -------- #
 

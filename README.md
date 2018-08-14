@@ -1,14 +1,13 @@
 # Loki
 
 Loki is Remote Access Tool.<br/>
-Loki uses E2EE for normal communication, and SSE for FTP and SSH.<br/>
 
 __Warning:__ 
 * This program is still in beta mode; I'm not done yet.
 * Communication will be a bit slow due to the security.
 
 ### Server side
-1) open /lib/const.py & configure your setting 
+1) open /lib/const.py & configure the setting 
 2) start loki.py
 3) navigate to http://127.0.0.1:5000
 4) login, Username: loki Password: ikol

