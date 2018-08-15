@@ -36,6 +36,7 @@ class sFTP(object):
      break
 
  def send_file(self, file):  
+  chdir(self.home)
   if not os.path.exists(file):
    self.display('File `{}` does not exist'.format(file))
    return -1
@@ -49,6 +50,7 @@ class sFTP(object):
   sleep(0.5)
   self.display('Sending {} ...'.format(file))
 
+  chdir(self.home)
   for data in self.read_file(file):
    self.recipient_session.sendall(data)
   self.display('File sent')
@@ -78,11 +80,11 @@ class sFTP(object):
    pass
 
  def send(self, file):
+  chdir(self.home)
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
   try:
    self.recipient_session.connect((self.ip, self.port))
-   chdir(self.home)
   except ConnectionRefusedError: 
    self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
    return -1
@@ -97,12 +99,11 @@ class sFTP(object):
    self.close()
 
  def recv(self):
-
+  chdir(self.home)
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
   try:
    self.recipient_session.connect((self.ip, self.port))
-   chdir(self.home)
   except ConnectionRefusedError: 
    self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
    return -1
@@ -110,6 +111,7 @@ class sFTP(object):
   try:
    started = time()
    file_name, data = self.recv_file()
+   chdir(self.home)
    with open(file_name, 'wb') as f:f.write(data)
    self.display('Time-elapsed: {}(sec)'.format(time() - started))
   except:
