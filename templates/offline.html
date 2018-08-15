@@ -5,16 +5,7 @@
 	{% endblock %}
 
 	{% block title %} Offline {% endblock %}
-				{% block header %}						
-					<li><a href="{{ url_for('index') }}"><button id="home">Home</button></a></li>
-					<li><a href="{{ url_for('account_settings') }}"><button id="settings">Settings</button></a></li>
-					<li><a href="{{ url_for('logout') }}"><button id="logout">Logout</button></a></li>
-				{% endblock %}
-
-				{% block tabs %}
-					<li><a href="{{ url_for('index') }}"><div>Bots</div></a></li>
-				{% endblock %}
-				
+								
 				{% block content %}
-					<p style="font-family: comfortaa; color: var(--white-smoke); text-align: center; margin-top: 20%;">{{ msg }}</p>		
+					<p style="font-family: comfortaa; color: var(--white-smoke); text-align: center; margin-top: 20%;">{{ msg }}</p>
 				{% endblock %}

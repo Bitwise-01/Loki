@@ -6,6 +6,55 @@ body, html {
 	background-color: var(--bg-color);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+.nav {
+  height: 50px;
+  width: 100%;
+  position: relative;
+  background-color: #4d4d4d;
+}
+
+.nav > .nav-header {
+  display: inline;
+}
+
+.nav > .nav-header > .nav-title {
+  color: #fff;
+  font-size: 22px;
+  display: inline-block;
+  padding: 10px 10px 10px 10px;
+}
+
+.nav > .nav-btn {
+  display: none;
+}
+
+.nav > .nav-links {
+  float: right;
+  display: inline;
+  font-size: 18px;
+}
+
+.nav > .nav-links > a {
+  font-size: 17px;
+  display: inline-block;
+  text-decoration: none;
+  font-family: 'comfortaa';
+  color: var(--white-smoke);
+  padding: 18px 10px 18px 10px;
+}
+
+.nav > .nav-links > a:hover {
+  background-color: var(--bg-color);
+}
+
+.nav > #nav-check {
+  display: none;
+}
+
 #header {
 	margin: 0;
 	padding: 6px;
@@ -101,14 +150,12 @@ body, html {
 }
 
 .tabs button:hover, #sidebar div:hover {
-	color: #000;
 	cursor: pointer;
 	background-color: var(--tab-hover);
 }
 
 .selected {
-	color: #000 !important;
-	background-color: var(--tab-hover) !important;
+	background-color: var(--bg-color) !important;
 }
 
 .invalid {
@@ -144,6 +191,7 @@ body, html {
 }
 
 .sub-tabs li {
+
 	width: 10%;
 	padding: 10px;
 	list-style: none;
@@ -155,7 +203,6 @@ body, html {
 }
 
 .sub-tabs li:hover {
-	color: #000;
 	cursor: pointer;
 	background-color: var(--tab-hover);
 }
@@ -205,6 +252,82 @@ body, html {
 	border: 1px solid #000;
 }
 
+@media (max-width:800px) {
+  .nav > .nav-btn {
+    display: inline-block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+  }
+
+  .nav > .nav-btn > label {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    padding: 13px;
+  }
+
+  .nav > .nav-btn > label:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .nav > .nav-btn > label > span {
+    display: block;
+    width: 25px;
+    height: 10px;
+    border-top: 2px solid #eee;
+  }
+
+  .nav > .nav-links {
+    position: absolute;
+    display: block;
+    width: 100%;
+    background-color: #333;
+    height: 0px;
+    transition: all 0.3s ease-in;
+    overflow-y: hidden;
+    top: 50px;
+    left: 0px;
+  }
+
+  .nav > .nav-links > a {
+    display: block;
+    width: 100%;
+  }
+
+  .nav > #nav-check:not(:checked) + .nav-links {
+    height: 0px;
+    text-align: center;
+  }
+
+  .nav > #nav-check:checked + .nav-links {
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    text-align: center;
+  }
+
+  form, #btn-show-hide, #display, #server-status, #bots-amount {
+  	position: static !important;
+  }
+
+  #server-status, #bots-amount {
+  	margin-bottom: -2.2%;
+  }
+
+  #bots-amount {
+  	margin-bottom: -1%;
+  	margin-top: -2%;
+  }
+
+  #last_active {
+  	display: none;
+  }
+
+  .sub-tabs li {
+  	padding-left: 0;
+  	padding-right: 0;
+  }
+}
 
 @font-face {
 	font-family: rich;
@@ -223,10 +346,10 @@ body, html {
 
 :root {
 	--bg-color: #222;
+	--tab-hover: #222;
 	--hot-red: #ff0033;
 	--dark-red: #dc3545; 
 	--hd-color: #696969;
-	--tab-hover: #6495ed;
-	--tab-color: #007bff;
+	--tab-color: #696969;
 	--white-smoke: #f5f5f5;
 }

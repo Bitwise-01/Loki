@@ -121,7 +121,7 @@ class SSH(object):
     
  def client(self):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  self.recipient_session = ssl.wrap_socket(sock, ca_certs=r'public.crt', cert_reqs=ssl.CERT_REQUIRED)
+  self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
   self.recipient_session.settimeout(self.max_time)
   try:
    self.recipient_session.connect((self.ip, self.port))

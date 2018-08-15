@@ -363,3 +363,141 @@ function selectTab() {
 	removeSelected(this);	
 	this.classList.add("selected");
 }
+
+// -------- Server -------- //
+
+function validateIp(ip) {
+	let ipInput = document.getElementById("ip");
+
+	if(!/^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/.test(ip)) {
+		if(!ipInput.classList.contains("invalid")) {
+			ipInput.classList.add("invalid");
+		}
+		return false;
+	} else {
+		if(ipInput.classList.contains("invalid")) {
+			ipInput.classList.remove("invalid");
+		}
+		return true;
+	}
+}
+
+function testPort(port) {
+	let _port = port.toString().trim();	
+	
+	if(!_port.length) {
+		return false;
+	} else {
+
+		// check if number
+		for(let n=0; n<_port.length; n++) {
+			if(isNaN(_port[n])) {
+				return false;
+			}
+		}
+
+		// check if number starts with a zero
+		if(parseInt(_port[0]) == 0) {
+			return false;
+		}
+
+		// check if number is larger than 65535
+		if(parseInt(_port) > 65535) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+function validatePort(port) {
+	let portInput = document.getElementById("port");
+
+	if(!testPort(port)) {
+		if(!portInput.classList.contains("invalid")) {
+			portInput.classList.add("invalid");
+		}
+		return false;
+	} else {
+		if(portInput.classList.contains("invalid")) {
+			portInput.classList.remove("invalid");
+		}
+		return true;
+	}
+}
+
+function invalidate(id) {
+	let element = document.getElementById(id);
+
+	if(!element.classList.contains("invalid")) {
+		element.classList.add("invalid");
+	}
+}
+
+function serverService() {
+	let ip = document.getElementById("ip");
+	let port = document.getElementById("port");
+	let btn = document.getElementById("server-address-btn");
+	let load = document.getElementById("server-service-load");
+
+	if(all([validateIp(ip.value), validatePort(port.value)])) {
+		btn.style.display = "none";
+		load.style.display = "block";
+		$.ajax({
+			type: "POST",
+			data: {"ip": ip.value, "port": port.value},
+			url: "/server_service"
+			}).done(function(data) {
+				if("mode" in data) {
+					if(data["mode"] == "Start Server") {
+						if(!data["failed"]) {
+							ip.disabled = false;
+							port.disabled = false;							
+						} else {
+							invalidate("ip");
+							invalidate("port");
+						}
+					} else {
+						ip.disabled = true;
+						port.disabled = true;
+					}
+
+					if(data["failed"]) {
+						invalidate("ip");
+						invalidate("port");
+					}
+
+					btn.innerHTML = data["mode"];
+				}
+				btn.style.display = "block";
+				load.style.display = "none";
+		});
+	}
+}
+
+function serverServiceSource() {
+	$.ajax({
+		type: "POST",
+		url: "/server_service_source"
+	}).done(function(data) {
+		let displayArea = document.getElementById("display-area");
+		let html = data["resp"];
+
+		if(html) {
+			displayArea.innerHTML = html;
+			let ip = document.getElementById("ip");
+			let port = document.getElementById("port");
+			let btn = document.getElementById("server-address-btn");
+
+			if(all([data["ip"], data["port"]])) {
+				ip.value = data["ip"];
+				port.value = data["port"];
+				btn.innerHTML = data["mode"];
+				if(ip.value) {
+					ip.disabled = true;
+					port.disabled = true;
+				} 
+			}		
+		}
+	});	
+}

