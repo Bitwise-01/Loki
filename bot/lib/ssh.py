@@ -32,8 +32,7 @@ class Communicate(object):
       self.recvs_decrypted.put(data)
 
     else:self.stop()
-   except TimeOutError:pass
-   except:self.stop()
+   except:pass
 
  def send(self, data):
   if len(data.strip()):
