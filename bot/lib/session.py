@@ -4,8 +4,9 @@
 
 import time 
 import pickle
-import socket 
+import socket
 from lib.info import Information
+from socket import timeout as TimeOutError
 
 class Session(object):
  
@@ -49,4 +50,6 @@ class Session(object):
  def recv(self, size=4096):
   try:
    return pickle.loads(self.session.recv(size))
+  except TimeOutError:
+    return -1
   except:pass 

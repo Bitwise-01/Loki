@@ -9,7 +9,7 @@ var cmdProcessing = false;
 var inputHistoryCMD = [];
 var inputHistorySSH = [];
 
-var commands = {
+var commands = { 
     "status": { "id": 1, "help": "Check the status of a file transfer", "usage": "status" },
     "reconnect": { "id": 2, "help": "Force the remote computer to reconnect", "usage": "reconnect" },
     "screenshot": { "id": 5, "help": "Capture a screenshot", "usage": "\t\tscreenshot" },

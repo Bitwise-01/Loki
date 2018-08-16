@@ -27,7 +27,7 @@ class Server(object):
 
  def gen_cert(self):
   key_pair = crypto.PKey()
-  key_pair.generate_key(crypto.TYPE_RSA, 4096)
+  key_pair.generate_key(crypto.TYPE_RSA, 2048)
 
   cert = crypto.X509()
   cert.get_subject().O = 'Loki'

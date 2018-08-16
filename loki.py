@@ -4,8 +4,8 @@
 
 from re import match
 from os import urandom
-from lib import database
 from time import time, sleep
+from lib import database, const 
 from string import ascii_uppercase
 from lib.server.server import Server
 from flask import Flask, render_template, request, session, jsonify, redirect, url_for
@@ -64,15 +64,10 @@ def index():
 
 # -------- Subsections of settings -------- #
 
-@app.route('/settings/account')
+@app.route('/settings')
 @login_required
-def account_settings():
- return render_template('account.html')
-
-@app.route('/settings/server')
-@login_required
-def server_settings():
- return render_template('server.html')
+def settings():
+ return render_template('settings.html')
 
 # -------- Intel -------- #
 
@@ -504,6 +499,9 @@ def server_service():
 
  ip = request.form['ip']
  port = request.form['port']
+
+ if ip != const.PRIVATE_IP:
+  ip = const.PRIVATE_IP
 
  if any([not len(ip.strip()), not len(port.strip())]):
   return redirect(url_for('index'))

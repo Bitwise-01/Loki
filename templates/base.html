@@ -28,12 +28,12 @@
 		  <input type="checkbox" id="nav-check">
 		  <div class="nav-links">
 		  	<a href="{{ url_for('index') }}">Home</a>
-		  	<a href="{{ url_for('account_settings') }}">Settings</a>
+		  	<a href="{{ url_for('settings') }}">Settings</a>
 		    <a href="{{ url_for('logout') }}"><span style="color: var(--hot-red);">Logout</span></a>
 		  </div>
 		</div>
 		{% if session.status != None %}
-			<a href="{{ url_for('account_settings') }}" style="text-decoration: none;"><p id="notice">{{ session.status }}</p></a>
+			<a href="{{ url_for('settings') }}" style="text-decoration: none;"><p id="notice">{{ session.status }}</p></a>
 		{% endif %}
 
 		{% block content %}

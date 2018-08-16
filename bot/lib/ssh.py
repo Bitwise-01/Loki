@@ -5,8 +5,7 @@
 import os 
 import ssl
 import socket
-import subprocess
-from time import sleep 
+import subprocess 
 from queue import Queue 
 from threading import Thread 
 from socket import timeout as TimeOutError
@@ -19,8 +18,7 @@ class Communicate(object):
   self.session = session
   self.is_alive = True
   self.pending = False 
-  self.resp = None 
-
+  
  def recv(self):
   self.session.settimeout(0.5)
   while self.is_alive:
@@ -28,12 +26,10 @@ class Communicate(object):
     recv = self.session.recv(self.session_recv)
 
     if recv:
-     self.resp = None
      self.pending = False
      data = recv.decode('utf8')
      if data != '-1':
       self.recvs_decrypted.put(data)
-      self.resp = data
 
     else:self.stop()
    except TimeOutError:pass

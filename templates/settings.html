@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+		
+		{% block links %}
+		<script type="text/javascript" src="{{ url_for('static', filename='js/settings.js') }}"></script>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}">
+		{% endblock %}
+		{% block title %}Settings{% endblock %}
+	
+				{% block tabs %}
+				<a href="/settings/account"></a><li><div class="selected">Account</div></li>
+				<a href="/settings/server"><li><div>Server</div></li></a>
+				{% endblock %}
+
+		{% block content %}
+		<div id="display"></div>
+		{% endblock %}

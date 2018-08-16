@@ -5,9 +5,6 @@
 import os 
 import ssl 
 import socket
-import subprocess
-from time import sleep
-from queue import Queue 
 from threading import Thread 
 from lib.const import CERT_FILE, KEY_FILE
 from socket import timeout as TimeOutError
@@ -15,7 +12,6 @@ from socket import timeout as TimeOutError
 class Communicate(object):
 
  def __init__(self, session):
-  self.recvs_decrypted = Queue()
   self.session_recv = 4096**2
   self.session = session
   self.is_alive = True
@@ -34,8 +30,7 @@ class Communicate(object):
      data = recv.decode('utf8')
      if data != '-1':
       self.resp = data
-      self.recvs_decrypted.put(data)
-      
+            
     else:self.stop()
    except TimeOutError:pass
    except:self.stop()

