@@ -65,8 +65,8 @@ class Shell(object):
 
   while self.is_alive:
    try:sleep(0.5)
-   except:
-    self.close()
+   except:break
+  self.close()
 
  def send(self, code=None, args=None):
   self.session.send(code=code, args=args)
