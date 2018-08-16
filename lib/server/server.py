@@ -73,12 +73,20 @@ class Server(object):
    self.port = None 
    self.ip = None 
 
+ def close(self, sock): 
+  try:
+   sock.shutdown(socket.SHUT_RDWR)
+   sock.session.close()
+  except:pass
+
  def server_stop(self):
   if self.is_active:
    self.is_active = False 
    self.ip, self.port = None, None 
    self.interface.disconnect_all()
   self.is_active = False
+  self.close(self.server)
+  self.close(self._server)
 
  def manage_conn_info(self, sess_obj, conn_info):
   if conn_info:

@@ -460,13 +460,17 @@ def server_management():
  return jsonify({'resp': src})
 
 def valid_ip(ip):
- return True if match(r'^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$', ip) else False 
+ if not match(r'^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$', ip):
+  return False 
+ if ip != const.PRIVATE_IP:
+  return False 
+ return True
 
 def valid_port(port):
- _port = str(port).strip(); 
+ _port = str(port).strip()
  
  if not len(_port): 
-  return False;
+  return False
  else:
   #  check if number
   for item in _port:
@@ -475,12 +479,14 @@ def valid_port(port):
 
   # check if number starts with a zero
   if int(_port[0]) == 0:
-   return False;  
+   return False 
 
   # check if number is larger than 65535
   if int(_port) > 65535:
-   return False;  
+   return False 
 
+  if any([int(_port) == const.FTP_PORT, int(_port) == const.SSH_PORT, int(_port) == const.CNC_PORT]):
+   return False 
   return True;
 
 def server_start(ip, port):
@@ -497,17 +503,24 @@ def server_stop():
 @login_required
 def server_service():  
  if any([not 'ip' in request.form, not 'port' in request.form]):
-  return redirect(url_for('index'))
+  return jsonify({'resp': 'invalid', 'mode': 'Start Server' if session['server_active'] else 'Stop Server', 
+    'ipFailed': True if not 'ip' in request.form else False, 'portFailed': True if not 'port' in request.form else False})
 
  ip = request.form['ip']
  port = request.form['port']
 
- if ip != const.PRIVATE_IP:
-  ip = const.PRIVATE_IP
-
  if any([not len(ip.strip()), not len(port.strip())]):
-  return redirect(url_for('index'))
+  return jsonify({'resp': 'invalid', 'mode': 'Start Server' if not session['server_active'] else 'Stop Server', 
+    'ipFailed': True if not len(ip.strip()) else False, 'portFailed': True if not len(port.strip()) else False})
 
+ if any([ip.isdigit(), not port.isdigit()]):
+  return jsonify({'resp': 'invalid', 'mode': 'Start Server' if not session['server_active'] else 'Stop Server', 
+    'ipFailed': True if ip.isdigit() else False, 'portFailed': True if not port.isdigit() else False})
+
+ if any([not valid_ip(ip), not valid_port(port)]):
+  return jsonify({'resp': 'invalid', 'mode': 'Start Server' if not session['server_active'] else 'Stop Server', 
+    'ipFailed': True if not valid_ip(ip) else False, 'portFailed': True if not valid_port(port) else False})
+ 
  if session['server_active']:
   server_stop()
   online = server.stop()

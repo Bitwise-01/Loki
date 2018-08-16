@@ -194,8 +194,8 @@ class Database(object):
   _username = username.encode('utf-8') + urandom(64 * 1024)
   _password = password.encode('utf-8') + urandom(64 * 1024) 
   _username_password = b64encode(_username + _password + urandom(64 * 64))
-  secure_hash = sha256(_username_password).digest()
-  return b64encode(secure_hash)
+  secure_hash = sha256(_username_password).digest().hex()
+  return secure_hash
 
  def get_date_created(self, user_id):
   return self.db_query('SELECT date_created FROM Status WHERE stat_id=?;', [user_id])

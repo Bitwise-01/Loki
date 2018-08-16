@@ -327,6 +327,11 @@ body, html {
   	padding-left: 0;
   	padding-right: 0;
   }
+
+  #server-service-load {
+  	margin-top: 10% !important;
+	margin-left: 36.3% !important;
+  }
 }
 
 @font-face {

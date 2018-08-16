@@ -21,7 +21,7 @@ class Session(object):
    return self.recv()
   except:pass 
 
- def close(self):
+ def close(self): 
   try:
    self.session.shutdown(socket.SHUT_RDWR)
    self.session.close()

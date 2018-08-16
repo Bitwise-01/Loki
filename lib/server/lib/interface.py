@@ -89,7 +89,7 @@ class Interface(object):
  def disconnect_all(self):
   for bot_id in [bot_id for bot_id in self.bots]:
    self.disconnect_client(bot_id)
-
+  
  def get_bot(self, bot_id):
   for bot in self.bots:
    if self.bots[bot]['bot_id'] == bot_id:

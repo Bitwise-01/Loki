@@ -265,7 +265,11 @@ function usernameUpdateSource() {
 		let displayArea = document.getElementById("display-area");
 		let html = data["resp"];
 		if(html) {
-			displayArea.innerHTML = html;			
+			try { 
+				displayArea.innerHTML = html;	
+			} catch(e) {
+
+			}		
 		}
 	});
 }
@@ -448,23 +452,35 @@ function serverService() {
 			data: {"ip": ip.value, "port": port.value},
 			url: "/server_service"
 			}).done(function(data) {
+				console.log(data);
 				if("mode" in data) {
 					if(data["mode"] == "Start Server") {
-						if(!data["failed"]) {
-							ip.disabled = false;
-							port.disabled = false;							
-						} else {
-							invalidate("ip");
-							invalidate("port");
+
+						if("failed" in data) {
+							if(!data["failed"]) {
+								ip.disabled = false;
+								port.disabled = false;							
+							} else {
+								invalidate("ip");
+								invalidate("port");
+							}							
+						}
+						if("ipFailed" in data && "portFailed" in data) {
+							if(!data["ipFailed"] && !data["portFailed"]) {
+								ip.disabled = false;
+								port.disabled = false;
+							} else if(data["ipFailed"] && data["portFailed"]) {
+								invalidate("ip");
+								invalidate("port");
+							} else if(data["ipFailed"]) {
+								invalidate("ip");
+							} else if(data["portFailed"]) {
+								invalidate("port");
+							}							
 						}
 					} else {
 						ip.disabled = true;
 						port.disabled = true;
-					}
-
-					if(data["failed"]) {
-						invalidate("ip");
-						invalidate("port");
 					}
 
 					btn.innerHTML = data["mode"];

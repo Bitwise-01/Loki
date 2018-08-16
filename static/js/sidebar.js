@@ -12,18 +12,22 @@ $(document).ready(function(){
 });
 
 function addListeners() {
-	menuLines.addEventListener("click", toggleSideBar);
-	document.addEventListener("click", function(e) {
-		if(_isClicked == 1) {	
-			sidebar.style.display = "none";
-			isClicked = false;
-			_isClicked = 0;
-		} else {
-			if(isClicked) {
-				_isClicked += 1;
+	try {
+		menuLines.addEventListener("click", toggleSideBar);
+		document.addEventListener("click", function(e) {
+			if(_isClicked == 1) {	
+				sidebar.style.display = "none";
+				isClicked = false;
+				_isClicked = 0;
+			} else {
+				if(isClicked) {
+					_isClicked += 1;
+				}
 			}
-		}
-	});		
+		});				
+	} catch(e) {
+
+	}
 }
 
 function toggleSideBar() {
