@@ -32,8 +32,7 @@ class Communicate(object):
       self.resp = data
             
     else:self.stop()
-   except TimeOutError:pass
-   except:self.stop()
+   except:pass
 
  def send(self, data):
   if len(data.strip()):
