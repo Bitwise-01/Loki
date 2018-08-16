@@ -353,8 +353,9 @@ def populate_bot_table():
       <td>{}</td> 
       <td>{}</td>
       <td>{}</td>
+      <td>{}</td>
    </tr> 
-  '''.format(bot_id, hostname, '{} {}'.format(os, version), ip, country)
+  '''.format(bot_id, hostname, '{} {}'.format(os, version), ip, country, bot_id[:8])
  return online_bots  
 
 @app.route('/fetch_bots', methods=['POST'])
@@ -369,6 +370,7 @@ def fetch_bots():
       <th>OS</th> 
       <th>IP</th>
       <th>Country</th>
+      <th>ID</th>
     </tr> 
     {}
    </table>
