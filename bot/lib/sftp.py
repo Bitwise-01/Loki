@@ -79,16 +79,19 @@ class sFTP(object):
   except:
    pass
 
- def send(self, file):
+ def socket_obj(self):
   chdir(self.home)
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
+  sock.settimeout(10)
   try:
+   self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
    self.recipient_session.connect((self.ip, self.port))
-  except ConnectionRefusedError: 
-   self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
+  except:
    return -1
 
+ def send(self, file):
+  if self.socket_obj() == -1:
+   return -1
   try:
    started = time()
    self.send_file(file)
@@ -99,15 +102,8 @@ class sFTP(object):
    self.close()
 
  def recv(self):
-  chdir(self.home)
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
-  try:
-   self.recipient_session.connect((self.ip, self.port))
-  except ConnectionRefusedError: 
-   self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
+  if self.socket_obj() == -1:
    return -1
-
   try:
    started = time()
    file_name, data = self.recv_file()

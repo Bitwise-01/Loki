@@ -34,7 +34,7 @@ class Shell(object):
   while self.is_alive:
    recv = self.session.recv()
    if recv == -1: continue # timed out
-   
+
    if recv:
     with self.lock:
      self.recv_queue.put(recv)
@@ -98,7 +98,7 @@ class Shell(object):
   print('Downloading ...')
   self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
   try:
-   self.ftp.recv()
+   self.ftp.recv() 
   except:pass
   finally:
    self.ftp.close()
