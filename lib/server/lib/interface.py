@@ -82,6 +82,13 @@ class Interface(object):
   print('Disconnecting client ...')
   if sess_obj in self.bots:
    self.bots[sess_obj]['shell'].is_alive = False
+   bot_id = self.bots[sess_obj]['bot_id']
+
+   if self.ftp:
+    if self.ftp.bot_id == bot_id:
+     self.ftp.close()
+     self.ftp = None 
+
    del self.bots[sess_obj]
    sess_obj.close()
    self.sig = self.signature
