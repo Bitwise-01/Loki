@@ -164,7 +164,7 @@ class Interface(object):
   if cmd_id == 1:
    return self.ftp_status()
   elif any([cmd_id == 3, cmd_id == 4, cmd_id == 5]):
-   return self.ftp_obj(bot_id, cmd_id, args[0] if cmd_id != 5 else 'a screenshot', override)
+   return self.ftp_obj(bot_id, cmd_id, ' '.join(args[0:]) if cmd_id != 5 else 'a screenshot', override)
   else:
    bot = self.get_bot(bot_id)
    if bot:
