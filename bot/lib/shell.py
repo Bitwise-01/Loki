@@ -97,12 +97,18 @@ class Shell(object):
  def download(self, args):
   print('Downloading ...')
   self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
-  self.ftp.recv()
+  try:
+   self.ftp.recv()
+  finally:
+   self.ftp.close()
 
  def upload(self, file):
   print('Uploading {}'.format(file))
   self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
-  self.ftp.send(file)
+  try:
+   self.ftp.send(file)
+  finally:
+   self.ftp.close()
 
  def screen(self, args):
   chdir(self.home)
