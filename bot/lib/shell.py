@@ -99,6 +99,7 @@ class Shell(object):
   self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
   try:
    self.ftp.recv()
+  except:pass
   finally:
    self.ftp.close()
 
@@ -107,6 +108,7 @@ class Shell(object):
   self.ftp = sftp.sFTP(self.services['ftp']['ip'], self.services['ftp']['port'], self.home, verbose=True)
   try:
    self.ftp.send(file)
+  except:pass
   finally:
    self.ftp.close()
 
