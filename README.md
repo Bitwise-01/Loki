@@ -1,4 +1,4 @@
-# Loki <img src="/static/img/favicon.png" width="40" height="35">
+# Loki <img src="/static/img/favicon.png" width="32" height="32">
 
 Loki is Remote Access Tool.<br/>
 Loki uses **RSA-2048** with **AES-256** to keep your communication secure.
