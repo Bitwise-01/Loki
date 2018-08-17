@@ -4,7 +4,6 @@
 
 from re import match
 from os import urandom
-from time import time, sleep
 from lib import database, const 
 from string import ascii_uppercase
 from lib.server.server import Server
