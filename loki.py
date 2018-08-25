@@ -486,7 +486,7 @@ def valid_port(port):
 
   if any([int(_port) == const.FTP_PORT, int(_port) == const.SSH_PORT, int(_port) == const.CNC_PORT]):
    return False 
-  return True;
+  return True
 
 def server_start(ip, port):
  session['ip'] = ip
