@@ -22,9 +22,9 @@ class FTP(object):
   self.time = None
   self.file = file 
 
- def send(self, file):
+ def send(self, code, file=None):
   if not path.exists(file):return 
-  self.shell.send(code=3)
+  self.shell.send(code=code, args=file)
   self.is_alive = True
   self.sftp.send(file)
   self.is_alive = False
