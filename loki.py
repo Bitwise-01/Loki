@@ -10,8 +10,8 @@ from lib.server.server import Server
 from flask import Flask, render_template, request, session, jsonify, redirect, url_for
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = urandom(64 * 32) # cookie encryption
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SECRET_KEY'] = urandom(64 << 3) # cookie encryption
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0x00
 
 server = Server()
 db = database.Database()
