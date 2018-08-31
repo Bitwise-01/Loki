@@ -114,7 +114,7 @@ class Server(object):
   shell_thread.start()
    
  def establish_conn(self, sess, ip):
-  s = session.Session(sess, ip)
+  s = session.Session(sess, ip) 
   conn_info = s.initial_communication()
   self.manage_conn_info(s, conn_info)
   

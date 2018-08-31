@@ -5,6 +5,7 @@
 import os
 import ssl
 import socket
+from . file import File 
 from time import time, sleep
 from lib.const import CERT_FILE, KEY_FILE
 from socket import timeout as TimeOutError
@@ -27,15 +28,6 @@ class sFTP(object):
   if self.verbose:
    print('{}\n'.format(msg))
 
- def read_file(self, file):
-  with open(file, 'rb') as f:
-   while True:
-    data = f.read(self.chunk_size)
-    if data:
-     yield data 
-    else:
-     break
-
  def send_file(self, file):
 
   # send file's name
@@ -46,7 +38,7 @@ class sFTP(object):
   # send file's data 
   sleep(0.5)
   self.display('Sending {} ...'.format(file))
-  for data in self.read_file(file):
+  for data in File.read(file):
    self.recipient_session.sendall(data)
   self.display('File sent')
 
@@ -141,7 +133,7 @@ class sFTP(object):
   try:
    started = time()
    file_name, data = self.recv_file()
-   with open(file_name, 'wb') as f:f.write(data)
+   File.write(file_name, data)
    self.time_elapsed = (time() - started)
    self.display('Time-elapsed: {}(sec)'.format(time() - started))
   except Exception as error:

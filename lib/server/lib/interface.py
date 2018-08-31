@@ -20,7 +20,7 @@ class FTP(object):
   self.is_alive = False
   self.success = False
   self.time = None
-  self.file = file 
+  self.file = file  
 
  def send(self, code, file=None):
   if not path.exists(file):return 

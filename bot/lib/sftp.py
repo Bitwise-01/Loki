@@ -7,6 +7,7 @@ import ssl
 import socket
 from os import chdir 
 from . import screen 
+from . file import File 
 from time import sleep, time
 from socket import timeout as TimeOutError
 
@@ -51,7 +52,7 @@ class sFTP(object):
   self.display('Sending {} ...'.format(file))
 
   chdir(self.home)
-  for data in self.read_file(file):
+  for data in File.read(file):
    self.recipient_session.sendall(data)
   self.display('File sent')
 
@@ -108,7 +109,7 @@ class sFTP(object):
    started = time()
    file_name, data = self.recv_file()
    chdir(self.home)
-   with open(file_name, 'wb') as f:f.write(data)
+   File.write(file_name, data)
    self.display('Time-elapsed: {}(sec)'.format(time() - started))
   except:
    pass 
