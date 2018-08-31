@@ -14,7 +14,7 @@ __Warning:__
     * Polymorphism **(** *to bypass AV* **)**      
 
 ### Requirements
-* Python **3.x.x**
+* Python **3.6.x**
 
 ### Server tested on
 * Windows 10
