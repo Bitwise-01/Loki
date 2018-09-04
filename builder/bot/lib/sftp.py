@@ -4,6 +4,7 @@
 
 import os
 import ssl 
+import sys
 import socket
 from os import chdir 
 from . import screen 
@@ -22,6 +23,7 @@ class sFTP(object):
   self.chunk_size = 0xffff
   self.session_size = 0x1000
   self.recipient_session = None
+  self.cert = os.path.dirname(sys.executable[:-2]) + os.path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
  
  def display(self, msg):
   if self.verbose:
@@ -85,7 +87,7 @@ class sFTP(object):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(10)
   try:
-   self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
+   self.recipient_session = ssl.wrap_socket(sock, ca_certs=self.cert, cert_reqs=ssl.CERT_REQUIRED)
    self.recipient_session.connect((self.ip, self.port))
   except:
    return -1
