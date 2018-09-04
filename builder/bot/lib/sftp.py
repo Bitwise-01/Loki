@@ -19,8 +19,8 @@ class sFTP(object):
   self.home = home 
   self.verbose = verbose
   self.max_time = max_time
-  self.session_size = 64**2
-  self.chunk_size = (2**16)-1
+  self.chunk_size = 0xffff
+  self.session_size = 0x1000
   self.recipient_session = None
  
  def display(self, msg):
@@ -65,7 +65,7 @@ class sFTP(object):
   # receive file's data
   self.display('Downloading {} ...'.format(file_name))
   while True:
-   data = self.recipient_session.recv(self.chunk_size * 2) 
+   data = self.recipient_session.recv(self.chunk_size << 2) 
    if data:
     _bytes += data
    else:

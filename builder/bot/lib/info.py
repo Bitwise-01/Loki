@@ -3,7 +3,9 @@
 # Description: Machine information
 
 import socket
+from uuid import getnode
 from requests import get
+from hashlib import sha256 
 from getpass import getuser
 from platform import system, node, release, version
 
@@ -15,9 +17,14 @@ class System(object):
   self.release = release()
   self.version = version()
   self.username = getuser()
- 
+  self.uuid = self.get_id()
+
+ def get_id(self):
+  return sha256((str(getnode()) + getuser()).encode()).digest().hex()
+
  def sys_info(self):
   return { 
+   'uuid': self.uuid,
    'system': self.system,
    'release': self.release,
    'version': self.version,

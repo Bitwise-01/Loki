@@ -12,10 +12,11 @@ from socket import timeout as TimeOutError
 class Communicate(object):
 
  def __init__(self, session):
-  self.session_recv = 4096**2
+  self.session_recv = 4096 << 12
   self.session = session
   self.is_alive = True
   self.pending = False 
+  self.tmp_resp = ''
   self.resp = None 
 
  def recv(self):
@@ -23,14 +24,13 @@ class Communicate(object):
   while self.is_alive:
    try:
     recv = self.session.recv(self.session_recv)
-
     if recv:
-     self.resp = None
-     self.pending = False
      data = recv.decode('utf8')
      if data != '-1':
-      self.resp = data
-            
+      self.tmp_resp += data
+     else:
+      self.resp = self.tmp_resp
+      self.pending = False            
     else:self.stop()
    except:pass
 
@@ -38,8 +38,8 @@ class Communicate(object):
   if len(data.strip()):
    if not self.is_alive:return 
    try:
-    self.session.sendall(data.encode('utf8'))
     self.pending = True
+    self.session.sendall(data.encode('utf8'))
    except:
     pass 
 
@@ -67,7 +67,10 @@ class Server(object):
    if not self.communication.pending:
     self.communication.send(cmd)
     while all([self.is_alive, self.communication.is_alive, self.communication.pending]):pass 
-    return self.communication.resp 
+    self.communication.tmp_resp = ''
+    resp = self.communication.resp 
+    self.communication.resp = None
+    return resp
    
 class SSH(object):
 
@@ -106,13 +109,14 @@ class SSH(object):
 
   communication = Communicate(self.recipient_session)
   if self.communication:
-   self.communication.stop()
+   self.close()
 
   self.communication = Server(communication)
   return 0
   
  def close(self):
   try:
+   print('\nClosing SSH ...\n')
    if self.communication:self.communication.stop()
    self.recipient_session.shutdown(socket.SHUT_RDWR)
    self.recipient_session.close()
@@ -121,4 +125,3 @@ class SSH(object):
  def send(self, cmd):
   if self.communication:
    return self.communication.send(cmd)
-    

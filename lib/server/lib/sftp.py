@@ -19,9 +19,9 @@ class sFTP(object):
   self.time_elapsed = 0
   self.verbose = verbose
   self.max_time = max_time
-  self.session_size = 64**2
+  self.chunk_size = 0xffff 
   self.server_socket = None 
-  self.chunk_size = (2**16)-1
+  self.session_size = 0x1000
   self.recipient_session = None
   
  def display(self, msg):
@@ -51,7 +51,7 @@ class sFTP(object):
   # receive file's data
   self.display('Downloading {} ...'.format(file_name))
   while True:
-   data = self.recipient_session.recv(self.chunk_size * 2) 
+   data = self.recipient_session.recv(self.chunk_size << 2) 
    if data:
     _bytes += data
    else:
@@ -60,6 +60,7 @@ class sFTP(object):
   return file_name, _bytes
 
  def close(self):
+  print('\nClosing sFTP ...')
   try:
    self.recipient_session.shutdown(socket.SHUT_RDWR)
    self.recipient_session.close()

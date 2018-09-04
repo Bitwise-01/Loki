@@ -19,9 +19,9 @@ class Server(object):
   self.interface = interface.Interface()
   self.waiting_conn = Queue()
   self.is_active = False # is the server active 
+  self._server = None
   self.lock = RLock()
   self.server = None
-  self._server = None
   self.port = None
   self.ip = None
 
