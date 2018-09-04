@@ -3,9 +3,9 @@
 # Description: Screen shot
 
 from mss import mss
-from os import path, remove
+from os import path, getcwd, remove
 
-file = 'screen.png'
+file = getcwd() + path.sep + 'screen.png'
 
 def screenshot():
  with mss() as sct:
