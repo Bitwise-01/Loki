@@ -2,6 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Bot 
 
+import sys
 import ssl
 import socket
 import pickle
@@ -26,7 +27,7 @@ PORT = addr_port
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = getcwd() + path.sep + 'public.crt'
+  self.cert = path.dirname(sys.executable[:-2]) + path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
   self.shell = None
   self.home = home
   self.conn = None 

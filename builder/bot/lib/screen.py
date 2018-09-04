@@ -3,9 +3,9 @@
 # Description: Screen shot
 
 from mss import mss
-from os import path, getcwd, remove
+from os import path, remove
 
-file = getcwd() + path.sep + 'screen.png'
+file = path.dirname(sys.executable[:-2]) + path.sep + 'screen.png' if hasattr(sys, 'frozen') else 'screen.png' 
 
 def screenshot():
  with mss() as sct:
