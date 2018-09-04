@@ -2,6 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Screen shot
 
+import sys
 from mss import mss
 from os import path, remove
 
