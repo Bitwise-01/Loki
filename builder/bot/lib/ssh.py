@@ -4,6 +4,7 @@
 
 import os 
 import ssl
+import sys 
 import socket
 import subprocess 
 from queue import Queue 
@@ -102,6 +103,7 @@ class SSH(object):
   self.max_time = max_time
   self.communication = None 
   self.recipient_session = None
+  self.cert = os.path.dirname(sys.executable[:-2]) + os.path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
     
  def display(self, msg):
   if self.verbose:
@@ -120,7 +122,7 @@ class SSH(object):
     
  def client(self):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  self.recipient_session = ssl.wrap_socket(sock, ca_certs='public.crt', cert_reqs=ssl.CERT_REQUIRED)
+  self.recipient_session = ssl.wrap_socket(sock, ca_certs=self.cert, cert_reqs=ssl.CERT_REQUIRED)
   self.recipient_session.settimeout(self.max_time)
   try:
    self.recipient_session.connect((self.ip, self.port))
