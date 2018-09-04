@@ -26,7 +26,7 @@ PORT = addr_port
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = 'public.crt'
+  self.cert = getcwd() + path.sep + 'public.crt'
   self.shell = None
   self.home = home
   self.conn = None 
