@@ -42,7 +42,7 @@ class Executor(object):
   return data 
 
  def compile_file(self, path):
-  cmd = 'pyinstaller -F -w {}'.format(path)
+  cmd = 'pyinstaller -F -c {}'.format(path)
   Popen(cmd.split()).wait()
 
  def write_template(self, template, py_temp, _dict):
