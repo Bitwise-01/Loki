@@ -2,11 +2,10 @@
 # Author: Pure-L0G1C
 # Description: Screen shot
 
-import sys
 from mss import mss
 from os import path, remove
 
-file = path.dirname(sys.executable[:-2]) + path.sep + 'screen.png' if hasattr(sys, 'frozen') else 'screen.png' 
+file = 'screen.png' 
 
 def screenshot():
  with mss() as sct:

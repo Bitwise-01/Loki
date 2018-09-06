@@ -4,7 +4,6 @@
 
 import os 
 import ssl
-import sys 
 import socket
 import subprocess 
 from queue import Queue 
@@ -100,10 +99,10 @@ class SSH(object):
   self.port = port  
   self.home = home
   self.verbose = verbose
+  self.cert = 'public.crt' 
   self.max_time = max_time
   self.communication = None 
   self.recipient_session = None
-  self.cert = os.path.dirname(sys.executable[:-2]) + os.path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
     
  def display(self, msg):
   if self.verbose:

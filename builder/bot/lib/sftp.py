@@ -4,7 +4,6 @@
 
 import os
 import ssl 
-import sys
 import socket
 from os import chdir 
 from . import screen 
@@ -19,11 +18,11 @@ class sFTP(object):
   self.port = port  
   self.home = home 
   self.verbose = verbose
+  self.cert = 'public.crt' 
   self.max_time = max_time
   self.chunk_size = 0xffff
   self.session_size = 0x1000
   self.recipient_session = None
-  self.cert = os.path.dirname(sys.executable[:-2]) + os.path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
  
  def display(self, msg):
   if self.verbose:

