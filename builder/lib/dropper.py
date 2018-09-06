@@ -1,6 +1,6 @@
 # Date: 08/31/2018
 # Author: Pure-L0G1C
-# Description: Decrypts and drops off malware
+# Description: Unpacks and drops off malware
 
 from time import sleep
 

