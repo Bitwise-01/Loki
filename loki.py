@@ -10,9 +10,9 @@ from lib.server.server import Server
 from flask import Flask, render_template, request, session, jsonify, redirect, url_for
 
 app = Flask(__name__)  
-app.config['SECRET_KEY'] = urandom(64 << 3) # cookie encryption
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0x000    
+app.config['SECRET_KEY'] = urandom(0x200) # cookie encryption  
 
+# server
 server = Server()
 db = database.Database()
 
@@ -22,6 +22,12 @@ bots_online_src = ''
 bots_signature = None 
 
 # -------- Authenticity -------- #
+
+def get_bot(bot_id):
+ bots = server.interface.bots
+ for bot_session in bots:
+  if bots[bot_session]['bot_id'] == bot_id:
+   return bots[bot_session]
 
 def login_required(func):
  def wrapper(*args, **kwargs):
@@ -33,12 +39,6 @@ def login_required(func):
    return func(*args, **kwargs)
  wrapper.__name__ = func.__name__
  return wrapper
-
-def get_bot(bot_id):
- bots = server.interface.bots
- for bot_session in bots:
-  if bots[bot_session]['bot_id'] == bot_id:
-   return bots[bot_session]
 
 def bot_required(func):
  def wrapper(*args, **kwargs):
@@ -785,6 +785,6 @@ def logout():
  return redirect(url_for('index'))
 
 if __name__ == '__main__':
- app.run(debug=True) 
- if session['server_active']:
-  server.stop()
+ try:app.run(debug=False) 
+ except KeyboardInterrupt:pass 
+ finally:server.stop(delay=False)

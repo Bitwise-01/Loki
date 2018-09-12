@@ -28,6 +28,9 @@ if hasattr(sys, 'frozen'):
 IP = addr_ip 
 PORT = addr_port 
 
+# signature 
+signature = SIG
+
 class Bot(object):
  
  def __init__(self, home):

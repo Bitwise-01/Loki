@@ -62,7 +62,7 @@ class Interface(object):
   bots = b''
   for bot in self.bots:
    bot_id = self.bots[bot]['bot_id']
-   bot_id = bot_id[:4] + bot_id[-4:] 
+   bot_id = bot_id[:8] + bot_id[-8:] 
    bots += bot_id.encode()
   return sha256(bots).digest().hex()
     
@@ -105,11 +105,7 @@ class Interface(object):
      self.ftp = None 
 
    self.close_sess(sess_obj, self.bots[sess_obj]['shell'])
-   
- def disconnect_all(self):
-  for bot_id in [bot_id for bot_id in self.bots]:
-   self.disconnect_client(bot_id)
-  
+     
  def get_bot(self, bot_id):
   for bot in self.bots:
    if self.bots[bot]['bot_id'] == bot_id:

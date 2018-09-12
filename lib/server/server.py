@@ -83,7 +83,6 @@ class Server(object):
   if self.is_active:
    self.is_active = False 
    self.ip, self.port = None, None 
-   self.interface.disconnect_all()
   self.is_active = False
   self.close(self.server)
   self.close(self._server)
@@ -188,7 +187,8 @@ class Server(object):
   sleep(1.2)
   return self.is_active
   
- def stop(self):
-  self.server_stop()
-  sleep(1.2)
+ def stop(self, delay=True):
+  if self.is_active:
+   self.server_stop()
+   sleep(1.2 if delay else 0)
   return self.is_active
