@@ -61,7 +61,6 @@ class Database(object):
   username = username.lower()
   user_id = self.gen_user_id(username, password)
   hashed_password = self.hash_password(password)
-  print('User id: {}\nGenerated hashed password: {}'.format(user_id, hashed_password))
 
   self.db_update(''' 
    INSERT INTO Account(user_id, username, password) 
@@ -85,7 +84,6 @@ class Database(object):
 
  def account_exists(self, username):
   database = sqlite3.connect(self.db_path)
-  print(self.db_query('SELECT * FROM Account WHERE username=?;', [username], False))
   data = self.db_query('SELECT * FROM Account WHERE username=?;', [username], False)
   return True if len(data) else False
 
@@ -95,8 +93,6 @@ class Database(object):
 
  def check_password(self, username, password):
   hashed_password = self.db_query('SELECT password FROM Account WHERE username=?;', [username])
-  
-  print('Hashed password: {}'.format(hashed_password))
   return True if bcrypt.hashpw(password.encode('utf-8'), hashed_password) == hashed_password else False 
 
  def authenticate(self, username, password):

@@ -2,18 +2,16 @@
 # Author: Pure-L0G1C
 # Description: Session 
 
-import ssl
 import time  
 import pickle
 import socket
-from lib.const import CERT_FILE, KEY_FILE
 
 class Session(object):
 
  def __init__(self, session, ip):
   self.ip = ip[0]
   try:
-   self.session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
+   self.session = session
   except:pass
 
  def initial_communication(self):

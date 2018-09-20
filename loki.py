@@ -484,7 +484,7 @@ def valid_port(port):
   if int(_port) > 65535:
    return False 
 
-  if any([int(_port) == const.FTP_PORT, int(_port) == const.SSH_PORT, int(_port) == const.CNC_PORT]):
+  if any([int(_port) == const.FTP_PORT, int(_port) == const.SSH_PORT]):
    return False 
   return True
 

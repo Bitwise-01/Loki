@@ -2,9 +2,9 @@
 # Author: Pure-L0G1C
 # Description: Session 
 
-import time 
 import pickle
 import socket
+from time import sleep
 from lib.info import Information
 from socket import timeout as TimeOutError
 
@@ -21,20 +21,16 @@ class Session(object):
   except:pass 
 
  def initial_communication(self):
-  time.sleep(0.5)
+  sleep(0.5)
   self.send(args=self.sys_info)
   services = self.recv()
   return services
 
- def connect(self, ip, port, code):
+ def connect(self, ip, port):
   try:
    self.session.connect((ip, port))  
-   if code == 1:
-    print('Requesting a certificate ...')
-    return self.session.recv(4096 * 2)
-   else:
-    print('Establishing a secure connection ...')
-    return self.initial_communication()
+   print('Establishing a secure connection ...')
+   return self.initial_communication()
   except:
    pass
    

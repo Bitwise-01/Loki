@@ -49,6 +49,15 @@ class Interface(object):
   self.ssh = None
   self.ftp = None 
   self.sig = self.signature
+
+ def close(self):
+  if self.ftp:
+   self.ftp.close()
+   self.ftp = None
+  if self.ssh:
+   self.ssh.close()
+   self.ssh = None 
+  self.disconnect_all()
   
  def gen_bot_id(self, uuid):
   bot_ids = [self.bots[bot]['bot_id'] for bot in self.bots]
@@ -105,6 +114,13 @@ class Interface(object):
      self.ftp = None 
 
    self.close_sess(sess_obj, self.bots[sess_obj]['shell'])
+   self.bots[sess_obj]['session'].close()
+   self.sig = self.signature
+
+ def disconnect_all(self):
+  for bot in self.bots:
+   self.bots[bot]['session'].close()
+  self.sig = self.signature
      
  def get_bot(self, bot_id):
   for bot in self.bots:
