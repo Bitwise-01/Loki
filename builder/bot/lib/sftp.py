@@ -18,7 +18,6 @@ class sFTP(object):
   self.port = port  
   self.home = home 
   self.verbose = verbose
-  self.cert = 'public.crt' 
   self.max_time = max_time
   self.chunk_size = 0xffff
   self.session_size = 0x1000
