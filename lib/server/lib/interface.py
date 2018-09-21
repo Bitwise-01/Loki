@@ -114,7 +114,6 @@ class Interface(object):
      self.ftp = None 
 
    self.close_sess(sess_obj, self.bots[sess_obj]['shell'])
-   self.bots[sess_obj]['session'].close()
    self.sig = self.signature
 
  def disconnect_all(self):
