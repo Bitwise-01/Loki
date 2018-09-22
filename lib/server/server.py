@@ -118,7 +118,7 @@ class Server(object):
    try:
     session, ip = self.server.accept()
     self.waiting_conn.put([session, ip])
-   except socket.timeout: 
+   except: 
     pass 
    
  def services_start(self):
