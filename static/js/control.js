@@ -163,7 +163,6 @@ function consoleExecute() {
                 url: "/control/cmd/cmd",
                 data: { "cmd_id": cmd_id, "args": args }
             }).done(function(data) {
-                console.log(data);
                 let cmdOutput = '\n' + data["resp"];
                 let newDisplay = currentDisplay + "\n" + cmdLine + "\n" + cmdOutput;
 

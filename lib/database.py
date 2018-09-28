@@ -202,21 +202,21 @@ class Database(object):
  def get_last_active(self, user_id):
   epoch_time = self.db_query('SELECT last_online FROM Status WHERE stat_id=?;', [user_id])
   self.db_update('UPDATE Status SET last_online=? WHERE stat_id=?;', [time(), user_id])
-  return datetime.fromtimestamp(epoch_time).strftime("%b %d, %Y at %I:%M %p")
+  return datetime.fromtimestamp(epoch_time).strftime('%b %d, %Y at %I:%M %p')
 
  def get_account_status(self, user_id, username):
-  default_username = "loki"
-  default_password = "ikol"
+  default_username = 'loki'
+  default_password = 'ikol'
 
   username = username.lower()
   is_same_password = self.compare_passwords(user_id, default_password)
 
   if all([username == default_username, is_same_password]):
-   status = "** Please consider changing your username and password **"
+   status = '** Please consider changing your username and password **'
   elif username == default_username:
-   status = "** Please consider changing your username **"
+   status = '** Please consider changing your username **'
   elif is_same_password:
-   status = "** Please consider changing your passsword **"
+   status = '** Please consider changing your passsword **'
   else:
    status = None 
   return status

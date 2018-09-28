@@ -2,15 +2,13 @@
 
 		{% block links %}
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/control.css') }}">
 		<script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
 		{% endblock %}
 	
 	{% block title %} Home {% endblock %}
 					
-				{% block tabs %}
-				<li><a href="#"><div>Template</div></a></li>
-				<li><a href="{{ url_for('index') }}"><div class="selected">Bots</div></a></li>
-				{% endblock %}
+				{% block tabs %}{% endblock %}
 		
 		{% block content %}
 		<div id="display"></div>			

