@@ -16,6 +16,7 @@ var tasks = {
 
 $(document).ready(function() {
     onlineBotsSource();
+    setInterval(fetchBots, 10 * 1000);
 });
 
 function onlineBotsSource() {
@@ -28,9 +29,7 @@ function onlineBotsSource() {
         if(html) {
             fetchBotsPaused = false;
             display.innerHTML = html;
-
-            fetchBots();     
-            setInterval(fetchBots, 10 * 1000); 
+            fetchBots();      
         }
     });
 }
