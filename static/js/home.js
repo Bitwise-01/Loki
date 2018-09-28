@@ -5,7 +5,7 @@ var indexer = null;
 var lastCmdEnter = null;
 var isLastCmdSet = false;
 var cmdProcessing = false;
-var fetchBotsPaused = false;
+var fetchBotsPaused = true;
 var inputHistoryCMD = [];
 
 var tasks = { 
