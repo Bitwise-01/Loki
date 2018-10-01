@@ -39,7 +39,7 @@ class Bot(object):
 
  def shutdown(self):
   try: 
-   self.shell.task.stop()
+   self.shell.stop()
    self.conn.shutdown(socket.SHUT_RDWR)
    self.conn.close()
   except:pass
