@@ -260,9 +260,9 @@ class Interface(object):
    pass 
   try:
    if all([bot_shell.is_alive, bot_shell.keystrokes]):
-    keystrokes = bot_shell.keystrokes
+    keystrokes = bot_shell.keystrokes 
     bot_shell.keystrokes = None
-    return keystrokes
+    return keystrokes if keystrokes != '-1' else ''
   except:
    pass
 

