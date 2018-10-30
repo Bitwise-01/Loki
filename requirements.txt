@@ -1,7 +1,7 @@
-mss==3.2.1
-pynput==1.4
-Flask==1.0.2
-bcrypt==3.1.4
-requests==2.19.1
-pyOpenSSL==18.0.0
-PyInstaller==3.3.1
+mss>=3.2.1
+pynput>=1.4
+Flask>=1.0.2
+bcrypt>=3.1.4
+requests>=2.20.0
+pyOpenSSL>=18.0.0
+PyInstaller>=3.3.1
