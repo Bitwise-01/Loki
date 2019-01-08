@@ -550,7 +550,7 @@ def server_service():
   online = server.stop()
   mode = 'Stop Server' if online else 'Start Server'
   failed = True if online else False 
-  if failed:server_start()
+  if failed:server_stop()
  else:
   server_start(ip, port)
   online = server.start(ip, port)
