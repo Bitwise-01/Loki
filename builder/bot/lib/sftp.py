@@ -3,115 +3,115 @@
 # Description: Secure FTP
 
 import os
-import ssl 
+import ssl
 import socket
-from os import chdir 
-from . import screen 
-from . file import File 
+from os import chdir
+from . import screen
+from . file import File
 from time import sleep, time
 from socket import timeout as TimeOutError
 
 class sFTP(object):
 
- def __init__(self, ip, port, home, max_time=10, verbose=False):
-  self.ip = ip 
-  self.port = port  
-  self.home = home 
-  self.verbose = verbose
-  self.max_time = max_time
-  self.chunk_size = 0xffff
-  self.session_size = 0x1000
-  self.recipient_session = None
- 
- def display(self, msg):
-  if self.verbose:
-   print('{}\n'.format(msg))
+    def __init__(self, ip, port, home, max_time=10, verbose=False):
+        self.ip = ip
+        self.port = port
+        self.home = home
+        self.verbose = verbose
+        self.max_time = max_time
+        self.chunk_size = 0xffff
+        self.session_size = 0x1000
+        self.recipient_session = None
 
- def read_file(self, file):
-  with open(file, 'rb') as f:
-   while True:
-    data = f.read(self.chunk_size)
-    if data:
-     yield data 
-    else:
-     break
+    def display(self, msg):
+        if self.verbose:
+            print('{}\n'.format(msg))
 
- def send_file(self, file):  
-  chdir(self.home)
-  if not os.path.exists(file):
-   self.display('File `{}` does not exist'.format(file))
-   return -1
+    def read_file(self, file):
+        with open(file, 'rb') as f:
+            while True:
+                data = f.read(self.chunk_size)
+                if data:
+                    yield data
+                else:
+                    break
 
-  # send file's name
-  sleep(0.5)
-  print('Sending file\'s name ...')
-  self.recipient_session.sendall(os.path.basename(file).encode('utf8'))
+    def send_file(self, file):
+        chdir(self.home)
+        if not os.path.exists(file):
+            self.display('File `{}` does not exist'.format(file))
+            return -1
 
-  # send file's data 
-  sleep(0.5)
-  self.display('Sending {} ...'.format(file))
+        # send file's name
+        sleep(0.5)
+        print('Sending file\'s name ...')
+        self.recipient_session.sendall(os.path.basename(file).encode('utf8'))
 
-  chdir(self.home)
-  for data in File.read(file):
-   self.recipient_session.sendall(data)
-  self.display('File sent')
+        # send file's data
+        sleep(0.5)
+        self.display('Sending {} ...'.format(file))
 
- def recv_file(self):
-  _bytes = b''
-  
-  # receive file's name
-  file_name = self.recipient_session.recv(self.session_size) 
+        chdir(self.home)
+        for data in File.read(file):
+            self.recipient_session.sendall(data)
+        self.display('File sent')
 
-  # receive file's data
-  self.display('Downloading {} ...'.format(file_name))
-  while True:
-   data = self.recipient_session.recv(self.chunk_size << 2) 
-   if data:
-    _bytes += data
-   else:
-    break
+    def recv_file(self):
+        _bytes = b''
 
-  return file_name, _bytes
+        # receive file's name
+        file_name = self.recipient_session.recv(self.session_size)
 
- def close(self):
-  try:
-   self.recipient_session.shutdown(socket.SHUT_RDWR)
-   self.recipient_session.close()
-  except:
-   pass
+        # receive file's data
+        self.display('Downloading {} ...'.format(file_name))
+        while True:
+            data = self.recipient_session.recv(self.chunk_size << 2)
+            if data:
+                _bytes += data
+            else:
+                break
 
- def socket_obj(self):
-  chdir(self.home)
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  sock.settimeout(10)
-  try:
-   self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1) 
-   self.recipient_session.connect((self.ip, self.port))
-  except:
-   return -1
+        return file_name, _bytes
 
- def send(self, file):
-  if self.socket_obj() == -1:
-   return -1
-  try:
-   started = time()
-   self.send_file(file)
-   self.display('Time-elapsed: {}(sec)'.format(time() - started))
-  except:
-   pass
-  finally:
-   self.close()
+    def close(self):
+        try:
+            self.recipient_session.shutdown(socket.SHUT_RDWR)
+            self.recipient_session.close()
+        except:
+            pass
 
- def recv(self):
-  if self.socket_obj() == -1:
-   return -1
-  try:
-   started = time()
-   file_name, data = self.recv_file()
-   chdir(self.home)
-   File.write(file_name, data)
-   self.display('Time-elapsed: {}(sec)'.format(time() - started))
-  except:
-   pass 
-  finally:
-   self.close()
+    def socket_obj(self):
+        chdir(self.home)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(10)
+        try:
+            self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1)
+            self.recipient_session.connect((self.ip, self.port))
+        except:
+            return -1
+
+    def send(self, file):
+        if self.socket_obj() == -1:
+            return -1
+        try:
+            started = time()
+            self.send_file(file)
+            self.display('Time-elapsed: {}(sec)'.format(time() - started))
+        except:
+            pass
+        finally:
+            self.close()
+
+    def recv(self):
+        if self.socket_obj() == -1:
+            return -1
+        try:
+            started = time()
+            file_name, data = self.recv_file()
+            chdir(self.home)
+            File.write(file_name, data)
+            self.display('Time-elapsed: {}(sec)'.format(time() - started))
+        except:
+            pass
+        finally:
+            self.close()
