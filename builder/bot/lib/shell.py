@@ -3,7 +3,6 @@
 # Description: Communicate with server
 
 import sys
-import socket
 import subprocess
 from os import chdir
 from time import sleep

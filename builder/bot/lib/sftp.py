@@ -85,7 +85,7 @@ class sFTP(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(10)
         try:
-            self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1)
+            self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
             self.recipient_session.connect((self.ip, self.port))
         except:
             return -1

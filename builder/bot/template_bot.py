@@ -47,7 +47,7 @@ class Bot(object):
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(10)
-        self.conn = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1)
+        self.conn = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
         s = session.Session(self.conn)
         services = s.connect(self.ip, self.port)
         if not services:
