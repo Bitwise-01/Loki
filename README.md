@@ -47,6 +47,8 @@ pip install -r requirements.txt
 1) Navigate to the builder directory
 2) Run: python builder.py -h
 
+**It will not compile inside a virtual enivornment**
+
 ### After connection
 1) You can click the hostname of the bot once it connects 
 2) Explore 
