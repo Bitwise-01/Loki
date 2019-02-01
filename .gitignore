@@ -1,0 +1,17 @@
+# Generated samples
+output/
+
+# Python cache
+__pycache__/
+
+# RSA key-pair
+cert/
+
+# VS Code
+.vscode
+
+# Database file
+*.db
+
+# Virtual environment
+env_loki
