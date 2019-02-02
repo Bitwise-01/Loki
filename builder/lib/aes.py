@@ -28,4 +28,4 @@ def decrypt(ciphertext, key):
     return plaintext
 
 def gen_key(size=16):
-    return SHA256.new(get_random_bytes(size)).digest()
+    return get_random_bytes(size)
