@@ -121,8 +121,9 @@ class Database(object):
 
     def failed_attempt(self, user_id):
         current_value = self.failed_attempts_counts(user_id)
-        if current_value >= const.MAX_FAILED_ATTEMPTS:
-            self.lock_account(user_id)
+        if current_value >= const.MAX_FAILED_ATTEMPTS-1:
+            if not self.is_locked(user_id):
+                self.lock_account(user_id)
         else:
             self.db_update('UPDATE Attempt SET attempts_made=? WHERE ampt_id=?;', [current_value + 1, user_id])
 
