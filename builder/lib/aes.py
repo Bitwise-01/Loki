@@ -5,27 +5,33 @@
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto.Random import get_random_bytes
- 
 
-def encrypt(data, key):
-    nonce = get_random_bytes(12)
-    key = SHA256.new(key).digest()
-    
-    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-    ciphertext = cipher.encrypt(data)        
-    return ciphertext + nonce
 
-def decrypt(ciphertext, key):
-    cipher_nonce = ciphertext
-    index = len(cipher_nonce) - 12
-    key = SHA256.new(key).digest()
+class CryptoAES:
 
-    nonce = cipher_nonce[index:]
-    ciphertext = cipher_nonce[:index]
+    nonce_size = 12 
 
-    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-    plaintext = cipher.decrypt(ciphertext)
-    return plaintext
+    @staticmethod
+    def generate_key():
+        return get_random_bytes(AES.block_size)
 
-def gen_key(size=16):
-    return get_random_bytes(size)
+    @staticmethod
+    def encrypt(data, key):
+        key = SHA256.new(key).digest()
+        nonce = get_random_bytes(CryptoAES.nonce_size)
+        
+        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+        ciphertext = cipher.encrypt(data)        
+        return nonce + ciphertext
+
+    @staticmethod
+    def decrypt(ciphertext, key):
+        cipher_nonce = ciphertext
+        key = SHA256.new(key).digest()
+
+        nonce = cipher_nonce[:CryptoAES.nonce_size]
+        ciphertext = cipher_nonce[CryptoAES.nonce_size:]
+
+        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+        plaintext = cipher.decrypt(ciphertext)
+        return plaintext

