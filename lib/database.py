@@ -83,7 +83,6 @@ class Database(object):
         ''', [user_id])
 
     def account_exists(self, username):
-        database = sqlite3.connect(self.db_path)
         data = self.db_query('SELECT * FROM Account WHERE username=?;', [username], False)
         return True if len(data) else False
 
