@@ -5,3 +5,4 @@ bcrypt>=3.1.4
 requests>=2.20.0
 pyOpenSSL>=18.0.0
 PyInstaller>=3.3.1
+pycryptodome>=3.7.3
