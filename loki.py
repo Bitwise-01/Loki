@@ -797,15 +797,10 @@ def login():
     else:
         return redirect(url_for('index'))
 
-def clear_session():
-    keys = [_ for _ in session]
-    for _ in range(len(keys)):
-        del session[keys[_]]
-
 @app.route('/logout')
 @login_required
 def logout():
-    clear_session()
+    session.clear()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
