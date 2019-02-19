@@ -61,7 +61,7 @@ function upArrow(input_id, inputHistory) {
         input.value = inputHistory[indexer];
     } else if (inputHistory.length) {
         if(typeof input.selectionStart == "number") {
-            input.selectionStart = input.selectionEnd = input.value.length;
+            input.selectionStart = input.selectionEnd - input.value.length;
         } else if (typeof input.createTextRange != "undefined") {
             input.focus();
             var range = input.createTextRange();
