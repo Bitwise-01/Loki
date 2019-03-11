@@ -38,9 +38,6 @@ class Executor(object):
         self.tmp_dir = tempfile.mkdtemp()
         self.dist_path = os.path.join(self.tmp_dir, 'application')
 
-        self.output_dir = 'output'
-        self.dist_path = os.path.join(self.tmp_dir, 'application')
-
         self.bot_template = 'bot' + os.path.sep + 'template_bot.py'
         self.bot_py_temp = 'bot' + os.path.sep + '{}.py'.format(filename)
         self.bot_compiled = self.dist_path + os.path.sep + '{}.exe'.format(filename)
@@ -128,3 +125,4 @@ if __name__ == '__main__':
         os.system('cls' if is_win else 'clear')
         print('\nFinished creating {}'.format(executor.filename + '.exe' if executor.exe else executor.bot_py_temp))
         print('Look in the directory named output for your exe file' if executor.exe else 'Look in the directory named bot for your Python file')
+        
