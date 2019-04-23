@@ -38,11 +38,12 @@ class Geo(object):
 
     def __init__(self):
         self.geo = self.get_geo()
-        self.interal_ip = self.get_interal_ip()
+        self.internal_ip = self.get_internal_ip()
 
-    def get_interal_ip(self):
+    def get_internal_ip(self):
         ip = ''
         try:
+            print('Ehlo')
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(('8.8.8.8', 80))
             ip = s.getsockname()[0]
@@ -53,14 +54,14 @@ class Geo(object):
 
     def get_geo(self):
         try:
-            return get('http://ip-api.com/json').json()
+            return get('https://ipapi.co/json/').json()
         except:
             pass
 
     def net_info(self):
         data = self.get_geo()
         if data:
-            i_ip = self.get_interal_ip()
+            i_ip = self.internal_ip
             if i_ip:
                 data['internalIp'] = i_ip
         return data
@@ -74,15 +75,15 @@ class Information(object):
 
     def parse(self, data):
         data = {
-            'lat': data['lat'] if 'lat' in data else '',
-            'lon': data['lon'] if 'lon' in data else '',
-            'zip': data['zip'] if 'zip' in data else '',
-            'isp': data['isp'] if 'isp' in data else '',
+            'lat': data['latitude'] if 'latitude' in data else '',
+            'lon': data['longitude'] if 'longitude' in data else '',
+            'zip': data['postal'] if 'postal' in data else '',
+            'isp': data['org'] if 'org' in data else '',
             'city': data['city'] if 'city' in data else '',
-            'query': data['query'] if 'query' in data else '',
-            'country': data['country'] if 'country' in data else '',
+            'query': data['ip'] if 'ip' in data else '',
+            'country': data['country_name'] if 'country_name' in data else '',
             'timezone': data['timezone'] if 'timezone' in data else '',
-            'regionName': data['regionName'] if 'regionName' in data else '',
+            'regionName': data['region'] if 'region' in data else '',
             'internalIp': data['internalIp'] if 'internalIp' in data else ''
         }
 

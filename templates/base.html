@@ -29,9 +29,9 @@
                 </label>
             </div>
             <input type="checkbox" id="nav-check" />
+
             <div class="nav-links">
-                <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('settings') }}">Settings</a>
+                {% block navbar_section %}{% endblock %}
                 <a href="{{ url_for('logout') }}"><span style="color: var(--hot-red);">Logout</span></a>
             </div>
         </div>
