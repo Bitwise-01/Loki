@@ -7,6 +7,7 @@ import time
 from queue import Queue
 from threading import Thread, RLock
 
+
 class Shell(object):
 
     def __init__(self, sess_obj, interface):

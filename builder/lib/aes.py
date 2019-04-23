@@ -9,7 +9,7 @@ from Crypto.Random import get_random_bytes
 
 class CryptoAES:
 
-    nonce_size = 12 
+    nonce_size = 12
 
     @staticmethod
     def generate_key():
@@ -19,9 +19,9 @@ class CryptoAES:
     def encrypt(data, key):
         key = SHA256.new(key).digest()
         nonce = get_random_bytes(CryptoAES.nonce_size)
-        
+
         cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-        ciphertext = cipher.encrypt(data)        
+        ciphertext = cipher.encrypt(data)
         return nonce + ciphertext
 
     @staticmethod

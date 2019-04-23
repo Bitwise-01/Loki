@@ -7,7 +7,7 @@ from re import match
 from lib import const
 from . import ssh, sftp
 from hashlib import sha256
-from time import time, sleep
+from time import time, sleep  
 from os import urandom, path
 from threading import Thread
 from datetime import datetime
@@ -203,7 +203,7 @@ class Interface(object):
             else:
                 self.ftp.close()
 
-        self.ftp = ftp_obj = FTP(file, bot, download=False if cmd_id == 3 else True)
+        self.ftp = FTP(file, bot, download=False if cmd_id == 3 else True)
         ftp_func = self.ftp.send if cmd_id == 3 else self.ftp.recv
         ftp_thread = Thread(target=ftp_func, args=[cmd_id, file])
         ftp_thread.daemon = True

@@ -1,66 +1,74 @@
-@import url("main.css");
+@import url('main.css');
 
-body, html {
-	margin: 0;
-	padding: 0;
-	font-family: sans-serif;
-	background-color: var(--bg-color);
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+}
+
+#container {
+    text-align: center;
+    text-align: -webkit-center;
 }
 
 #logo {
-	color: #fff; 
-	display: block;
-	margin-top: 10%;
-	font-size: 40px; 
-	font-family: rich;
-	margin-bottom: 10px;
+    color: #fff;
+    display: block;
+    margin-top: 10%;
+    font-size: 40px;
+    font-family: rich;
+    margin-bottom: 10px;
 }
 
 #login-box {
-	width: 500px;
-	height: 280px;
-	border-radius: 2%;
-	background-color: #fff;
-	border: 1px solid var(--bg-color);
+    width: 500px;
+    height: 280px;
+    border-radius: 3.5px;
+    background-color: #fff;
+    border: 1px solid var(--bg-color);
 }
 
 #login-box > form {
-	margin: 15% 0 auto;
+    margin: 15% 0 auto;
 }
 
 #login-box > form > input {
-	width: 75%;
-	outline: none;
-	padding-left: 5px;
-	text-align: center;
-	line-height: 2.5em;
-	font-family: comfortaa;
-	border: 1px solid #ccc;
+    width: 75%;
+    outline: none;
+    padding-left: 5px;
+    text-align: center;
+    line-height: 2.5em;
+    font-family: comfortaa;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
 }
 
-#username:focus, #password:focus {
-	text-align: left;
-	border: 1.2px solid var(--bg-color);
-} 
+#username:focus,
+#password:focus {
+    text-align: left;
+    border: 1.2px solid var(--bg-color);
+}
 
 #login {
-	width: 20%;
-	height: 35px;
+    width: 20%;
+    height: 35px;
     outline: none;
-	display: block;
-	font-size: 1em;
-	border-radius: 5%;
-	font-family: rich;
-	margin: 5% 0 7% 6px;
-	background-color: #fff;
-    border: 1px solid var(--bg-color); 
+    display: block;
+    font-size: 1em;
+    font-family: rich;
+    margin: 5% 0 7% 6px;
+    background-color: #fff;
+    border: 1px solid var(--bg-color);
+    border-radius: var(--border-radius);
 }
 
 #login:hover {
-	cursor: pointer;
-	border: 1px solid #ccc;
+    cursor: pointer;
+    border: 1px solid #ccc;
 }
 
 #login:active {
-	border: 1px solid var(--bg-color);
+    border: 1px solid var(--bg-color);
 }

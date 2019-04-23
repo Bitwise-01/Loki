@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
-		<link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon">
-	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	    <meta charset="utf-8">
-		<title>Login</title>
-	</head>
-	<body>
-		<center>	
-			<span id="logo">Loki</span>
-			<div id="login-box">
-				<form action="{{ url_for('login') }}" method="post">
-					<input type="text" id="username" name="username" spellcheck="false" placeholder="Username">
-					<input type="password" id="password" name="password" placeholder="Password">
-					<button type="submit" id="login" name="submit">Login</button>
-				</form>
-			</div>	
-		</center>
-	</body>
-</html> 
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}" />
+        <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta charset="utf-8" />
+        <title>Login</title>
+    </head>
+    <body>
+        <div id="container">
+            <span id="logo">Loki</span>
+            <div id="login-box">
+                <form action="{{ url_for('login') }}" method="post">
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        spellcheck="false"
+                        placeholder="Username"
+                    />
+                    <input type="password" id="password" name="password" placeholder="Password" />
+                    <button type="submit" id="login" name="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

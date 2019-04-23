@@ -9,6 +9,7 @@ from threading import Thread
 from lib.const import CERT_FILE, KEY_FILE
 from socket import timeout as TimeOutError
 
+
 class Communicate(object):
 
     def __init__(self, session):
@@ -31,12 +32,15 @@ class Communicate(object):
                     else:
                         self.resp = self.tmp_resp
                         self.pending = False
-                else:self.stop()
-            except:pass
+                else:
+                    self.stop()
+            except:
+                pass
 
     def send(self, data):
         if len(data.strip()):
-            if not self.is_alive:return
+            if not self.is_alive:
+                return
             try:
                 self.pending = True
                 self.session.sendall(data.encode('utf8'))
@@ -50,6 +54,7 @@ class Communicate(object):
 
     def stop(self):
         self.is_alive = False
+
 
 class Server(object):
 
@@ -66,11 +71,13 @@ class Server(object):
         if len(cmd.strip()):
             if not self.communication.pending:
                 self.communication.send(cmd)
-                while all([self.is_alive, self.communication.is_alive, self.communication.pending]):pass
+                while all([self.is_alive, self.communication.is_alive, self.communication.pending]):
+                    pass
                 self.communication.tmp_resp = ''
                 resp = self.communication.resp
                 self.communication.resp = None
                 return resp
+
 
 class SSH(object):
 
@@ -96,12 +103,14 @@ class SSH(object):
             server_socket.listen(1)
             return server_socket
         except OSError:
-            self.display('Failed to start ssh server on {}:{}'.format(self.ip, self.port))
+            self.display('Failed to start ssh server on {}:{}'.format(
+                self.ip, self.port))
 
     def serve(self, server_socket):
         try:
             session, addr = server_socket.accept()
-            self.recipient_session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
+            self.recipient_session = ssl.wrap_socket(
+                session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
         except TimeOutError:
             self.display('Server timed out')
             self.close()
@@ -117,10 +126,12 @@ class SSH(object):
     def close(self):
         try:
             print('\nClosing SSH ...\n')
-            if self.communication:self.communication.stop()
+            if self.communication:
+                self.communication.stop()
             self.recipient_session.shutdown(socket.SHUT_RDWR)
             self.recipient_session.close()
-        except:pass
+        except:
+            pass
 
     def send(self, cmd):
         if self.communication:

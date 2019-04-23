@@ -6,6 +6,7 @@ from os import path
 from re import match
 from argparse import ArgumentParser
 
+
 class Args(object):
 
     def __init__(self):
@@ -26,62 +27,62 @@ class Args(object):
         parser = ArgumentParser()
 
         parser.add_argument('-i',
-                           '--ip',
-                           required=True,
-                           help='the ip of the C&C server. \
+                            '--ip',
+                            required=True,
+                            help='the ip of the C&C server. \
                             Example: -i 127.0.0.1')
 
         parser.add_argument('-p',
-                           '--ports',
-                           required=True,
-                           help='the port of the C&C server. \
+                            '--ports',
+                            required=True,
+                            help='the port of the C&C server. \
                             Example: -p 8080')
 
         parser.add_argument('-n',
-                           '--name',
-                           required=True,
-                           help='the name of the output file. \
+                            '--name',
+                            required=True,
+                            help='the name of the output file. \
                             Example: -n myvirus')
 
         parser.add_argument('-d',
-                           '--delay',
-                           default=17,
-                           help='time in seconds before upacking. \
+                            '--delay',
+                            default=17,
+                            help='time in seconds before upacking. \
                             Example: -d 17')
 
         parser.add_argument('-w',
-                           '--wait',
-                           default=17,
-                           help='time in seconds before calling C&C. \
+                            '--wait',
+                            default=17,
+                            help='time in seconds before calling C&C. \
                             Example: -w 17')
 
         parser.add_argument('-t',
-                           '--type',
-                           default='exe',
-                           help='the output type.\
+                            '--type',
+                            default='exe',
+                            help='the output type.\
                             Example: -t python \
                             Example: -t exe')
 
         parser.add_argument('-ic',
-                           '--icon',
-                           default=None,
-                           help='the output type.\
+                            '--icon',
+                            default=None,
+                            help='the output type.\
                             Example: -ic FILE.ico \
                             Example: -ic FILE.exe')
 
         parser.add_argument('-hd',
-                           '--hide',
-                           default=False,
-                           action='store_true',
-                           help='hide the executable when executed. \
+                            '--hide',
+                            default=False,
+                            action='store_true',
+                            help='hide the executable when executed. \
                             Example: --hide')
 
         parser.add_argument('-ap',
-                           '--autopersist',
-                           default=False,
-                           dest='persist',
-                           action='store_true',
-                           help='Auto persist when executed. \
+                            '--autopersist',
+                            default=False,
+                            dest='persist',
+                            action='store_true',
+                            help='Auto persist when executed. \
                             Example: -ap')
 
         return parser.parse_args()
@@ -139,7 +140,8 @@ class Args(object):
         if not self.icon:
             return True
         if not path.exists(self.icon):
-            self.error('Check your path to your icon, `{}` does not exist'.format(self.icon))
+            self.error(
+                'Check your path to your icon, `{}` does not exist'.format(self.icon))
             return False
         else:
             if not any([self.icon.endswith('exe'), self.icon.endswith('ico')]):

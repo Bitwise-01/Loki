@@ -1,119 +1,130 @@
-@import url("main.css");
+@import url('main.css');
 
 #current_password {
-	margin-top: 10%;
+    margin-top: 10%;
 }
 
-#display-area > form  {
-	height: 100%;
-	overflow: hidden;
-	position: relative;
+#display-area > form {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
 #display-area span {
-	font-size: 12px;
-	color: var(--hot-red);
-	font-family: comfortaa;
+    font-size: 12px;
+    color: var(--hot-red);
+    font-family: comfortaa;
 }
 
 #btn-show-hide {
-	padding: 0.5% 2%;
-	margin-top: 55px;
-	margin-left: 72%;
+    padding: 0.5% 2%;
+    margin-top: 55px;
+    margin-left: 72%;
 }
 
 #current_password_status {
-	margin-top: 8.4%;
+    margin-top: 8.4%;
 }
 
-#password_status, #username_status {
-	margin-top: -2%;
+#password_status,
+#username_status {
+    margin-top: -2%;
 }
 
 #form-status {
-	margin-top: 3.8%;
-	margin-left: 42.5%;
+    margin-top: 3.8%;
+    margin-left: 42.5%;
 }
 
-#current_password_status, #password_status, #username_status {
-	margin-left: 33%;
+#current_password_status,
+#password_status,
+#username_status {
+    margin-left: 33%;
 }
 
-#current_password_status, #password_status, #form-status, #username_status {
-	display: block;
-	position: absolute;
+#current_password_status,
+#password_status,
+#form-status,
+#username_status {
+    display: block;
+    position: absolute;
 }
 
-#btn-show-hide:hover, #submit:hover, #server-address-btn:hover {
-	cursor: pointer;
-	border: 1px solid #ccc;
+#btn-show-hide:hover,
+#submit:hover,
+#server-address-btn:hover {
+    cursor: pointer;
+    border: 1px solid #ccc;
 }
 
-#btn-show-hide:active, #submit:active, #server-address-btn:active {
-	cursor: pointer;
-	border: 1px solid var(--bg-color);
+#btn-show-hide:active,
+#submit:active,
+#server-address-btn:active {
+    cursor: pointer;
+    border: 1px solid var(--bg-color);
 }
 
 #submit {
-	display: none;
-	margin-top: 2em;
-	padding: 1.3% 1.8%;
-	margin-left: 43.3%;
+    display: none;
+    margin-top: 2em;
+    padding: 1.3% 1.8%;
+    margin-left: 43.3%;
 }
 
-#btn-show-hide, #submit {
-	outline: none;
-	position: absolute;
-	border-radius: 5.5px;
-	border: 1px solid #000;
-	font-family: comfortaa;
-	background-color: var(--white-smoke);
+#btn-show-hide,
+#submit {
+    outline: none;
+    position: absolute;
+    border-radius: 5.5px;
+    border: 1px solid #000;
+    font-family: comfortaa;
+    background-color: var(--white-smoke);
 }
 
 #load {
-	width: 64px;
-	height: 64px;
-	display: none;
-	margin-top: 2.6%;
-	margin-left: 47.5%;
+    width: 64px;
+    height: 64px;
+    display: none;
+    margin-top: 2.6%;
+    margin-left: 47.5%;
 }
 
 #server-address {
-	margin-top: 10%;
-	text-align: center; 
+    margin-top: 10%;
+    text-align: center;
 }
 
 #server-address input {
-	outline: none;
+    outline: none;
     font-size: 20px;
-	text-align: center;
-	padding: 0.8% 1.2%;
+    text-align: center;
+    padding: 0.8% 1.2%;
     border-radius: 3.5px;
     border: 1px solid #ccc;
     background-color: #fff;
-	font-family: inconsolata;
+    font-family: inconsolata;
 }
 
 #server-address input:focus {
-	border: 1px solid #000;
+    border: 1px solid #000;
 }
 
 #server-address-btn {
-	outline: none;
-	display: block;
-	margin: 8em auto;
-	padding: 1.3% 1.8%;
-	border-radius: 5.5px;
-	border: 1px solid #000;
-	font-family: comfortaa;
-	background-color: var(--white-smoke);
+    outline: none;
+    display: block;
+    margin: 8em auto;
+    padding: 1.3% 1.8%;
+    border-radius: 5.5px;
+    border: 1px solid #000;
+    font-family: comfortaa;
+    background-color: var(--white-smoke);
 }
 
 #server-service-load {
-	width: 64px;
-	height: 64px;
-	display: none;
-	margin-top: 6.4%;
-	margin-left: 47.3%;
-	position: absolute;
+    width: 64px;
+    height: 64px;
+    display: none;
+    margin-top: 6.4%;
+    margin-left: 47.3%;
+    position: absolute;
 }

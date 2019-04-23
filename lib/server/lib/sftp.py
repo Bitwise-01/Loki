@@ -10,6 +10,7 @@ from time import time, sleep
 from lib.const import CERT_FILE, KEY_FILE
 from socket import timeout as TimeOutError
 
+
 class sFTP(object):
 
     def __init__(self, ip, port, max_time=60, verbose=False):
@@ -68,14 +69,16 @@ class sFTP(object):
             try:
                 self.server_socket.shutdown(socket.SHUT_RDWR)
                 self.server_socket.close()
-            except:pass
+            except:
+                pass
 
         try:
             del self.recipient_session
         except:
             try:
                 del self.server_socket
-            except:pass
+            except:
+                pass
 
     def send(self, file):
         if not os.path.exists(file):
@@ -84,19 +87,22 @@ class sFTP(object):
             return
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server_socket.setsockopt(
+            socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_socket.settimeout(self.max_time)
 
         try:
             self.server_socket.bind((self.ip, self.port))
             self.server_socket.listen(1)
         except OSError:
-            self.display('Failed to start FTP server on {}:{}'.format(self.ip, self.port))
+            self.display('Failed to start FTP server on {}:{}'.format(
+                self.ip, self.port))
             self.error_code = -1
 
         try:
             session, addr = self.server_socket.accept()
-            self.recipient_session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
+            self.recipient_session = ssl.wrap_socket(
+                session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
         except TimeOutError:
             self.display('Server timed out')
             self.error_code = -1
@@ -113,19 +119,22 @@ class sFTP(object):
 
     def recv(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server_socket.setsockopt(
+            socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_socket.settimeout(self.max_time)
 
         try:
             self.server_socket.bind((self.ip, self.port))
             self.server_socket.listen(1)
         except OSError:
-            self.display('Failed to start FTP server on {}:{}'.format(self.ip, self.port))
+            self.display('Failed to start FTP server on {}:{}'.format(
+                self.ip, self.port))
             self.error_code = -1
 
         try:
             session, addr = self.server_socket.accept()
-            self.recipient_session = ssl.wrap_socket(session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
+            self.recipient_session = ssl.wrap_socket(
+                session, server_side=True, certfile=CERT_FILE, keyfile=KEY_FILE)
         except TimeOutError:
             self.display('Server timed out')
             self.error_code = -1

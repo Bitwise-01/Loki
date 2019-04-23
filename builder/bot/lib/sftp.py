@@ -11,6 +11,7 @@ from . file import File
 from time import sleep, time
 from socket import timeout as TimeOutError
 
+
 class sFTP(object):
 
     def __init__(self, ip, port, home, max_time=10, verbose=False):
@@ -85,7 +86,8 @@ class sFTP(object):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(10)
         try:
-            self.recipient_session = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
+            self.recipient_session = ssl.wrap_socket(
+                sock, ssl_version=ssl.PROTOCOL_SSLv23)
             self.recipient_session.connect((self.ip, self.port))
         except:
             return -1

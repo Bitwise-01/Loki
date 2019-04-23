@@ -1,35 +1,35 @@
-@import url("main.css");
+@import url('main.css');
 
 #last_active {
-	right: 0;
-	bottom: 0;
-	color: #fff; 
-	font-size: 15px; 
-	margin-right: 2px;
-	position: absolute;
-	font-family: comfortaa; 
+    right: 0;
+    bottom: 0;
+    color: #fff;
+    font-size: 12px;
+    margin-right: 5%;
+    position: absolute;
+    font-family: comfortaa;
 }
 
 #display {
-	position: relative;
+    position: relative;
 }
 
 .tabs {
-	z-index: 1;
-	position: relative;
+    z-index: 1;
+    position: relative;
 }
 
 #display-area {
-	overflow: auto;
-	border-radius: 0;
+    overflow: auto;
+    border-radius: 0;
 }
 
 table {
-    width: 97%; 
-	margin: auto;
-	font-size: 15px;
-    table-layout:fixed;     
-	font-family: comfortaa;
+    width: 97%;
+    margin: auto;
+    font-size: 13.5px;
+    table-layout: fixed;
+    font-family: comfortaa;
     background-color: var(--white-smoke);
 }
 
@@ -43,67 +43,64 @@ table tr:nth-child(odd) {
 }
 
 table th {
-	padding: 1%;
+    padding: 1%;
     color: var(--white-smoke);
     background-color: var(--bg-color);
 }
 
 td {
-	padding: 0.7%;
-	text-align: center;
+    padding: 0.7%;
+    text-align: center;
 }
 
 .clickable:hover {
-	cursor: pointer;
-	text-decoration: underline;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 #bots-amount {
-	margin-left: 75%; 
-	margin-top: -1.9%; 
-	position: absolute; 
-	font-family: comfortaa; 
-	color: var(--white-smoke);
+    margin-left: 75%;
+    margin-top: -1.9%;
+    position: absolute;
+    font-family: comfortaa;
+    color: var(--white-smoke);
 }
 
-#bots-amount > span, #server-status > span {
-	font-size: 17px;
-	font-family: rich; 
+#bots-amount > span,
+#server-status > span {
+    font-size: 17px;
+    font-family: rich;
 }
 
 #amount {
-	font-family: rich;
-	color: var(--bg-color);
+    font-family: rich;
+    color: var(--white-smoke);
 }
 
 #server-status {
-	margin-top: 0.2%;
-	margin-left: 75%;
-	position: absolute;
-	font-family: comfortaa;
-	color: var(--white-smoke);
+    margin-top: 0.2%;
+    margin-left: 75%;
+    position: absolute;
+    font-family: comfortaa;
+    color: var(--white-smoke);
 }
 
 .status-on {
-	color: #008000;
+    color: #008000;
 }
 
 .status-off {
-	color: var(--dark-red);
+    color: var(--dark-red);
 }
 
-::-webkit-scrollbar
-{
-  width: 5px;
+::-webkit-scrollbar {
+    width: 5px;
 }
 
-::-webkit-scrollbar-track
-{
-  background: rgba(0, 0, 0, 0.1);
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
 }
 
-::-webkit-scrollbar-thumb
-{
-  background-color: var(--bg-color);
+::-webkit-scrollbar-thumb {
+    background-color: var(--bg-color);
 }
-

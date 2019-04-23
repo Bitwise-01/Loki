@@ -11,6 +11,7 @@ from hashlib import sha256
 from base64 import b64encode
 from datetime import datetime
 
+
 class Database(object):
 
     def __init__(self):
@@ -83,15 +84,18 @@ class Database(object):
         ''', [user_id])
 
     def account_exists(self, username):
-        data = self.db_query('SELECT * FROM Account WHERE username=?;', [username], False)
+        data = self.db_query(
+            'SELECT * FROM Account WHERE username=?;', [username], False)
         return True if len(data) else False
 
     def compare_passwords(self, user_id, password):
-        hashed_password = self.db_query('SELECT password FROM Account WHERE user_id=?;', [user_id])
+        hashed_password = self.db_query(
+            'SELECT password FROM Account WHERE user_id=?;', [user_id])
         return True if bcrypt.hashpw(password.encode('utf-8'), hashed_password) == hashed_password else False
 
     def check_password(self, username, password):
-        hashed_password = self.db_query('SELECT password FROM Account WHERE username=?;', [username])
+        hashed_password = self.db_query(
+            'SELECT password FROM Account WHERE username=?;', [username])
         return True if bcrypt.hashpw(password.encode('utf-8'), hashed_password) == hashed_password else False
 
     def authenticate(self, username, password):
@@ -116,7 +120,8 @@ class Database(object):
     # -------- Attempts -------- #
 
     def lock_account(self, user_id):
-        self.db_update('UPDATE Lock SET time_locked=? WHERE lock_id=?;', [time(), user_id])
+        self.db_update('UPDATE Lock SET time_locked=? WHERE lock_id=?;', [
+                       time(), user_id])
 
     def failed_attempt(self, user_id):
         current_value = self.failed_attempts_counts(user_id)
@@ -124,7 +129,8 @@ class Database(object):
             if not self.is_locked(user_id):
                 self.lock_account(user_id)
         else:
-            self.db_update('UPDATE Attempt SET attempts_made=? WHERE ampt_id=?;', [current_value + 1, user_id])
+            self.db_update('UPDATE Attempt SET attempts_made=? WHERE ampt_id=?;', [
+                           current_value + 1, user_id])
 
     def failed_attempts_counts(self, user_id):
         return self.db_query('SELECT attempts_made FROM Attempt WHERE ampt_id=?;', [user_id])
@@ -149,7 +155,8 @@ class Database(object):
          ''', [user_id])
 
     def remove_locked_account(self, user_id):
-        self.db_update('UPDATE Attempt SET attempts_made=? WHERE ampt_id=?;', [0, user_id])
+        self.db_update(
+            'UPDATE Attempt SET attempts_made=? WHERE ampt_id=?;', [0, user_id])
 
 # -------- Database Wrappers -------- #
 
@@ -176,10 +183,12 @@ class Database(object):
 
     def update_password(self, user_id, password):
         hashed_password = self.hash_password(password)
-        self.db_update('UPDATE Account SET password=? WHERE user_id=?;', [hashed_password, user_id])
+        self.db_update('UPDATE Account SET password=? WHERE user_id=?;', [
+                       hashed_password, user_id])
 
     def update_username(self, user_id, username):
-        self.db_update('UPDATE Account SET username=? WHERE user_id=?;', [username.lower(), user_id])
+        self.db_update('UPDATE Account SET username=? WHERE user_id=?;', [
+                       username.lower(), user_id])
 
 # -------- Misc -------- #
 
@@ -189,7 +198,8 @@ class Database(object):
     def gen_user_id(self, username, password):
         _username = username.encode('utf-8') + urandom(64 * 1024)
         _password = password.encode('utf-8') + urandom(64 * 1024)
-        _username_password = b64encode(_username + _password + urandom(64 * 64))
+        _username_password = b64encode(
+            _username + _password + urandom(64 * 64))
         secure_hash = sha256(_username_password).digest().hex()
         return secure_hash
 
@@ -200,8 +210,10 @@ class Database(object):
         return self.db_query('SELECT user_id FROM Account WHERE username=?;', [username])
 
     def get_last_active(self, user_id):
-        epoch_time = self.db_query('SELECT last_online FROM Status WHERE stat_id=?;', [user_id])
-        self.db_update('UPDATE Status SET last_online=? WHERE stat_id=?;', [time(), user_id])
+        epoch_time = self.db_query(
+            'SELECT last_online FROM Status WHERE stat_id=?;', [user_id])
+        self.db_update('UPDATE Status SET last_online=? WHERE stat_id=?;', [
+                       time(), user_id])
         return datetime.fromtimestamp(epoch_time).strftime('%b %d, %Y at %I:%M %p')
 
     def get_account_status(self, user_id, username):

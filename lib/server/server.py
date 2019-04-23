@@ -13,12 +13,13 @@ from OpenSSL import crypto
 from threading import Thread, RLock
 from . lib import session, shell, interface
 
+
 class Server(object):
 
     def __init__(self):
         self.interface = interface.Interface()
         self.waiting_conn = Queue()
-        self.is_active = False # is the server active
+        self.is_active = False  # is the server active
         self.lock = RLock()
         self.server = None
         self.port = None
@@ -69,7 +70,8 @@ class Server(object):
             self.ip = None
 
     def server_stop(self):
-        if not self.is_active:return
+        if not self.is_active:
+            return
         self.is_active = False
         self.interface.close()
         self.ip, self.port = None, None
@@ -79,18 +81,19 @@ class Server(object):
             try:
                 with self.lock:
                     services = {
-                      'ssh': {
-                           'ip': const.PUBLIC_IP,
-                           'port': const.SSH_PORT
-                       }, 'ftp': {
-                           'ip': const.PUBLIC_IP,
+                        'ssh': {
+                            'ip': const.PUBLIC_IP,
+                            'port': const.SSH_PORT
+                        }, 'ftp': {
+                            'ip': const.PUBLIC_IP,
                            'port': const.FTP_PORT
-                       }
+                        }
                     }
 
                     sess_obj.send(args=services)
                     self.manage_conn(sess_obj, conn_info)
-            except:pass
+            except:
+                pass
 
     def manage_conn(self, sess_obj, conn_info):
         _shell = shell.Shell(sess_obj, self.interface)
@@ -139,7 +142,8 @@ class Server(object):
         print('{0}{1}{0}'.format('\n\n\t', text))
 
     def start(self, ip, port):
-        if self.is_active:self.server_stop()
+        if self.is_active:
+            self.server_stop()
         self.ip, self.port = ip, int(port)
         self.server_start()
         sleep(1.2)
