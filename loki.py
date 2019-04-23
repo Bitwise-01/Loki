@@ -804,6 +804,6 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    try:app.run(debug=True)
+    try:app.run()
     except KeyboardInterrupt:pass
     finally:server.stop(delay=False)
