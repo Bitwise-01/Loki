@@ -7,6 +7,7 @@
     margin-top: 10px;
     white-space: pre;
     overflow-x: auto;
+    padding: 0.8% 0.5%;
     border-radius: 3.5px;
     color: var(--white-smoke);
     background-color: var(--bg-color);

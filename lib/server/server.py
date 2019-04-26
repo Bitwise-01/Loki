@@ -149,8 +149,8 @@ class Server(object):
         sleep(1.2)
         return self.is_active
 
-    def stop(self, delay=True):
+    def stop(self):
         if self.is_active:
             self.server_stop()
-            sleep(1.2 if delay else 0)
+            sleep(1.2)
         return self.is_active

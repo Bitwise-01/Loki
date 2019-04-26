@@ -3,7 +3,7 @@
 # Description: Session
 
 import time
-import pickle
+import json
 import socket
 
 
@@ -30,7 +30,7 @@ class Session(object):
             pass
 
     def struct(self, code=None, args=None):
-        return pickle.dumps({'code': code, 'args': args})
+        return json.dumps({'code': code, 'args': args}).encode()
 
     def send(self, code=None, args=None):
         data = self.struct(code, args)
@@ -41,6 +41,6 @@ class Session(object):
 
     def recv(self, size=4096):
         try:
-            return pickle.loads(self.session.recv(size))
+            return json.loads(self.session.recv(size))
         except:
             pass

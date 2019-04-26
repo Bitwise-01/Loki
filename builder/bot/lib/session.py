@@ -2,7 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Session
 
-import pickle
+import json
 import socket
 from time import sleep
 from lib.info import Information
@@ -37,7 +37,7 @@ class Session(object):
             pass
 
     def struct(self, code=None, args=None):
-        return pickle.dumps({'code': code, 'args': args})
+        return json.dumps({'code': code, 'args': args}).encode()
 
     def send(self, code=None, args=None):
         data = self.struct(code, args)
@@ -48,7 +48,7 @@ class Session(object):
 
     def recv(self, size=4096):
         try:
-            return pickle.loads(self.session.recv(size))
+            return json.loads(self.session.recv(size))
         except TimeOutError:
             return -1
         except:

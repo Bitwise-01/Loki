@@ -70,7 +70,7 @@ class Bot(object):
         self.ip, self.port = ip, int(port)
         try:
             self.connect()
-        except Exception as e:
+        except:
             self.shutdown()
 
 
