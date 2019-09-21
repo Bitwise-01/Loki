@@ -10,10 +10,10 @@ from os import path, makedirs
 #######################################################################################################
 ### This is only required if you are connecting to computers outside of your network ###
 #
-# If you are using connecting to computer outside
+# If you are connecting to computers outside
 # of your network, you must enable port forwarding
 # on your router. You must have have the FTP_PORT, SSH_PORT
-# and the port you started the server on open. Both the FTP_PORT and SSH_PORT
+# and the port you started the server on open on your router. Both the FTP_PORT and SSH_PORT
 # can be confirgured below.
 #
 # You must also set the PRIVATE_IP as the ip of your computer
