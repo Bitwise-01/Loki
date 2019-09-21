@@ -33,8 +33,8 @@ SSH_PORT = 256
 DATABASE = 'lib/database.db'
 
 # account
-LOCK_TIME = 300 # in seconds
-MAX_FAILED_ATTEMPTS = 3 # attempts before locking
+LOCK_TIME = 300  # in seconds
+MAX_FAILED_ATTEMPTS = 3  # attempts before locking
 
 if not path.exists('lib/cert'):
     makedirs('lib/cert')
