@@ -309,7 +309,6 @@ def control_cmd_src():
     '''.format(bot_id)
     return jsonify({'resp': src})
 
-
 @app.route('/control/cmd/cmd', methods=['POST'])
 @login_required
 @bot_required
@@ -433,8 +432,7 @@ def task_console_source():
      <div id="cmd-line"></div>
      <input id="console" placeholder="help" spellcheck="false" type="text" size=64>
      <img src="/static/img/loading.gif" id="console-load">
-     <p id="last_active">last accessed on {}</p>
-    '''.format(session['last_active'])
+    '''
     return jsonify({'resp': src})
 
 @app.route('/task_console_cmd', methods=['POST'])

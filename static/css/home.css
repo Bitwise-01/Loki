@@ -24,9 +24,9 @@
 }
 
 table {
-    width: 97%;
+    width: 100%;
     margin: auto;
-    font-size: 13.5px;
+    font-size: 12.8px;
     table-layout: fixed;
     font-family: comfortaa;
     background-color: var(--white-smoke);
@@ -42,7 +42,8 @@ table tr:nth-child(odd) {
 }
 
 table th {
-    padding: 1%;
+    padding: 0.7%;
+    font-size: 12px;
     color: var(--white-smoke);
     background-color: var(--bg-color);
 }
@@ -58,17 +59,10 @@ td {
 }
 
 #bots-amount {
-    margin-left: 75%;
-    margin-top: -1.9%;
+    margin-top: -1.5%;
     position: absolute;
     font-family: comfortaa;
     color: var(--white-smoke);
-}
-
-#bots-amount > span,
-#server-status > span {
-    font-size: 17px;
-    font-family: rich;
 }
 
 #amount {
@@ -78,10 +72,26 @@ td {
 
 #server-status {
     margin-top: 0.2%;
-    margin-left: 75%;
     position: absolute;
     font-family: comfortaa;
     color: var(--white-smoke);
+}
+
+#bots-amount,
+#bots-amount > span,
+#server-status,
+#server-status > span {
+    font-size: 14px;
+}
+
+#bots-amount,
+#server-status {
+    margin-left: 79.5%;
+}
+
+#bots-amount > span,
+#server-status > span {
+    font-family: rich;
 }
 
 .status-on {
@@ -89,11 +99,11 @@ td {
 }
 
 .status-off {
-    color: var(--dark-red);
+    color: var(--hot-red);
 }
 
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 2.5px;
 }
 
 ::-webkit-scrollbar-track {

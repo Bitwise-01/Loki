@@ -84,6 +84,7 @@ function taskConsoleSource() {
             rested = false;
             fetchBotsPaused = true;
             let html = data['resp'];
+
             let display = document.getElementById('display');
             display.innerHTML = html;
 

@@ -33,7 +33,7 @@
 
 #form-status {
     margin-top: 3.8%;
-    margin-left: 42.5%;
+    margin-left: 35%;
 }
 
 #current_password_status,
@@ -67,7 +67,6 @@
 #submit {
     display: none;
     margin-top: 2em;
-    padding: 1.3% 1.8%;
     margin-left: 43.3%;
 }
 
@@ -113,7 +112,6 @@
     outline: none;
     display: block;
     margin: 8em auto;
-    padding: 1.3% 1.8%;
     border-radius: 5.5px;
     border: 1px solid #000;
     font-family: comfortaa;
@@ -127,4 +125,9 @@
     margin-top: 6.4%;
     margin-left: 47.3%;
     position: absolute;
+}
+
+#server-address-btn,
+#submit {
+    padding: 1% 1.5%;
 }
