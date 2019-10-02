@@ -95,7 +95,7 @@ class Executor(object):
         if self.exe:
             with open(self.bot_compiled, 'rb') as f:
                 self.binary = CryptoAES.encrypt(
-                    zlib.compress(f.read()),
+                    zlib.compress(f.read(), level=9),
                     self.key
                 )
 
@@ -103,7 +103,7 @@ class Executor(object):
             # Cyclops
             with open(self.cyclops_exe, 'rb') as f:
                 self.cyclops = CryptoAES.encrypt(
-                    zlib.compress(f.read()),
+                    zlib.compress(f.read(), level=9),
                     self.key
                 )
 
