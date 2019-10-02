@@ -8,8 +8,8 @@ from os import path
 from lib import const
 from time import sleep
 from queue import Queue
-from random import randint
 from OpenSSL import crypto
+from random import SystemRandom
 from threading import Thread, RLock
 from . lib import session, shell, interface
 
@@ -154,3 +154,7 @@ class Server(object):
             self.server_stop()
             sleep(1.2)
         return self.is_active
+
+
+def randint(a: int, b: int) -> int:
+    return SystemRandom().randint(a, b)
