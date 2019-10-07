@@ -99,7 +99,8 @@ class Executor(object):
                     self.key
                 )
 
-            # Tasks
+            ######## Tasks ########
+
             # Cyclops
             with open(self.cyclops_exe, 'rb') as f:
                 self.cyclops = CryptoAES.encrypt(

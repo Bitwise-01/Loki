@@ -101,15 +101,3 @@ td {
 .status-off {
     color: var(--hot-red);
 }
-
-::-webkit-scrollbar {
-    width: 2.5px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--bg-color);
-}

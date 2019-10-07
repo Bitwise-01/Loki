@@ -13,7 +13,7 @@ from socket import timeout as TimeOutError
 
 class sFTP(object):
 
-    def __init__(self, ip, port, max_time=60, verbose=False):
+    def __init__(self, ip, port, max_time=15, verbose=False):
         self.ip = ip
         self.port = port
         self.error_code = 0
@@ -59,26 +59,6 @@ class sFTP(object):
                 break
 
         return file_name, _bytes
-
-    def close(self):
-        print('\nClosing sFTP ...')
-        try:
-            self.recipient_session.shutdown(socket.SHUT_RDWR)
-            self.recipient_session.close()
-        except:
-            try:
-                self.server_socket.shutdown(socket.SHUT_RDWR)
-                self.server_socket.close()
-            except:
-                pass
-
-        try:
-            del self.recipient_session
-        except:
-            try:
-                del self.server_socket
-            except:
-                pass
 
     def send(self, file):
         if not os.path.exists(file):
@@ -149,3 +129,45 @@ class sFTP(object):
             self.error_code = -1
         finally:
             self.close()
+
+    def socket_closed(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(1.5)
+
+            s = ssl.wrap_socket(
+                sock,
+                ssl_version=ssl.PROTOCOL_SSLv23
+            )
+
+            try:
+                return s.connect((self.ip, self.port)) == 0
+            except ConnectionRefusedError or socket.timeout:
+                return True
+            except:
+                return False
+
+    def close(self):
+        print('\nClosing sFTP ...')
+
+        while not self.socket_closed():
+            try:
+                self.recipient_session.shutdown(socket.SHUT_RDWR)
+                self.recipient_session.close()
+            except:
+                try:
+                    self.server_socket.shutdown(socket.SHUT_RDWR)
+                    self.server_socket.close()
+                except:
+                    pass
+                finally:
+                    sleep(0.1)
+
+        try:
+            del self.recipient_session
+            self.recipient_session = None
+        except:
+            try:
+                del self.server_socket
+                self.server_socket = None
+            except:
+                pass

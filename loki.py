@@ -352,8 +352,7 @@ def control_ssh_exe():
         else:
             resp = server.interface.ssh_exe(cmd)
             return jsonify({'resp': resp if resp else ''})
-
-
+            
 def populate_bot_table():
     online_bots = ''
     bots = server.interface.bots

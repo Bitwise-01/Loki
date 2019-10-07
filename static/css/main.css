@@ -243,6 +243,19 @@ html {
     border: 1px solid #000;
 }
 
+::-webkit-scrollbar {
+    width: 2.5px;
+    height: 2.5px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--bg-color);
+}
+
 @media (max-width: 800px) {
     .nav > .nav-btn {
         display: inline-block;

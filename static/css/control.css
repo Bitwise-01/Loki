@@ -47,7 +47,3 @@
     display: none;
     margin-left: 4%;
 }
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--white-smoke);
-}

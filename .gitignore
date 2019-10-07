@@ -10,7 +10,8 @@ cert/
 # VS Code
 .vscode
 
-# Database file
+# Database
+database/
 *.db
 
 # Virtual environment
