@@ -379,7 +379,7 @@ class Interface(object):
         self.screenshare.start(cmd_id)
         self.write_screen_scr(update)
 
-        return 'Screenshare is being host at the URL: {}'.format(ScreenShare.screen_src)
+        return 'Screenshare is being hosted at the URL: {}'.format(ScreenShare.screen_src)
 
     def execute_cmd_by_id(self, bot_id, cmd_id, args):
         override = True if '--override' in args else False
