@@ -199,7 +199,7 @@ function any(items) {
 
 function accountManagement() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/account_management'
     }).done(function(data) {
         let display = document.getElementById('display');
@@ -213,7 +213,7 @@ function accountManagement() {
 
 function passwordUpdateSource() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/password_update_source'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');
@@ -260,7 +260,7 @@ function updatePassword() {
 
 function usernameUpdateSource() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/username_update_source'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');
@@ -490,7 +490,7 @@ function serverService() {
 
 function serverServiceSource() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/server_service_source'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');

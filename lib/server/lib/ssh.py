@@ -125,7 +125,7 @@ class SSH(object):
 
     def close(self):
         try:
-            print('\nClosing SSH ...\n')
+            print('\nClosing SSH ...')
             if self.communication:
                 self.communication.stop()
 

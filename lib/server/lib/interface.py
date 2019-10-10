@@ -416,7 +416,7 @@ class Interface(object):
                 return 'Screenshare is inactive'
 
             self.screenshare.stop()
-            return 'Stopping screenshare ...'
+            return 'Stopped screenshare ...'
 
         if cmd_id == 17:
             if not self.screenshare:

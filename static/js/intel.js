@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 function intelSystemSrc() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/system/src'
     }).done(function(data) {
         let display = document.getElementById('display');
@@ -20,7 +20,7 @@ function intelSystemSrc() {
 
 function intelNetworkSrc() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/network/src'
     }).done(function(data) {
         let display = document.getElementById('display');
@@ -34,7 +34,7 @@ function intelNetworkSrc() {
 
 function intelGeoSrc() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/geo/src'
     }).done(function(data) {
         let display = document.getElementById('display');
@@ -48,7 +48,7 @@ function intelGeoSrc() {
 
 function intelSystemData() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/system/data'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');
@@ -62,7 +62,7 @@ function intelSystemData() {
 
 function intelNetworkData() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/network/data'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');
@@ -76,7 +76,7 @@ function intelNetworkData() {
 
 function intelGeoData() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/intel/geo/data'
     }).done(function(data) {
         let displayArea = document.getElementById('display-area');

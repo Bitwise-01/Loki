@@ -261,7 +261,7 @@ function executeCmd() {
 
 function cmdSrc() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/control/cmd/src'
     }).done(function(data) {
         let display = document.getElementById('display');
@@ -301,7 +301,7 @@ function cmdSrc() {
 
 function sshSrc() {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/control/ssh/src'
     }).done(function(data) {
         let display = document.getElementById('display');

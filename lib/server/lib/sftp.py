@@ -141,7 +141,7 @@ class sFTP(object):
 
             try:
                 return s.connect((self.ip, self.port)) == 0
-            except ConnectionRefusedError or socket.timeout:
+            except (ConnectionRefusedError, socket.timeout):
                 return True
             except:
                 return False
