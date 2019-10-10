@@ -24,8 +24,8 @@ class Session(object):
 
     def close(self):
         try:
-            self.session.shutdown(socket.SHUT_RDWR)
             self.session.close()
+            self.session.shutdown(socket.SHUT_RDWR)
         except:
             pass
 

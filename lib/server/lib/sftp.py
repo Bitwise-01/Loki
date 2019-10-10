@@ -151,12 +151,12 @@ class sFTP(object):
 
         while not self.socket_closed():
             try:
-                self.recipient_session.shutdown(socket.SHUT_RDWR)
                 self.recipient_session.close()
+                self.recipient_session.shutdown(socket.SHUT_RDWR)
             except:
                 try:
-                    self.server_socket.shutdown(socket.SHUT_RDWR)
                     self.server_socket.close()
+                    self.server_socket.shutdown(socket.SHUT_RDWR)
                 except:
                     pass
                 finally:

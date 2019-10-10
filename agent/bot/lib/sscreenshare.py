@@ -34,8 +34,7 @@ class ScreenShare:
             )
 
             self.recipient_session.connect((self.ip, self.port))
-        except Exception as e:
-            print('Error:', e)
+        except:
             return -1
 
     def send_image(self):
@@ -75,8 +74,8 @@ class ScreenShare:
         self.is_alive = False
 
         try:
-            self.recipient_session.shutdown(socket.SHUT_RDWR)
             self.recipient_session.close()
+            self.recipient_session.shutdown(socket.SHUT_RDWR)
         except:
             pass
 

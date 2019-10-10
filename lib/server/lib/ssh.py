@@ -128,8 +128,9 @@ class SSH(object):
             print('\nClosing SSH ...\n')
             if self.communication:
                 self.communication.stop()
-            self.recipient_session.shutdown(socket.SHUT_RDWR)
+
             self.recipient_session.close()
+            self.recipient_session.shutdown(socket.SHUT_RDWR)
         except:
             pass
 

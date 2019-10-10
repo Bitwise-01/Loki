@@ -120,8 +120,9 @@ class SSH(object):
         try:
             if self.communication:
                 self.communication.stop()
-            self.recipient_session.shutdown(socket.SHUT_RDWR)
+
             self.recipient_session.close()
+            self.recipient_session.shutdown(socket.SHUT_RDWR)
         except:
             pass
 

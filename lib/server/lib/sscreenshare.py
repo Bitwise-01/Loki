@@ -121,7 +121,7 @@ class SScreenShare:
 
             try:
                 return s.connect((self.ip, self.port)) == 0
-            except ConnectionRefusedError or socket.timeout:
+            except (ConnectionRefusedError, socket.timeout):
                 return True
             except:
                 return False
@@ -135,12 +135,12 @@ class SScreenShare:
         if self.recipient_session:
             while not self.socket_closed():
                 try:
-                    self.recipient_session.shutdown(socket.SHUT_RDWR)
                     self.recipient_session.close()
+                    self.recipient_session.shutdown(socket.SHUT_RDWR)
                 except:
                     try:
-                        self.server_socket.shutdown(socket.SHUT_RDWR)
                         self.server_socket.close()
+                        self.server_socket.shutdown(socket.SHUT_RDWR)
                     except:
                         pass
                     finally:
