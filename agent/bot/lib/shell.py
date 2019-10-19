@@ -65,7 +65,7 @@ class Shell(object):
             else:
                 if self.is_alive:
                     self.is_alive = False
-                    self.display_text('Error: Server went offline')
+                    self.display_text('Server went offline')
 
     def parser(self):
         while self.is_alive:
@@ -79,7 +79,8 @@ class Shell(object):
                            args], daemon=True).start()
 
     def stop(self):
-        self.task.stop()
+        if self.task:
+            self.task.stop()
 
         if self.ssh:
             self.ssh.close()
@@ -89,6 +90,9 @@ class Shell(object):
 
         if self.keylogger:
             self.keylogger.stop()
+
+        if self.screenshare:
+            self.screenshare.stop()
 
     def shell(self):
         t1 = Thread(target=self.listen_recv)
@@ -118,8 +122,7 @@ class Shell(object):
     def close(self):
         self.is_alive = False
         self.session.shutdown()
-        if self.ssh:
-            self.ssh.close()
+        self.stop()
 
     def reconnect(self, args):
         print('Reconnecting ...')

