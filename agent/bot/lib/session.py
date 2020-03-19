@@ -3,6 +3,7 @@
 # Description: Session
 
 import json
+import const
 import socket
 from time import sleep
 from lib.info import Information
@@ -24,7 +25,7 @@ class Session(object):
 
     def initial_communication(self):
         sleep(0.5)
-        self.send(args=self.sys_info)
+        self.send(code=const.CONN_CODE, args=self.sys_info)
         services = self.recv()
         return services
 

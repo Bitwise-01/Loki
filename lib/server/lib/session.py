@@ -18,7 +18,8 @@ class Session(object):
 
     def initial_communication(self):
         try:
-            return self.recv()
+            data = self.recv()
+            return data
         except:
             pass
 

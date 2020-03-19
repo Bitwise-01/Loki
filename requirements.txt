@@ -1,8 +1,9 @@
-mss>=3.2.1
-pynput>=1.4
-Flask>=1.0.2
-bcrypt>=3.1.4
-requests>=2.20.0
-pyOpenSSL>=18.0.0
-PyInstaller>=3.4.0
-pycryptodome>=3.7.3
+mss==3.2.1
+pynput==1.6.6
+Flask==1.1.1
+bcrypt==3.1.7
+requests==2.22.0
+Flask-WTF==0.14.3
+pyOpenSSL==19.1.0
+PyInstaller==3.6
+pycryptodome==3.9.6

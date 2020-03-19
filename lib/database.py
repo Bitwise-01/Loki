@@ -85,7 +85,7 @@ class Database(object):
 
     def account_exists(self, username):
         data = self.db_query(
-            'SELECT * FROM Account WHERE username=?;', [username], False)
+            'SELECT * FROM Account WHERE username=?;', [username.lower()], False)
         return True if len(data) else False
 
     def compare_passwords(self, user_id, password):
@@ -217,18 +217,18 @@ class Database(object):
         return datetime.fromtimestamp(epoch_time).strftime('%b %d, %Y at %I:%M %p')
 
     def get_account_status(self, user_id, username):
-        default_username = 'loki'
-        default_password = 'ikol'
+        default_username = const.DEFAULT_USERNAME
+        default_password = const.DEFAULT_PASSWORD
 
         username = username.lower()
         is_same_password = self.compare_passwords(user_id, default_password)
 
-        if all([username == default_username, is_same_password]):
-            status = '** Please consider changing your username and password **'
+        if username == default_username.lower() and is_same_password:
+            status = 'It is imperative that you update your username and password'
         elif username == default_username:
-            status = '** Please consider changing your username **'
+            status = 'Please consider changing your username'
         elif is_same_password:
-            status = '** Please consider changing your passsword **'
+            status = 'Please consider changing your passsword'
         else:
             status = None
         return status

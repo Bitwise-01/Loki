@@ -37,7 +37,17 @@ class sFTP(object):
                 else:
                     break
 
+    def test_tunnel(self):
+        value = b'abc123'
+        self.recipient_session.sendall(value)
+
+        if self.recipient_session.recv(self.session_size) == value:
+            return True
+        return False
+
     def send_file(self, file):
+        self.test_tunnel()
+
         chdir(self.home)
         if not os.path.exists(file):
             self.display('File `{}` does not exist'.format(file))
@@ -85,12 +95,17 @@ class sFTP(object):
         chdir(self.home)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(10)
-        try:
-            self.recipient_session = ssl.wrap_socket(
-                sock, ssl_version=ssl.PROTOCOL_SSLv23)
-            self.recipient_session.connect((self.ip, self.port))
-        except:
-            return -1
+
+        for i in range(5):
+            try:
+                self.recipient_session = ssl.wrap_socket(
+                    sock, ssl_version=ssl.PROTOCOL_SSLv23)
+                self.recipient_session.connect((self.ip, self.port))
+                return 0
+            except:
+                sleep(1)
+
+        return -1
 
     def send(self, file):
         if self.socket_obj() == -1:

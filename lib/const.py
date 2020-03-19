@@ -21,13 +21,19 @@ from os import path, makedirs
 #
 #######################################################################################################
 
+#################### Configuration Section ####################
+
 # ip
-PRIVATE_IP = '127.0.0.1'
-PUBLIC_IP = '127.0.0.1'
+PRIVATE_IP = '127.0.0.1'  # IP from your router to your pc
+PUBLIC_IP = '127.0.0.1'  # IP from your ISP to your router
 
 # ports
 FTP_PORT = 128
 SSH_PORT = 256
+
+#################### DO NOT TOUCH ANYTHING BELOW ####################
+
+VERSION = 'v0.1.1'
 
 # database
 DATABASE = 'database/database.db'
@@ -45,3 +51,23 @@ if not path.exists('cert'):
 
 CERT_FILE = 'cert/public.crt'
 KEY_FILE = 'cert/private.key'
+
+# communication codes
+STAGER_CODE = 0
+CONN_CODE = 1
+
+# stager
+PAYLOAD_PATH = 'agent/.bin/.payload.exe'
+BLOCK_SIZE = 65535
+
+
+# Settings
+MIN_USERNAME_LENGTH = 4
+MAX_USERNAME_LENGTH = 16
+
+MIN_PASSWORD_LENGTH = 12
+MAX_PASSWORD_LENGTH = 256
+
+# Default creds
+DEFAULT_USERNAME = 'loki'
+DEFAULT_PASSWORD = 'ikol'

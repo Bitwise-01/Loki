@@ -1,5 +1,6 @@
 # Generated samples
 output/
+.bin/
 
 # Python cache
 __pycache__/

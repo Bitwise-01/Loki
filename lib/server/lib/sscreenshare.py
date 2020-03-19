@@ -61,6 +61,7 @@ class SScreenShare:
             except Exception as e:
                 self.error_msg = e
                 self.stop()
+                return
 
             if not data:
                 self.error_msg = 'Empty data'

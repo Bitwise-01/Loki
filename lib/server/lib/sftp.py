@@ -29,6 +29,10 @@ class sFTP(object):
         if self.verbose:
             print('{}\n'.format(msg))
 
+    def test_tunnel(self):
+        value = self.recipient_session.recv(self.session_size)
+        self.recipient_session.sendall(value)
+
     def send_file(self, file):
 
         # send file's name
@@ -44,6 +48,8 @@ class sFTP(object):
         self.display('File sent')
 
     def recv_file(self):
+        self.test_tunnel()
+
         _bytes = b''
 
         # receive file's name
@@ -51,13 +57,16 @@ class sFTP(object):
 
         # receive file's data
         self.display('Downloading {} ...'.format(file_name))
+
         while True:
             data = self.recipient_session.recv(self.chunk_size << 2)
+
             if data:
                 _bytes += data
             else:
                 break
 
+        print('Downloaded file')
         return file_name, _bytes
 
     def send(self, file):

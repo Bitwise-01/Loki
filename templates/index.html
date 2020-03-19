@@ -1,28 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}" />
-        <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <!-- Required meta tags -->
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='vendor/bootstrap-4.4.1-dist/css/bootstrap.min.css') }}"
+        />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}" />
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+
         <title>Login</title>
     </head>
     <body>
-        <div id="container">
-            <span id="logo">Loki</span>
-            <div id="login-box">
-                <form action="{{ url_for('login') }}" method="post">
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        spellcheck="false"
-                        placeholder="Username"
-                    />
-                    <input type="password" id="password" name="password" placeholder="Password" />
-                    <button type="submit" id="login" name="submit">Login</button>
-                </form>
+        <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}" />
+        <div class="container">
+            <div class="row pt-5 mt-5">
+                <div class="col-11 col-md-5 mt-5 mx-auto">
+                    <span id="alert-container"></span>
+
+                    <h1 id="logo" class="text-center mt-3 text-white logo">Loki</h1>
+                    <div class="form-container bg-white p-md-5 p-4 rounded">
+                        <form id="form" action="" method="post">
+                            <div class="form-group pb-1">
+                                <input
+                                    type="text"
+                                    id="username"
+                                    class="form-control"
+                                    name="username"
+                                    placeholder="Username"
+                                    spellcheck="false"
+                                    style=" border: transparent;text-align: center;"
+                                />
+                            </div>
+                            <div class="form-group pb-3">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    class="form-control"
+                                    name="password"
+                                    placeholder="Password"
+                                    style="border: transparent;text-align: center;"
+                                />
+                            </div>
+                            <button id="login" type="submit" class="btn btn-block">
+                                Login
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{{ url_for('static', filename='vendor/jquery-3.4.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/bootstrap-4.4.1-dist/js/bootstrap.min.js') }}"></script>
     </body>
 </html>

@@ -1,10 +1,98 @@
 {% extends "base.html" %} {% block links %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/control.css') }}" />
-<script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %} {% block title %} Home {% endblock %} {% block navbar_section %}
 <a href="{{ url_for('index') }}" class="selected">Home</a>
 <a href="{{ url_for('settings') }}">Settings</a>
-{% endblock %} {% block tabs %}{% endblock %} {% block content %}
-<div id="display"></div>
+
+{% endblock %} {% block sidebar %}
+<li class="nav-item mt-1 rounded active-sidebar-tab">
+    <a class="nav-link" href="{{ url_for('index') }}">Bots</a>
+</li>
+{% endblock %} {% block content %}
+<div class="row pt-0">
+    <div class="col-7 pl-2 pr-0">
+        <div class="p-0 table-container">
+            <table class="table table-dark table-hover m-0">
+                <thead>
+                    <tr style="text-align: center;">
+                        <th scope="col">ID</th>
+                        <th scope="col">IP</th>
+                        <th scope="col">OS</th>
+                        <th scope="col">Country</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align: center;" id="bots-display"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-5 pl-0 pr-2">
+        <div class="row ml-2 mr-1">
+            <div class="col p-0">
+                <div id="server-status-section">
+                    <span class="status-row"
+                        >Bots<span>:</span><span class="status-value" id="bots-count"></span
+                    ></span>
+                    <span class="status-row"
+                        >IP<span>:</span><span class="status-value" id="server-ip-display"></span>
+                    </span>
+                    <span class="status-row"
+                        >Port<span>:</span><span class="status-value" id="server-port-display"></span
+                    ></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row ml-2 mr-0 mt-2">
+            <div class="col p-0">
+                <div id="server-control-section">
+                    <div id="server-config-section" class="mt-4">
+                        <input type="text" id="server-ip" placeholder="127.0.0.1" />
+                        <span style="font-size: 20px; font-weight: bolder;">:</span>
+                        <input type="text" id="server-port" placeholder="8080" />
+                    </div>
+                    <button class="btn mt-2" id="server-active-toggle"></button>
+                    <div class="spinner-grow d-none" id="server-toggle-loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row pt-0">
+    <div class="col-9 pl-2 mt-3 pr-0">
+        <div class="console">
+            <ul class="nav pl-3 pb-1">
+                <li class="nav-item mt-1 rounded tab" id="command">
+                    <span class="nav-link">Command</span>
+                </li>
+                <li class="nav-item mt-1 rounded tab" id="ssh">
+                    <span class="nav-link">SSH</span>
+                </li>
+            </ul>
+
+            <div class="console-display">
+                <div id="console-output"></div>
+
+                <span class="console-input-container">
+                    <span></span>
+                    <input type="text" id="console-input" spellcheck="false" />
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3 pl-2 mt-3 pr-2">
+        <div id="info-display"></div>
+    </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/exception.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/terminal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/console.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/command.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/ssh.js') }}"></script>
 {% endblock %}

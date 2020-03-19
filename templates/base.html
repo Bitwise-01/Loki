@@ -1,38 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <!-- Required meta tags -->
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        <script
-            type="text/javascript"
-            src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"
-        ></script>
-        <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon" />
-        <script type="text/javascript" src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='vendor/bootstrap-4.4.1-dist/css/bootstrap.min.css') }}"
+        />
+
         {% block links %}{% endblock %}
         <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
-        <div class="nav">
-            <div class="nav-btn">
-                <label for="nav-check">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </label>
-            </div>
-            <input type="checkbox" id="nav-check" />
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#toggler"
+                aria-controls="toggler"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="toggler">
+                <a class="navbar-brand text-light logo" href="/">Loki</a>
+                <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0 ml-5">
+                    <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/settings' %}active{% endif %}">
+                        <a class="nav-link" href="{{ url_for('settings') }}">Settings</a>
+                    </li>
+                </ul>
 
-            <div class="nav-links">
-                {% block navbar_section %}{% endblock %}
-                <a href="{{ url_for('logout') }}"><span style="color: var(--hot-red);">Logout</span></a>
+                <ul class="navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger btn-sm text-white" href="{{ url_for('logout') }}"
+                            >Logout</a
+                        >
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}" />
+
+        <div class="d-flex">
+            <div class="align-self-start" id="sidebar">
+                <nav class="navbar-full navbar-expand-lg navbar-dark">
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#toggler2"
+                        aria-controls="toggler2"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse pl-2" id="toggler2" style="margin-left: 3px;">
+                        <ul class="nav navbar-nav d-block">
+                            {% block sidebar %}{% endblock %}
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Content -->
+            <div class="align-self-stretch" style="width: 100%;">
+                <div class="container-fluid">
+                    {% if session['account_status'] %}
+                    <div class="row p-0" id="account-status-msg">
+                        <div class="col mx-auto p-0" style="margin-bottom: -16px;">
+                            <p style="text-align: center;" class="pt-2">
+                                <a id="notice" href="{{ url_for('settings') }}"
+                                    >{{ session['account_status'] }}</a
+                                >
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div id="display-area" class="col-12 pt-2">
+                            {% block content %} {% endblock %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        {% if session.status != None %}
-        <a href="{{ url_for('settings') }}" style="text-decoration: none;"
-            ><p id="notice">{{ session.status }}</p></a
-        >
-        {% endif %} {% block content %} {% endblock %}
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{{ url_for('static', filename='vendor/jquery-3.4.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='vendor/bootstrap-4.4.1-dist/js/bootstrap.min.js') }}"></script>
+        {% block scripts %}{% endblock %}
     </body>
 </html>

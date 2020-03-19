@@ -1,37 +1,25 @@
 @import url('main.css');
 
-body,
-html {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    background-color: var(--bg-color);
-}
-
-#container {
-    text-align: center;
-    text-align: -webkit-center;
-}
-
 #logo {
     color: #fff;
     display: block;
     margin-top: 10%;
     font-size: 40px;
-    font-family: rich;
     margin-bottom: 10px;
 }
 
-#login-box {
-    width: 500px;
-    height: 280px;
-    border-radius: 3.5px;
-    background-color: #fff;
-    border: 1px solid var(--bg-color);
+#form input {
+    font-size: 14px !important;
+    font-family: comfortaa;
 }
 
-#login-box > form {
-    margin: 15% 0 auto;
+#form input:hover {
+    cursor: pointer;
+}
+
+#form input:focus {
+    cursor: text;
+    text-align: left !important;
 }
 
 #login-box > form > input {
@@ -52,23 +40,10 @@ html {
 }
 
 #login {
-    width: 23%;
-    height: 35px;
-    outline: none;
-    color: #fff;
-    display: block;
-    font-size: 1em;
-    font-family: rich;
-    margin: 5% 0 7% 6px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--bg-color);
-    border-radius: var(--border-radius);
+    color: #fff !important;
+    background-color: #222 !important;
 }
 
 #login:hover {
-    cursor: pointer;
-}
-
-#login:active {
-    border: 1px solid var(--bg-color);
+    background-color: #3b3b3b !important;
 }

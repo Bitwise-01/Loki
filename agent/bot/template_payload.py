@@ -5,7 +5,6 @@
 import sys
 import ssl
 import socket
-import pickle
 from time import sleep
 from random import randint
 from lib import shell, session

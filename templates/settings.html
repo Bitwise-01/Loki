@@ -1,15 +1,93 @@
 {% extends "base.html" %} {% block links %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/settings.js') }}"></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}" />
-{% endblock %} {% block title %}Settings{% endblock %} {% block navbar_section %}
-<a href="{{ url_for('index') }}">Home</a>
-<a href="{{ url_for('settings') }}" class="selected">Settings</a>
-{% endblock %} {% block tabs %}
-<a href="/settings/account"></a>
-<li><div class="selected">Account</div></li>
-<a href="/settings/server"
-    ><li><div>Server</div></li></a
->
+{% endblock %} {% block title %}Settings{% endblock %}{% block sidebar %}
+<li class="nav-item mt-1 rounded active-sidebar-tab">
+    <a class="nav-link" href="#">Account</a>
+</li>
 {% endblock %} {% block content %}
-<div id="display"></div>
-{% endblock %}
+
+<div class="row">
+    <div class="col mr-2 ml-2" id="account-update-container">
+        <div class="row">
+            <div class="col" style="text-align: center;">
+                <p class="pt-4" style="font-size: 16px;">
+                    Username and Password
+                </p>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-10 mx-auto" id="account-form-container">
+                <div>
+                    <div class="mx-auto">
+                        <div class="form-row">
+                            <div class="col-md-3 mb-3">
+                                <label for="new-username">New Username</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">@</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="new-username"
+                                        placeholder="New username"
+                                        spellcheck="false"
+                                        required
+                                    />
+                                    <div id="new-username-resp"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row mt-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="current-password">Current Password</label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="current-password"
+                                    placeholder="Current password"
+                                    required
+                                />
+                                <div id="current-password-resp"></div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="new-password">New Password</label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="new-password"
+                                    placeholder="New password"
+                                    required
+                                />
+                                <div id="new-password-resp"></div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="confirm-password">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirm-password"
+                                    placeholder="Confirm password"
+                                    required
+                                />
+                                <div id="confirm-password-resp"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-3 mt-4 pl-0 pt-2">
+                            <button class="btn btn-primary btn-block" id="btn-update-username-password">
+                                Update
+                            </button>
+                            <div class="spinner-grow d-none" id="update-username-password-loader"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %} {% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    {% endblock %}
+</div>

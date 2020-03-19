@@ -13,11 +13,9 @@ class Args(object):
         self.ip = None
         self.port = None
         self.name = None
-        self.type = None
-        self.hide = None
         self.wait = None
         self.icon = None
-        self.delay = None
+        self.hide = None
         self.persist = None
 
     def error(self, error):
@@ -33,7 +31,7 @@ class Args(object):
                             Example: -i 127.0.0.1')
 
         parser.add_argument('-p',
-                            '--ports',
+                            '--port',
                             required=True,
                             help='the port of the C&C server. \
                             Example: -p 8080')
@@ -44,24 +42,11 @@ class Args(object):
                             help='the name of the output file. \
                             Example: -n myvirus')
 
-        parser.add_argument('-d',
-                            '--delay',
-                            default=17,
-                            help='time in seconds before upacking. \
-                            Example: -d 17')
-
         parser.add_argument('-w',
                             '--wait',
                             default=17,
                             help='time in seconds before calling C&C. \
                             Example: -w 17')
-
-        parser.add_argument('-t',
-                            '--type',
-                            default='exe',
-                            help='the output type.\
-                            Example: -t python \
-                            Example: -t exe')
 
         parser.add_argument('-ic',
                             '--icon',
@@ -90,16 +75,14 @@ class Args(object):
     def set_args(self):
         args = self.get_args()
         self.ip = args.ip
-        self.port = args.ports
+        self.port = args.port
         self.name = args.name
-        self.type = args.type
         self.hide = args.hide
         self.wait = args.wait
         self.icon = args.icon
-        self.delay = args.delay
         self.persist = args.persist
 
-        if any([not self.valid_ip, not self.valid_port, not self.valid_type, not self.valid_wait, not self.valid_delay, not self.valid_icon]):
+        if any([not self.valid_ip, not self.valid_port, not self.valid_wait, not self.valid_icon]):
             return False
         return True
 
@@ -128,14 +111,6 @@ class Args(object):
         return True
 
     @property
-    def valid_type(self):
-        if not any([self.type == 'exe', self.type == 'python']):
-            self.error('Invalid type')
-            return False
-        self.type = True if self.type == 'exe' else False
-        return True
-
-    @property
     def valid_icon(self):
         if not self.icon:
             return True
@@ -147,19 +122,6 @@ class Args(object):
             if not any([self.icon.endswith('exe'), self.icon.endswith('ico')]):
                 self.error('Icon file must be a .ico or .exe')
                 return False
-        return True
-
-    @property
-    def valid_delay(self):
-        delay = str(self.delay)
-        if not delay.isdigit():
-            self.error('Delay must be a number')
-            return False
-        elif int(delay) < 17:
-            self.error('Delay must not be less than 17')
-            return False
-        else:
-            self.delay = int(delay)
         return True
 
     @property

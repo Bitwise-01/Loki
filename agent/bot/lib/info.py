@@ -41,13 +41,10 @@ class Geo(object):
         self.internal_ip = self.get_internal_ip()
 
     def get_internal_ip(self):
-        ip = ''
         try:
-            host_name = socket.gethostname()
-            ip = socket.gethostbyname(host_name)
+            return socket.gethostbyname_ex(socket.gethostname())[-1][-1]
         except:
-            pass
-        return ip
+            return ''
 
     def get_geo(self):
         try:

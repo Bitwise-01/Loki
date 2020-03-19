@@ -1,516 +1,276 @@
 'use strict';
 
-var dynamicTabsSet = false;
-var sidebarItems = new Array();
-var subtabsItems = new Array();
+const MIN_USERNAME_LENGTH = 4;
+const MAX_USERNAME_LENGTH = 16;
 
-$(document).ready(function() {
-    accountManagement();
-    for (let n = 0; n < 5; n++) {
-        usernameUpdateSource();
+const MIN_PASSWORD_LENGTH = 12;
+const MAX_PASSWORD_LENGTH = 256;
+
+let isProcessing = false;
+
+function isValidUsername(username) {
+    username = username.trim();
+    let resp = { status: 0, msg: '' };
+
+    if (username.length === 0) {
+        return resp;
     }
-    setEventListenerOnTabs();
+
+    if (username.length < MIN_USERNAME_LENGTH) {
+        resp['msg'] = 'Username must contain at least ' + MIN_USERNAME_LENGTH + ' characters';
+        return resp;
+    } else if (username.length > MAX_USERNAME_LENGTH) {
+        resp['msg'] = 'Username must contain at most ' + MAX_USERNAME_LENGTH + ' characters';
+        return resp;
+    }
+
+    if (username.match(/\W/i)) {
+        resp['msg'] = 'Username must not contain a special or space character';
+        return resp;
+    }
+
+    resp['status'] = 1;
+    return resp;
+}
+
+function isValidPassword(password) {
+    let _password = password;
+    password = password.trim();
+
+    let resp = { status: 0, msg: '' };
+
+    if (password.length === 0) {
+        return resp;
+    }
+
+    // Length
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        resp['msg'] = 'Password must contain at least ' + MIN_PASSWORD_LENGTH + ' characters';
+        return resp;
+    } else if (password.length > MAX_PASSWORD_LENGTH) {
+        resp['msg'] = 'Password must contain at most ' + MAX_PASSWORD_LENGTH + ' characters';
+        return resp;
+    }
+
+    // Diversity
+    if (password.match(/^\d+\d$/gm)) {
+        resp['msg'] = 'Password must not only consist of numbers';
+        return resp;
+    }
+
+    if (!password.match(/\d/gm)) {
+        resp['msg'] = 'Password must contain a digit';
+        return resp;
+    }
+
+    if (!password.match(/\w/)) {
+        resp['msg'] = 'Password must contain a letter';
+        return resp;
+    }
+
+    // Spaces
+    if (_password.match(/^\s|\s$/gm)) {
+        resp['msg'] = 'Password must not start or end with a space';
+        return resp;
+    }
+
+    if (!password.match(/\s/gm)) {
+        resp['msg'] = 'Password must contain a space';
+        return resp;
+    }
+
+    if (password.match(/\s{2,}/gm)) {
+        resp['msg'] = 'Password must not have consecutive space';
+        return resp;
+    }
+
+    resp['status'] = 1;
+    return resp;
+}
+
+function setInvalid(field, feedback) {
+    field.removeClass('is-valid');
+    feedback.removeClass('valid-feedback');
+
+    field.addClass('is-invalid');
+    feedback.addClass('invalid-feedback');
+}
+
+function setValid(field, feedback) {
+    field.removeClass('is-invalid');
+    feedback.removeClass('invalid-feedback');
+
+    field.addClass('is-valid');
+    feedback.addClass('valid-feedback');
+}
+
+function setClear(field, feedback) {
+    field.removeClass('is-invalid');
+    field.removeClass('is-valid');
+
+    feedback.removeClass('invalid-feedback');
+    feedback.removeClass('valid-feedback');
+
+    feedback.text('');
+}
+
+$('#new-username').keyup(() => {
+    let resp = isValidUsername($('#new-username').val());
+    let feedback = $('#new-username-resp');
+    let field = $('#new-username');
+
+    if (resp['status'] === 0 && resp['msg'].length !== 0) {
+        setInvalid(field, feedback);
+        feedback.text(resp['msg']);
+    } else if (resp['status'] === 0 && resp['msg'].length === 0) {
+        setClear(field, feedback);
+    }
+
+    if (resp['status'] === 1) {
+        setValid(field, feedback);
+        feedback.text('');
+    }
 });
 
-function checkUsername() {
-    let input = document.getElementById('new_username');
-    let output = document.getElementById('username_status');
-    displayMsg('', document.getElementById('form-status'), '');
+$('#new-password').keyup(() => {
+    checkPassword();
+    checkConfirmPassword();
+});
 
-    if (!input.value) {
-        if (!input.classList.contains('invalid')) {
-            input.classList.add('invalid');
-        } else {
-        }
-        output.innerHTML = '';
-    } else {
-        $.ajax({
-            data: { username: input.value },
-            type: 'POST',
-            url: '/check_username'
-        }).done(function(data) {
-            let db_resp = data['resp'];
-            let submit = document.getElementById('submit');
-
-            if (db_resp != 'valid') {
-                output.innerHTML = db_resp;
-                submit.style.display = 'none';
-
-                if (!input.classList.contains('invalid')) {
-                    input.classList.add('invalid');
-                }
-            } else {
-                if (input.classList.contains('invalid')) {
-                    input.classList.remove('invalid');
-                }
-                output.innerHTML = '';
-                submit.style.display = 'block';
-            }
-        });
-    }
-}
+$('#confirm-password').keyup(() => {
+    checkConfirmPassword();
+});
 
 function checkPassword() {
-    let input = document.getElementById('new_password');
-    let output = document.getElementById('password_status');
+    let resp = isValidPassword($('#new-password').val());
+    let feedback = $('#new-password-resp');
+    let field = $('#new-password');
 
-    if (!input.value) {
-        if (!input.classList.contains('invalid')) {
-            input.classList.add('invalid');
-        } else {
-        }
-        output.innerHTML = '';
+    if (resp['status'] === 0 && resp['msg'].length !== 0) {
+        setInvalid(field, feedback);
+        feedback.text(resp['msg']);
+    } else if (resp['status'] === 0 && resp['msg'].length === 0) {
+        setClear(field, feedback);
+    }
+
+    if (resp['status'] === 1) {
+        setValid(field, feedback);
+        feedback.text('');
+    }
+}
+
+function checkConfirmPassword() {
+    let feedback = $('#confirm-password-resp');
+    let field = $('#confirm-password');
+
+    if ($('#new-password').val().length === 0 || field.val().length === 0) {
+        setClear(field, feedback);
+        return;
+    }
+
+    if ($('#new-password').val() !== field.val()) {
+        setInvalid(field, feedback);
+        feedback.text('Passwords do not match');
     } else {
-        $.ajax({
-            data: { password: input.value },
-            type: 'POST',
-            url: '/check_password'
-        }).done(function(data) {
-            let db_resp = data['resp'];
-            let confirm = document.getElementById('confirm');
-
-            displayMsg(input, output, db_resp);
-
-            if (db_resp == 'valid') {
-                confirm.removeAttribute('disabled');
-            } else {
-                confirm.setAttribute('disabled', 'disabled');
-            }
-        });
-    }
-}
-
-function displayMsg(input, output, msg) {
-    if (msg != 'valid') {
-        if (input) {
-            if (!input.classList.contains('invalid')) {
-                input.classList.add('invalid');
-            }
-        }
-        output.innerHTML = msg;
-    } else {
-        if (input) {
-            if (input.classList.contains('invalid')) {
-                input.classList.remove('invalid');
-            }
-        }
-        output.innerHTML = '';
-    }
-}
-
-function showHide(e) {
-    let show = e.innerHTML.toLowerCase() == 'show' ? false : true;
-    let inputs = document.getElementById('display-area').getElementsByTagName('input');
-
-    for (let n = 0; n < inputs.length; n++) {
-        inputs[n].type = show ? 'password' : 'text';
-    }
-
-    e.innerHTML = show ? 'Show' : 'Hide';
-}
-
-function checkCurrentPassword(id) {
-    let input = document.getElementById(id);
-    let output = document.getElementById('current_password_status');
-
-    if (!input.value) {
-        displayMsg(input, output, '');
-    } else {
-        let password = input.value;
-
-        $.ajax({
-            data: { password: password },
-            type: 'POST',
-            url: '/current_password_check'
-        }).done(function(data) {
-            let db_resp = data['resp'];
-            displayMsg(input, output, db_resp);
-        });
-    }
-}
-
-function confirmPassword(e) {
-    let confirm = e.value;
-    let submit = document.getElementById('submit');
-    let password = document.getElementById('new_password');
-    let output = document.getElementById('password_status');
-
-    if (!password.value) {
-        displayMsg(password, output, '');
-        displayMsg(e, output, '');
-    } else {
-        if (confirm != password.value) {
-            displayMsg(e, output, '');
-            submit.style.display = 'none';
-            statusReport();
-            return '';
-        } else {
-            displayMsg(e, output, 'valid');
-            statusReport();
-            return 'valid';
+        if ($('#new-password').val().length >= MIN_PASSWORD_LENGTH) {
+            setValid(field, feedback);
+            feedback.text('');
         }
     }
 }
 
-function statusReport() {
-    let submit = document.getElementById('submit');
-    let confirm_password = document.getElementById('confirm');
-    let new_password = document.getElementById('new_password');
-    let current_password = document.getElementById('current_password');
+$('#btn-update-username-password').click(() => {
+    let newUsername = $('#new-username');
 
-    if (all([current_password.value, new_password.value, confirm_password.value])) {
-        $.ajax({
-            data: {
-                current: current_password.value,
-                new: new_password.value,
-                confirm: confirm_password.value
-            },
-            type: 'POST',
-            url: '/password_change_check'
-        }).done(function(data) {
-            if (data['resp'] == 'valid') {
-                displayMsg('', document.getElementById('form-status'), data['resp']);
-                submit.style.display = 'block';
-            } else {
-                displayMsg('', document.getElementById('form-status'), data['resp']);
-                submit.style.display = 'none';
-            }
-        });
+    let currentPassword = $('#current-password');
+    let newPassword = $('#new-password');
+    let confirmPassword = $('#confirm-password');
+
+    if (currentPassword.val().length === 0 && newUsername.val().length === 0) {
+        return;
     }
-}
 
-function all(items) {
-    for (let n = 0; n < items.length; n++) {
-        if (!items[n]) {
-            return false;
-        }
-    }
-    return true;
-}
+    let newPasswordResp = isValidPassword(newPassword.val());
+    let newUsernameResp = isValidUsername(newUsername.val());
 
-function any(items) {
-    for (let n = 0; n < items.length; n++) {
-        if (items[n]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function accountManagement() {
-    $.ajax({
-        type: 'GET',
-        url: '/account_management'
-    }).done(function(data) {
-        let display = document.getElementById('display');
-        let html = data['resp'];
-        if (html) {
-            display.innerHTML = html;
-            setEventListenerOnTabs();
-        }
-    });
-}
-
-function passwordUpdateSource() {
-    $.ajax({
-        type: 'GET',
-        url: '/password_update_source'
-    }).done(function(data) {
-        let displayArea = document.getElementById('display-area');
-        let html = data['resp'];
-        if (html) {
-            displayArea.innerHTML = html;
-        }
-    });
-}
-
-function updatePassword() {
-    let current = document.getElementById('current_password');
-    let _new = document.getElementById('new_password');
-    let confirm = document.getElementById('confirm');
-    let submit = document.getElementById('submit');
-    let load = document.getElementById('load');
-
-    load.style.display = 'block';
-    submit.style.display = 'none';
-
-    if (all([current, _new, confirm])) {
-        $.ajax({
-            data: { current: current.value, new: _new.value, confirm: confirm.value },
-            type: 'POST',
-            url: '/update_password'
-        }).done(function(data) {
-            submit.style.display = 'none';
-            if (data['resp']) {
-                let notice = document.getElementById('notice');
-                if (notice && 'status' in data) {
-                    notice.innerHTML = data['status'];
-                }
-                if ('status' in data) {
-                    load.style.display = 'none';
-                    current.value = '';
-                    confirm.value = '';
-                    _new.value = '';
-                }
-                displayMsg('', document.getElementById('form-status'), data['resp']);
-            }
-        });
-    }
-}
-
-function usernameUpdateSource() {
-    $.ajax({
-        type: 'GET',
-        url: '/username_update_source'
-    }).done(function(data) {
-        let displayArea = document.getElementById('display-area');
-        let html = data['resp'];
-        if (html) {
-            try {
-                displayArea.innerHTML = html;
-            } catch (e) {}
-        }
-    });
-}
-
-function updateUsername() {
-    let username = document.getElementById('new_username');
-    let submit = document.getElementById('submit');
-    let load = document.getElementById('load');
-
-    load.style.display = 'block';
-    submit.style.display = 'none';
-
-    if (username) {
-        $.ajax({
-            data: { username: username.value },
-            type: 'POST',
-            url: '/update_username'
-        }).done(function(data) {
-            submit.style.display = 'none';
-            if (data['resp']) {
-                let notice = document.getElementById('notice');
-                if (notice && 'status' in data) {
-                    notice.innerHTML = data['status'];
-                }
-                if ('status' in data) {
-                    load.style.display = 'none';
-                    username.value = '';
-                }
-                displayMsg('', document.getElementById('form-status'), data['resp']);
-            }
-        });
-    }
-}
-
-// -------- Tabs -------- //
-
-document.addEventListener('click', function() {
-    if (!dynamicTabsSet) {
-        dynamicTabsSet = true;
-        setEventListenerOnTabs();
+    if (
+        (newPasswordResp['status'] === 1 && newPassword.val() === $('#confirm-password').val()) ||
+        newUsernameResp['status'] === 1
+    ) {
+        updateUsernamePassword();
     }
 });
 
-function setEvents(items, tagType, array) {
-    for (let t = 0; t < items.length; t++) {
-        let tags = items[t].getElementsByTagName(tagType);
-        for (let n = 0; n < tags.length; n++) {
-            let tag = tags[n];
-            tag.addEventListener('click', selectTab);
-            array.push(tag);
-        }
-    }
-}
-
-function setEventListenerOnTabs() {
-    let tabs = document.getElementsByClassName('tabs');
-    let subtabs = document.getElementsByClassName('sub-tabs');
-
-    setEvents(subtabs, 'li', subtabsItems);
-    setEvents(tabs, 'div', sidebarItems);
-}
-
-function isIn(obj, array) {
-    let _isIn = false;
-
-    for (let n = 0; n < array.length; n++) {
-        if (array[n] == obj) {
-            _isIn = true;
-            break;
-        }
-    }
-    return _isIn;
-}
-
-function unSelect(items) {
-    for (let n = 0; n < items.length; n++) {
-        let item = items[n];
-
-        if (item.classList.contains('selected')) {
-            item.classList.remove('selected');
-        }
-    }
-}
-
-function removeSelected(obj) {
-    if (isIn(obj, sidebarItems)) {
-        unSelect(subtabsItems);
-        unSelect(sidebarItems);
+function updateUsernamePassword() {
+    if (isProcessing) {
+        return;
     } else {
-        unSelect(subtabsItems);
+        enableLoader();
+        isProcessing = true;
     }
-}
 
-function selectTab() {
-    removeSelected(this);
-    this.classList.add('selected');
-}
-
-// -------- Server -------- //
-
-function validateIp(ip) {
-    let ipInput = document.getElementById('ip');
-
-    if (!/^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/.test(ip)) {
-        if (!ipInput.classList.contains('invalid')) {
-            ipInput.classList.add('invalid');
+    $.ajax({
+        type: 'POST',
+        url: '/update-username-password',
+        data: {
+            newUsername: $('#new-username').val(),
+            currentPassword: $('#current-password').val(),
+            newPassword: $('#new-password').val(),
+            confirmPassword: $('#confirm-password').val()
+        },
+        beforeSend: request => {
+            request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
         }
-        return false;
-    } else {
-        if (ipInput.classList.contains('invalid')) {
-            ipInput.classList.remove('invalid');
-        }
-        return true;
-    }
-}
-
-function testPort(port) {
-    let _port = port.toString().trim();
-
-    if (!_port.length) {
-        return false;
-    } else {
-        // check if number
-        for (let n = 0; n < _port.length; n++) {
-            if (isNaN(_port[n])) {
-                return false;
-            }
-        }
-
-        // check if number starts with a zero
-        if (parseInt(_port[0]) == 0) {
-            return false;
-        }
-
-        // check if number is larger than 65535
-        if (parseInt(_port) > 65535) {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-function validatePort(port) {
-    let portInput = document.getElementById('port');
-
-    if (!testPort(port)) {
-        if (!portInput.classList.contains('invalid')) {
-            portInput.classList.add('invalid');
-        }
-        return false;
-    } else {
-        if (portInput.classList.contains('invalid')) {
-            portInput.classList.remove('invalid');
-        }
-        return true;
-    }
-}
-
-function invalidate(id) {
-    let element = document.getElementById(id);
-
-    if (!element.classList.contains('invalid')) {
-        element.classList.add('invalid');
-    }
-}
-
-function serverService() {
-    let ip = document.getElementById('ip');
-    let port = document.getElementById('port');
-    let btn = document.getElementById('server-address-btn');
-    let load = document.getElementById('server-service-load');
-
-    if (all([validateIp(ip.value), validatePort(port.value)])) {
-        btn.style.display = 'none';
-        load.style.display = 'block';
-        $.ajax({
-            type: 'POST',
-            data: { ip: ip.value, port: port.value },
-            url: '/server_service'
-        }).done(function(data) {
-            console.log(data);
-            if ('mode' in data) {
-                if (data['mode'] == 'Start Server') {
-                    if ('failed' in data) {
-                        if (!data['failed']) {
-                            ip.disabled = false;
-                            port.disabled = false;
-                        } else {
-                            invalidate('ip');
-                            invalidate('port');
-                        }
-                    }
-                    if ('ipFailed' in data && 'portFailed' in data) {
-                        if (!data['ipFailed'] && !data['portFailed']) {
-                            ip.disabled = false;
-                            port.disabled = false;
-                        } else if (data['ipFailed'] && data['portFailed']) {
-                            invalidate('ip');
-                            invalidate('port');
-                        } else if (data['ipFailed']) {
-                            invalidate('ip');
-                        } else if (data['portFailed']) {
-                            invalidate('port');
-                        }
-                    }
-                } else {
-                    ip.disabled = true;
-                    port.disabled = true;
+    })
+        .done(resp => {
+            for (let i in resp) {
+                if (resp[i]['status'] && resp[i]['msg']) {
+                    setValid($('#' + i), $('#' + i + '-resp'));
+                    $('#' + i + '-resp').text(resp[i]['msg']);
                 }
 
-                btn.innerHTML = data['mode'];
+                if (resp[i]['status'] === 0 && resp[i]['msg']) {
+                    setInvalid($('#' + i), $('#' + i + '-resp'));
+                    $('#' + i + '-resp').text(resp[i]['msg']);
+                }
             }
-            btn.style.display = 'block';
-            load.style.display = 'none';
+
+            disableLoader();
+            setAccountStatus();
+            isProcessing = false;
+        })
+        .fail(() => {
+            disableLoader();
+            isProcessing = false;
         });
-    }
 }
 
-function serverServiceSource() {
+function enableLoader() {
+    $('#update-username-password-loader').removeClass('d-none');
+    $('#update-username-password-loader').addClass('d-block');
+    $('#btn-update-username-password').addClass('d-none');
+}
+
+function disableLoader() {
+    $('#update-username-password-loader').addClass('d-none');
+    $('#update-username-password-loader').removeClass('d-block');
+    $('#btn-update-username-password').removeClass('d-none');
+}
+
+function setAccountStatus() {
     $.ajax({
         type: 'GET',
-        url: '/server_service_source'
-    }).done(function(data) {
-        let displayArea = document.getElementById('display-area');
-        let html = data['resp'];
-
-        if (html) {
-            displayArea.innerHTML = html;
-            let ip = document.getElementById('ip');
-            let port = document.getElementById('port');
-            let btn = document.getElementById('server-address-btn');
-
-            if (all([data['ip'], data['port']])) {
-                ip.value = data['ip'];
-                port.value = data['port'];
-                btn.innerHTML = data['mode'];
-                if (ip.value) {
-                    ip.disabled = true;
-                    port.disabled = true;
-                }
-            }
+        url: '/get-account-status',
+        beforeSend: request => {
+            request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
+        }
+    }).done(resp => {
+        if (resp['msg']) {
+            $('#notice').text(resp['msg']);
+            $('#account-status-msg').removeClass('d-none');
+        } else {
+            $('#account-status-msg').addClass('d-none');
         }
     });
 }
