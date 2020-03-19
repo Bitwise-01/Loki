@@ -9,7 +9,7 @@ Loki uses **RSA-2048** with **AES-256** to keep your communication with infected
 [![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)](https://www.paypal.me/Msheikh03)
 <br/><br/>
 
-<img src="screenshots/bots.png" atl=""/>
+<img src="Screenshots/bots.png" atl=""/>
 
 ### Requirements
 
