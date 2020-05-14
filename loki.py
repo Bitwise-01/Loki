@@ -88,7 +88,7 @@ def is_valid_password(password):
 
     # Length
 
-    if len(password) < const.MIN_USERNAME_LENGTH:
+    if len(password) < const.MIN_PASSWORD_LENGTH:
         resp['msg'] = 'Password must contain at least ' + \
             const.MIN_PASSWORD_LENGTH + ' characters'
         return resp
