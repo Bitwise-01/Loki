@@ -10,10 +10,13 @@ class Terminal {
     static SSHOutputHistory = [];
 
     static commandConsoleHistory = [];
-    static commandCurrentPosition = 0;
-
     static SSHConsoleHistory = [];
+
+    static commandCurrentPosition = 0;
     static SSHCurrentPosition = 0;
+
+    static commandCurrentInput = '';
+    static SSHCurrenInput = '';
 
     static isProcessing = false;
 
@@ -29,7 +32,7 @@ class Terminal {
             this.populateOutput();
         }
 
-        $('#console-input').val(this.consoleHistory[this.currentPosition]);
+        $('#console-input').val(this.currentInput);
         $('#console-input').focus();
     }
 
@@ -77,8 +80,20 @@ class Terminal {
         Terminal.isProcessing = value;
     }
 
+    get currentInput() {
+        return Terminal.isSSH ? Terminal.SSHCurrenInput : Terminal.commandCurrentInput;
+    }
+
+    set currentInput(value) {
+        if (Terminal.isSSH) {
+            Terminal.SSHCurrenInput = value;
+        } else {
+            Terminal.commandCurrentInput = value;
+        }
+    }
+
     populateOutput() {
-        this.outputHistory.forEach(h => {
+        this.outputHistory.forEach((h) => {
             $('#console-output').append(h['output']);
         });
 

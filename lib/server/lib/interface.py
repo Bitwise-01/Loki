@@ -86,7 +86,7 @@ class FTP(object):
     def recv(self, code, file=None):
         self.shell.send(code=code, args=file)
         self.is_alive = True
-        self.sftp.recv()
+        self.sftp.recv(code=code)
         self.is_alive = False
         self.time = self.sftp.time_elapsed
         self.success = True if self.sftp.error_code != -1 else False

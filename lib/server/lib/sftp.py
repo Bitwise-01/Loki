@@ -7,8 +7,9 @@ import ssl
 import socket
 from . file import File
 from time import time, sleep
-from lib.const import CERT_FILE, KEY_FILE
+from datetime import datetime
 from socket import timeout as TimeOutError
+from lib.const import CERT_FILE, KEY_FILE, SCREENSHOTS_PATH, FILES_PATH
 
 
 class sFTP(object):
@@ -106,7 +107,7 @@ class sFTP(object):
         finally:
             self.close()
 
-    def recv(self):
+    def recv(self, code):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.setsockopt(
             socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -131,10 +132,25 @@ class sFTP(object):
         try:
             started = time()
             file_name, data = self.recv_file()
+            file_name = file_name.decode()
+
+            if code == 5:  # Screenshot
+                file_name, exten = os.path.splitext(
+                    os.path.basename(file_name))
+                file_name = '{}_{}{}'.format(
+                    file_name, datetime.now().strftime('%Y-%m-%d_%H.%M.%S'), exten)
+
+                file_name = os.path.join(SCREENSHOTS_PATH, file_name)
+            else:
+                file_name = os.path.join(FILES_PATH, file_name)
+
+            print(f'\nFilename: {file_name}\n')
+
             File.write(file_name, data)
             self.time_elapsed = (time() - started)
             self.display('Time-elapsed: {}(sec)'.format(time() - started))
-        except:
+        except Exception as e:
+            print(f'\nException: {e}\n')
             self.error_code = -1
         finally:
             self.close()

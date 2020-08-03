@@ -2,7 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Config file
 
-from os import path, makedirs
+import os
 
 ################
 #    READ ME   #
@@ -38,16 +38,16 @@ VERSION = 'v0.1.1'
 # database
 DATABASE = 'database/database.db'
 
-if not path.exists('database'):
-    makedirs('database')
+if not os.path.exists(DATABASE):
+    os.makedirs(os.path.dirname(DATABASE))
 
 # account
 LOCK_TIME = 300  # in seconds
 MAX_FAILED_ATTEMPTS = 3  # attempts before locking
 
 # cert
-if not path.exists('cert'):
-    makedirs('cert')
+if not os.path.exists('cert'):
+    os.makedirs('cert')
 
 CERT_FILE = 'cert/public.crt'
 KEY_FILE = 'cert/private.key'
@@ -71,3 +71,14 @@ MAX_PASSWORD_LENGTH = 256
 # Default creds
 DEFAULT_USERNAME = 'loki'
 DEFAULT_PASSWORD = 'ikol'
+
+# Downloads path
+DOWNLOADS_PATH = 'downloads'
+SCREENSHOTS_PATH = os.path.join(DOWNLOADS_PATH, 'screenshots')
+FILES_PATH = os.path.join(DOWNLOADS_PATH, 'files')
+
+if not os.path.exists(SCREENSHOTS_PATH):
+    os.makedirs(SCREENSHOTS_PATH)
+
+if not os.path.exists(FILES_PATH):
+    os.makedirs(FILES_PATH)

@@ -4,3 +4,8 @@
     height: 404px;
     background-color: var(--hd-color);
 }
+
+#new-username {
+    border: none;
+    text-transform: lowercase;
+}

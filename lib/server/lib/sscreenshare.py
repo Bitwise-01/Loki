@@ -73,6 +73,11 @@ class SScreenShare:
                     pass
 
     def start(self):
+
+        image_path = os.path.dirname(self.image)
+        if not os.path.exists(image_path):
+            os.makedirs(image_path)
+
         self.is_alive = True
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -146,6 +151,11 @@ class SScreenShare:
                         pass
                     finally:
                         sleep(0.1)
+                finally:
+                    try:
+                        os.remove(self.image)
+                    except:
+                        pass
 
             try:
                 del self.recipient_session
@@ -156,9 +166,3 @@ class SScreenShare:
                     self.server_socket = None
                 except:
                     pass
-
-            # Remove image
-            try:
-                os.remove(self.image)
-            except:
-                pass

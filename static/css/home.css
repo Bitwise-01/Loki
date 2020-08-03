@@ -64,6 +64,10 @@ table th {
     font-size: 14px;
 }
 
+#server-config-section input:disabled {
+    background-color: #e5e5e5;
+}
+
 .console {
     border: 1px solid var(--hd-color);
     background-color: var(--hd-color);

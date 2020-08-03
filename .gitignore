@@ -17,3 +17,9 @@ database/
 
 # Virtual environment
 env_loki
+
+# Downloads path 
+downloads/
+
+# Screenshare path 
+static/img/

@@ -10,7 +10,7 @@ let isTogglingServer = false;
 let botsSignature = null;
 let terminalObj = null;
 
-$(document).ready(function() {
+$(document).ready(function () {
     updateStatus();
     setInterval(updateStatus, botsFetchInterval * 1000);
 });
@@ -19,7 +19,7 @@ $(document).ready(function() {
 
 function updateStatus() {
     getServerStatus()
-        .done(resp => {
+        .done((resp) => {
             isServerActive = resp['isActive'];
 
             if (isServerActive) {
@@ -55,9 +55,9 @@ function getServerStatus() {
     return $.ajax({
         type: 'GET',
         url: '/server-status',
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
+        },
     });
 }
 
@@ -93,12 +93,7 @@ $('#server-active-toggle').click(() => {
 
     if (
         !isServerActive &&
-        ($('#server-ip')
-            .val()
-            .trim().length === 0 ||
-            $('#server-port')
-                .val()
-                .trim().length === 0)
+        ($('#server-ip').val().trim().length === 0 || $('#server-port').val().trim().length === 0)
     ) {
         return;
     }
@@ -110,11 +105,11 @@ $('#server-active-toggle').click(() => {
         type: 'POST',
         url: url,
         data: data,
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
+        },
     })
-        .done(resp => {
+        .done((resp) => {
             updateStatus();
         })
         .fail(() => {
@@ -134,11 +129,11 @@ function fetchBots() {
     $.ajax({
         type: 'GET',
         url: '/fetch-bots',
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
+        },
     })
-        .done(resp => {
+        .done((resp) => {
             $('#bots-count').text(isServerActive ? resp['bots'].length : '----');
 
             if (botsSignature === null || botsSignature !== resp['signature']) {
@@ -161,13 +156,13 @@ function processBots(bots) {
         location.reload();
     }
 
-    bots.forEach(bot => {
+    bots.forEach((bot) => {
         tableRow = $('<tr>');
 
         tableRow.append(
             $('<td>', { 'data-bot-id': bot['id'], class: 'clickable' })
                 .text(bot['id'].slice(0, 8))
-                .click(e => {
+                .click((e) => {
                     exploreBot(e.currentTarget.getAttribute('data-bot-id'));
                 })
         );
@@ -191,11 +186,11 @@ function exploreBot(botId) {
         type: 'POST',
         url: '/get-bot-info',
         data: { 'bot-id': botId },
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
+        },
     })
-        .done(resp => {
+        .done((resp) => {
             $('#info-display').text('');
 
             if (resp['status'] === 0) {
@@ -242,10 +237,7 @@ function exploreBot(botId) {
                     );
                 }
 
-                $('#info-display')
-                    .append(sysInfo)
-                    .append(netInfo)
-                    .append(geoInfo);
+                $('#info-display').append(sysInfo).append(netInfo).append(geoInfo);
 
                 restTerminal();
                 terminalObj = new Command();
@@ -272,11 +264,11 @@ function restTerminal() {
     Terminal.SSHCurrentPosition = 0;
 }
 
-$('#command').click(e => {
+$('#command').click((e) => {
     activateCommand(e.currentTarget);
 });
 
-$('#ssh').click(e => {
+$('#ssh').click((e) => {
     activateSSH(e.currentTarget);
 });
 

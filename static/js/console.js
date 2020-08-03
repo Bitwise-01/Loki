@@ -4,7 +4,7 @@ const UP_CODE = 38;
 const DOWN_CODE = 40;
 const ENTER_CODE = 13;
 
-$(document).ready(function() {
+$(document).ready(function () {
     setServerStatusInactive();
 });
 
@@ -23,7 +23,7 @@ function getSelectedText() {
     return '';
 }
 
-$('#console-input').keydown(e => {
+$('#console-input').keydown((e) => {
     if (terminalObj === null || terminalObj.processingCommand) {
         return;
     }
@@ -63,6 +63,10 @@ $('#console-input').keydown(e => {
     }
 });
 
+$('#console-input').keyup(() => {
+    terminalObj.currentInput = $('#console-input').val();
+});
+
 function execute(cmd) {
     if (cmd.toLowerCase() === 'cls') {
         $('#console-output').text('');
@@ -72,6 +76,7 @@ function execute(cmd) {
     }
 
     terminalObj.execute(cmd);
+    terminalObj.currentInput = '';
 }
 
 function updateHistory(currentValue) {

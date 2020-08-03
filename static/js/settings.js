@@ -217,13 +217,13 @@ function updateUsernamePassword() {
             newUsername: $('#new-username').val(),
             currentPassword: $('#current-password').val(),
             newPassword: $('#new-password').val(),
-            confirmPassword: $('#confirm-password').val()
+            confirmPassword: $('#confirm-password').val(),
         },
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
+        },
     })
-        .done(resp => {
+        .done((resp) => {
             for (let i in resp) {
                 if (resp[i]['status'] && resp[i]['msg']) {
                     setValid($('#' + i), $('#' + i + '-resp'));
@@ -234,6 +234,19 @@ function updateUsernamePassword() {
                     setInvalid($('#' + i), $('#' + i + '-resp'));
                     $('#' + i + '-resp').text(resp[i]['msg']);
                 }
+            }
+
+            if (resp['new-username'].status === 1) {
+                $('#new-username').attr('placeholder', $('#new-username').val());
+                $('#new-username').val('');
+            }
+
+            if (resp['new-password'].status === 1) {
+                $('#current-password').val('');
+                $('#new-password').val('');
+                $('#confirm-password').val('');
+
+                setClear($('#current-password'), $('#current-password'));
             }
 
             disableLoader();
@@ -262,10 +275,10 @@ function setAccountStatus() {
     $.ajax({
         type: 'GET',
         url: '/get-account-status',
-        beforeSend: request => {
+        beforeSend: (request) => {
             request.setRequestHeader('X-CSRFToken', $('#csrf_token').val());
-        }
-    }).done(resp => {
+        },
+    }).done((resp) => {
         if (resp['msg']) {
             $('#notice').text(resp['msg']);
             $('#account-status-msg').removeClass('d-none');
