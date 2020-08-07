@@ -81,8 +81,8 @@ class Client(object):
             output = proc[0].decode('utf8')
             errors = proc[1].decode('utf8')
             output = output if output else errors
-        except:
-            output = ''
+        except Exception as e:
+            output = f'Error: {e}'
 
         if cmd.split()[0] == 'cd':
             if len(cmd.split()) != 1:
@@ -90,8 +90,8 @@ class Client(object):
                 if os.path.exists(path):
                     os.chdir(path)
             else:
-                output = ''
                 os.chdir(self.home)
+            output = os.getcwd()
 
         return output if len(output) else '-1'
 

