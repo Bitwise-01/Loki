@@ -262,6 +262,9 @@ function restTerminal() {
 
     Terminal.SSHConsoleHistory = [];
     Terminal.SSHCurrentPosition = 0;
+
+    Terminal.commandCurrentInput = '';
+    Terminal.SSHCurrenInput = '';
 }
 
 $('#command').click((e) => {
