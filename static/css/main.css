@@ -20,10 +20,10 @@ body > * {
     --hot-red: #ff0033;
     --dark-red: #dc3545;
     --hd-color: #1f1f1f;
-    --tab-color: #444;
+    --tab-color: #2f2f2f;
     --white-smoke: #f9f9f9;
 
-    --bg-color: #121212;
+    --bg-color: #101010;
     --tab-hover: #0f0f0f;
 
     --console-input-sym: '$> ';

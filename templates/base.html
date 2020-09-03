@@ -29,7 +29,7 @@
             </button>
             <div class="collapse navbar-collapse" id="toggler">
                 <a class="navbar-brand text-light logo" href="/">Loki</a>
-                <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0 ml-5">
+                <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0 ml-0">
                     <li class="nav-item {% if request.path == '/' %}active{% endif %}">
                         <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                     </li>
@@ -51,35 +51,13 @@
         <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}" />
 
         <div class="d-flex">
-            <div class="align-self-start" id="sidebar">
-                <nav class="navbar-full navbar-expand-lg navbar-dark">
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#toggler2"
-                        aria-controls="toggler2"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse pl-2" id="toggler2" style="margin-left: 3px;">
-                        <ul class="nav navbar-nav d-block">
-                            {% block sidebar %}{% endblock %}
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-
             <!-- Content -->
-            <div class="align-self-stretch" style="width: 100%;">
+            <div class="align-self-stretch" style="width: 100%">
                 <div class="container-fluid">
                     {% if session['account_status'] %}
                     <div class="row p-0" id="account-status-msg">
-                        <div class="col mx-auto p-0" style="margin-bottom: -16px;">
-                            <p style="text-align: center;" class="pt-2">
+                        <div class="col mx-auto p-0" style="margin-bottom: -16px">
+                            <p style="text-align: center" class="pt-2">
                                 <a id="notice" href="{{ url_for('settings') }}"
                                     >{{ session['account_status'] }}</a
                                 >
@@ -88,9 +66,7 @@
                     </div>
                     {% endif %}
                     <div class="row">
-                        <div id="display-area" class="col-12 pt-2">
-                            {% block content %} {% endblock %}
-                        </div>
+                        <div id="display-area" class="col-12 pt-2">{% block content %} {% endblock %}</div>
                     </div>
                 </div>
             </div>

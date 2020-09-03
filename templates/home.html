@@ -5,24 +5,20 @@
 <a href="{{ url_for('index') }}" class="selected">Home</a>
 <a href="{{ url_for('settings') }}">Settings</a>
 
-{% endblock %} {% block sidebar %}
-<li class="nav-item mt-1 rounded active-sidebar-tab">
-    <a class="nav-link" href="{{ url_for('index') }}">Bots</a>
-</li>
 {% endblock %} {% block content %}
-<div class="row pt-0">
+<div class="row pt-2">
     <div class="col-7 pl-2 pr-0">
         <div class="p-0 table-container">
             <table class="table table-dark table-hover m-0">
                 <thead>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: center">
                         <th scope="col">ID</th>
                         <th scope="col">IP</th>
                         <th scope="col">OS</th>
                         <th scope="col">Country</th>
                     </tr>
                 </thead>
-                <tbody style="text-align: center;" id="bots-display"></tbody>
+                <tbody style="text-align: center" id="bots-display"></tbody>
             </table>
         </div>
     </div>
@@ -49,7 +45,7 @@
                 <div id="server-control-section">
                     <div id="server-config-section" class="mt-4">
                         <input type="text" id="server-ip" placeholder="127.0.0.1" />
-                        <span style="font-size: 20px; font-weight: bolder;">:</span>
+                        <span style="font-size: 20px; font-weight: bolder">:</span>
                         <input type="text" id="server-port" placeholder="8080" />
                     </div>
                     <button class="btn mt-2" id="server-active-toggle"></button>
@@ -60,8 +56,8 @@
     </div>
 </div>
 
-<div class="row pt-0">
-    <div class="col-9 pl-2 mt-3 pr-0">
+<div class="row pt-2">
+    <div class="col-12 col-md-9 pl-2 mt-3 pr-0">
         <div class="console">
             <ul class="nav pl-3 pb-1">
                 <li class="nav-item mt-1 rounded tab" id="command">
@@ -83,7 +79,7 @@
         </div>
     </div>
 
-    <div class="col-3 pl-2 mt-3 pr-2">
+    <div class="col-12 col-md-3 pl-2 mt-3 pr-2">
         <div id="info-display"></div>
     </div>
 </div>
