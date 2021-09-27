@@ -515,4 +515,6 @@ if __name__ == "__main__":
 
     # start server
     app.run(host=WEB_SERVER_IP, port=WEB_SERVER_PORT)
+
+    # stop server
     server.stop()
