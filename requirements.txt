@@ -8,4 +8,4 @@ pyOpenSSL==22.0.0
 PyInstaller==3.6
 pycryptodome==3.9.6
 jinja2<3.1.0
-werkzeug==2.0.3
+werkzeug==2.2.3
